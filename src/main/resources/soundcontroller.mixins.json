@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.bvengo.soundcontroller.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [],
+  "client": [
+    "MixinOptionsScreen"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

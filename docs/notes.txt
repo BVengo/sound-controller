@@ -1,0 +1,54 @@
+Minecraft volume controller
+- Set sound volumes
+- Disable sounds entirely
+    - Disabling a music sound removes it from the list that MC uses
+    - Disabling any other sound simply mutes it (skip it entirely, not volume = 0)
+- Replace sound groups
+    - New 'Total Sound' control
+    - New 'Group Sound' controls
+    - These controls have an impact on each individual sound
+- Each individual sound controller has a little 'Preview' button to listen to it
+
+
+Sound ID breakdowns: <section><subsection><sound>
+Root:
+    A master control
+    Section buttons
+    A search option?
+        Shows list of sounds, but as <section> > <subsection> > <sound> e.g. Ambient > Basalt Deltas > Additions
+        The list component would probably be the same as the list component for Subsection, but simply uses Path instead of Name for the sounds
+Section:
+    An icon next to the title (shown in the Root buttons too)
+    A section control
+    Subsection buttons
+        Each section contains an 'All' subsection. This subsection holds a list of unique sounds. Changing the sound types will update each of those sounds in their individual subsections, rather than adding another percentage on them like the master, section, or subsection controls. E.g. the Ambient 'All' section will contain [additions, loop, mood, enter, exit]. Note that there are sub-sounds (e.g. additions.rare) - that are not specified, and are adjusted with their base sound (additions)
+Subsection:
+    An icon next to the title (shown in the Root buttons too)
+    A subsection control
+    Any notes for the subsection (e.g. a Bell block uses many sounds from the Anvil block, so aren't listed in the Bell subsection)
+    A list of all contained sounds as a table
+Sound:
+    Each sound has a volume slider, a mute button, and a tooltip when hovering over the name. Tooltips aren't based on the subsection, but are instead shared by all sounds with the same name
+        <sound name> ----------#--- [M]
+
+
+id: <section>.<subsection>.<sound>
+- each section.subsection will need a stored entry due to the icons
+- each sound will be dynamically listed based on the subsection, so don't need listing
+
+
+When annotating sounds:
+- Check if <section><subsection><sound name> has a corresponding annotation. If not, check <section>.all.<sound name>           Using all instead of generic, because generic is already used for entity sounds
+
+
+# Possibly useful classes:
+- PlaySoundS2CPacket.class
+- PlaySoundFromEntityS2CPacket.class
+- SoundEvents.class
+- GameOptions.class
+- OptionsScreen.class
+
+# New classes:
+- SoundOptionsScreen (see original SoundOptionsScreen for reference)
+- IconButtonListWidget (see ButtonListWidget for reference)
+- IconButtonEntry (see ButtonEntry for reference)
