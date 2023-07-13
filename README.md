@@ -12,24 +12,15 @@ By utilising the minecraft registry, this mod should also include all other soun
 
 This mod is available on [GitHub](https://www.github.com/BVengo/sound-controller), [CurseForge](https://www.curseforge.com/minecraft/mc-mods/sound-controller), and [Modrinth](https://www.modrinth.com/mod/sound-controller).
 
-<br/>
-
 ---
-
-<br/>
 
 ## Images
 
 <img src="./assets/settings_screen.png" alt="drawing" width="600"/>
 <br/>
-<br/>
 <img src="./assets/sounds_screen.png" alt="drawing" width="600"/>
 
-<br/>
-
 ---
-
-<br/>
 
 ## Support me!
 
