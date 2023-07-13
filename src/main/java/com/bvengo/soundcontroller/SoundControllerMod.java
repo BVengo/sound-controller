@@ -29,8 +29,7 @@ public class SoundControllerMod implements ClientModInitializer {
 				if (soundEvent != SoundEvents.INTENTIONALLY_EMPTY) {
 					Identifier identifier = soundEvent.getId();
 
-					// How to get category???
-					config.addSound(identifier);
+					config.addSound(identifier.toString());
 				}
 			}
 

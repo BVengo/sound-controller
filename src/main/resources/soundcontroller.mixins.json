@@ -3,7 +3,7 @@
   "package": "com.bvengo.soundcontroller.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [],
-  "client": ["SoundSystemMixin"],
+  "client": ["SoundSystemMixin", "ScreenAccessor", "GameOptionsScreenAccessor", "SoundOptionsScreenMixin"],
   "injectors": {
     "defaultRequire": 1
   }

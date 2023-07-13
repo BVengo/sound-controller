@@ -29,7 +29,7 @@ public abstract class SoundSystemMixin {
     private float modifyH(float h) {
         // Adjust the volume based on the individual sound config
         Identifier soundId = this.currentSoundInstance.getId();
-        float volumeMultiplier = SoundConfig.getInstance().getVolumeMultiplier(soundId);
+        float volumeMultiplier = SoundConfig.getInstance().getVolumeMultiplier(soundId.toString());
         return MathHelper.clamp(h * volumeMultiplier, 0.0F, 1.0F);
     }
 }
