@@ -1,6 +1,10 @@
 package com.bvengo.soundcontroller.mixin;
 
+import com.google.common.collect.Maps;
+import net.minecraft.client.sound.Channel;
+import net.minecraft.sound.SoundCategory;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -13,11 +17,13 @@ import net.minecraft.client.sound.SoundSystem;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
 
 @Mixin(SoundSystem.class)
 public abstract class SoundSystemMixin {
-    @Unique
-    private SoundInstance currentSoundInstance;
+    @Unique private SoundInstance currentSoundInstance;
+    SoundConfig config = SoundConfig.getInstance();
 
     @Inject(method = "play(Lnet/minecraft/client/sound/SoundInstance;)V", at = @At(value = "HEAD"))
     private void onPlay(SoundInstance sound, CallbackInfo ci) {
@@ -29,7 +35,17 @@ public abstract class SoundSystemMixin {
     private float modifyH(float h) {
         // Adjust the volume based on the individual sound config
         Identifier soundId = this.currentSoundInstance.getId();
-        float volumeMultiplier = SoundConfig.getInstance().getVolumeMultiplier(soundId.toString());
+        float volumeMultiplier = config.getVolumeMultiplier(soundId.toString());
         return MathHelper.clamp(h * volumeMultiplier, 0.0F, 1.0F);
+    }
+
+    @Inject(method = "getAdjustedVolume(Lnet/minecraft/client/sound/SoundInstance;)F", at = @At("HEAD"), cancellable = true)
+    private void modifyGetAdjustedVolume(SoundInstance sound, CallbackInfoReturnable<Float> ci) {
+        float volume = ((SoundSystemAccessor)(Object)this).invokeGetAdjustedVolume(sound.getVolume(), sound.getCategory());
+        float volumeMultiplier = config.getVolumeMultiplier(sound.getId().toString());
+        volume = MathHelper.clamp(volume * volumeMultiplier, 0.0F, 1.0F);
+
+        ci.setReturnValue(volume);
+        ci.cancel();
     }
 }

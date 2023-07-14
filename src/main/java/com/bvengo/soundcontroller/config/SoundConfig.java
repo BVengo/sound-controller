@@ -1,10 +1,13 @@
 package com.bvengo.soundcontroller.config;
 
 import com.bvengo.soundcontroller.SoundController;
+import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.sound.Channel;
+import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -12,6 +15,7 @@ import net.minecraft.util.Identifier;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.util.Map;
 import java.util.TreeMap;
 
 
