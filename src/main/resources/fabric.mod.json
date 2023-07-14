@@ -1,11 +1,11 @@
 {
     "schemaVersion": 1,
     "id": "soundcontroller",
-    "version": "2.4.0",
+    "version": "1.0.0",
     "icon": "assets/soundcontroller/icon.png",
 
-    "name": "Slab Controller",
-    "description": "Toggle between how slabs can be placed - top, bottom, or dynamic.",
+    "name": "Sound Controller",
+    "description": "Have complete control over the volume of all sounds played in the game.",
     "authors": [
         "BVengo"
     ],
@@ -18,7 +18,10 @@
     "environment": "client",
     "entrypoints": {
         "client": [
-            "com.bvengo.soundcontroller.SoundControllerMod"
+            "com.bvengo.soundcontroller.SoundController"
+        ],
+        "modmenu": [
+            "com.bvengo.soundcontroller.config.ModMenuIntegration"
         ]
     },
     "mixins": [
@@ -27,7 +30,15 @@
     "depends": {
         "fabricloader": ">=0.14.21",
         "minecraft": ">=1.20",
-        "java": ">=17",
-        "fabric-api": "*"
+        "java": ">=17"
+    },
+    "recommends": {
+        "modmenu": ">=7.0.1"
+    },
+
+    "custom": {
+        "modmenu": {
+            "update_checker": true
+        }
     }
 }

@@ -1,5 +1,6 @@
 {
-    "soundcontroller.options.sounds.individual.title": "Individual Sounds",
-    "soundcontroller.options.sounds.individual.search_title": "Search:",
-    "soundcontroller.options.sounds.individual.search_placeholder": "Search for a sound..."
+    "soundcontroller.options.title": "Individual Sounds",
+    "soundcontroller.options.search.title": "Search:",
+    "soundcontroller.options.search.placeholder": "Search for a sound...",
+    "soundcontroller.options.filter.tooltip": "Show only modified volumes"
 }

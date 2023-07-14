@@ -5,23 +5,28 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.OptionListWidget;
-import net.minecraft.client.gui.widget.TextFieldWidget;
+import net.minecraft.client.gui.tooltip.Tooltip;
+import net.minecraft.client.gui.widget.*;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 
-import static com.bvengo.soundcontroller.SoundControllerTexts.SOUND_SCREEN_TITLE;
-import static com.bvengo.soundcontroller.SoundControllerTexts.SEARCH_FIELD_TITLE;
-import static com.bvengo.soundcontroller.SoundControllerTexts.SEARCH_FIELD_PLACEHOLDER;
+import static com.bvengo.soundcontroller.Constants.SOUND_SCREEN_TITLE;
+import static com.bvengo.soundcontroller.Constants.SEARCH_FIELD_TITLE;
+import static com.bvengo.soundcontroller.Constants.SEARCH_FIELD_PLACEHOLDER;
+import static com.bvengo.soundcontroller.Constants.SEARCH_FILTER_TOOLTIP;
+
+import static com.bvengo.soundcontroller.Constants.FILTER_BUTTON_LOCATION;
 
 public class AllSoundOptionsScreen extends GameOptionsScreen {
     SoundConfig config = SoundConfig.getInstance();
 
     private OptionListWidget optionButtons;
     private TextFieldWidget searchField;
+    private TexturedButtonWidget toggleButton;
+
+    private boolean showModifiedOnly = false;
 
     public AllSoundOptionsScreen(Screen parent, GameOptions options) {
         super(parent, options, SOUND_SCREEN_TITLE);
@@ -29,13 +34,21 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
 
     @Override
     protected void init() {
-
         // Add search field - x, y, width, height
-        this.searchField = new TextFieldWidget(this.textRenderer, 80, 35, this.width - 112, 20, SEARCH_FIELD_PLACEHOLDER);
+        this.searchField = new TextFieldWidget(this.textRenderer, 80, 35, this.width - 142, 20, SEARCH_FIELD_PLACEHOLDER);
         this.searchField.setChangedListener(serverName -> this.loadOptions());
         this.addSelectableChild(this.searchField);
 
-        SoundConfig config = SoundConfig.getInstance();
+        // Add filter button - x, y, width, height, u, v, hoveredVOffset, location, textureWidth, textureHeight, onPress
+        this.toggleButton = new TexturedButtonWidget(this.width - 52, 35, 20, 20, 0, 0, 20,
+                FILTER_BUTTON_LOCATION, 20, 40, (button) -> {
+            showModifiedOnly = !showModifiedOnly;
+            loadOptions();
+            this.toggleButton.setFocused(false);
+        });
+        toggleButton.setTooltip(Tooltip.of(SEARCH_FILTER_TOOLTIP));
+
+        this.addDrawableChild(toggleButton);
 
         // Add options - width, height, top, bottom, itemHeight (decompiled code isn't very helpful here)
         this.optionButtons = new OptionListWidget(this.client, this.width, this.height-32, 64, this.height - 32, 25);
@@ -57,8 +70,10 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
         // Replace the option buttons to only show options that match the search field
         String search = this.searchField.getText().toLowerCase();
 
-        for (String id : config.soundVolumes.keySet()) {
-            if (!id.toLowerCase().contains(search)) {
+        for (String id : config.getVolumes().keySet()) {
+            double initialValue = config.getVolumeMultiplier(id).doubleValue();
+
+            if (!id.toLowerCase().contains(search) || (showModifiedOnly && initialValue == 1.0)) {
                 continue;
             }
 
@@ -77,7 +92,7 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
                         config.setVolumeMultiplier(id, value.floatValue());
                     });
 
-            double initialValue = config.getVolumeMultiplier(id).doubleValue();
+
             option.setValue(initialValue);
 
             this.optionButtons.addSingleOptionEntry(option);
