@@ -9,8 +9,17 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.*;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
+import net.minecraft.client.sound.SoundManager;
+import net.minecraft.client.sound.SoundSystem;
+import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenTexts;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+
+import java.lang.reflect.Field;
 
 import static com.bvengo.soundcontroller.Constants.SOUND_SCREEN_TITLE;
 import static com.bvengo.soundcontroller.Constants.SEARCH_FIELD_TITLE;
@@ -44,7 +53,6 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
                 FILTER_BUTTON_LOCATION, 20, 40, (button) -> {
             showModifiedOnly = !showModifiedOnly;
             loadOptions();
-            this.toggleButton.setFocused(false);
         });
         toggleButton.setTooltip(Tooltip.of(SEARCH_FILTER_TOOLTIP));
 
@@ -70,6 +78,7 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
         // Replace the option buttons to only show options that match the search field
         String search = this.searchField.getText().toLowerCase();
 
+        // Update all buttons
         for (String id : config.getVolumes().keySet()) {
             double initialValue = config.getVolumeMultiplier(id).doubleValue();
 
@@ -88,9 +97,7 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
                     },
                     SimpleOption.DoubleSliderCallbacks.INSTANCE,
                     1.0,
-                    (value) -> {
-                        config.setVolumeMultiplier(id, value.floatValue());
-                    });
+                    value -> config.setVolumeMultiplier(id, value.floatValue()));
 
 
             option.setValue(initialValue);
