@@ -1,3 +1,5 @@
 {
-    "soundcontroller.options.sounds.individual.title": "Individual Sounds"
+    "soundcontroller.options.sounds.individual.title": "Individual Sounds",
+    "soundcontroller.options.sounds.individual.search_title": "Search:",
+    "soundcontroller.options.sounds.individual.search_placeholder": "Search for a sound..."
 }
