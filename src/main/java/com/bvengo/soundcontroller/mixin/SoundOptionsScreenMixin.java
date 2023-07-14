@@ -1,6 +1,6 @@
 package com.bvengo.soundcontroller.mixin;
 
-import com.bvengo.soundcontroller.SoundControllerTexts;
+import com.bvengo.soundcontroller.Constants;
 import com.bvengo.soundcontroller.ui.AllSoundOptionsScreen;
 
 import net.minecraft.client.MinecraftClient;
@@ -33,7 +33,7 @@ public abstract class SoundOptionsScreenMixin {
         int height = screenAccessor.getHeight();
 
         // Button to sounds volume list
-        screenAccessor.invokeAddDrawableChild(ButtonWidget.builder(SoundControllerTexts.SOUND_SCREEN_TITLE, (button) -> {
+        screenAccessor.invokeAddDrawableChild(ButtonWidget.builder(Constants.SOUND_SCREEN_TITLE, (button) -> {
             client.options.write();
             client.setScreen(new AllSoundOptionsScreen((Screen)(Object)this, options));
         }).dimensions(width / 2 - 155, height - 27, 150, 20).build());
