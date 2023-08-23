@@ -58,10 +58,8 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
         loadOptions();
 
         this.addSelectableChild(this.optionButtons);
-        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> {
-            config.save();
-            this.client.setScreen(this.parent);
-        }).dimensions(this.width / 2 - 100, this.height - 27, 200, 20).build());
+        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close())
+                .dimensions(this.width / 2 - 100, this.height - 27, 200, 20).build());
 
         this.setInitialFocus(this.searchField);
     }
