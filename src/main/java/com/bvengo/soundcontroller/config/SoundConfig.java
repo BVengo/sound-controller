@@ -47,7 +47,7 @@ public class SoundConfig {
         if(file.exists()) {
             try (Reader reader = new FileReader(file)) {
                 soundVolumes = gson.fromJson(reader, type);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 SoundController.LOGGER.error("Unable to load sound config from file.", e);
                 soundVolumes = new TreeMap<>();
             }
