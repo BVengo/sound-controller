@@ -83,15 +83,15 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
                     id,
                     SimpleOption.emptyTooltip(),
                     (prefix, value) -> {
-                        if (value == 0.0) {
+                        if (Math.round(value.floatValue() * 100f) < 1) {
                             return Text.translatable("options.generic_value", prefix, ScreenTexts.OFF);
                         }
-                        return Text.translatable("options.percent_value", prefix, (int) (value * 100.0));
+                        return Text.translatable("options.percent_value", prefix, Math.round(value.floatValue() * 100f));
                     },
                     SimpleOption.DoubleSliderCallbacks.INSTANCE,
                     1.0,
                     value -> {
-                        config.setVolumeMultiplier(id, value.floatValue());
+                        config.setVolumeMultiplier(id, Math.round(value.floatValue() * 100f) / 100f);
                         SoundSystemAccessor soundSystem = (SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem();
                         // Dummy values, sound category can be anything but MASTER
                         soundSystem.invokeUpdateSoundVolume(SoundCategory.AMBIENT, 1.0f);
