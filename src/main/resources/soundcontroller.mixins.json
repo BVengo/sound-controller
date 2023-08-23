@@ -1,16 +1,17 @@
 {
-    "required": true,
-    "package": "com.bvengo.soundcontroller.mixin",
-    "compatibilityLevel": "JAVA_17",
-    "mixins": [],
-    "client": [
-        "GameOptionsScreenAccessor",
-        "ScreenAccessor",
-        "SoundOptionsScreenMixin",
-        "SoundSystemMixin",
-        "SoundSystemAccessor"
-    ],
-    "injectors": {
-        "defaultRequire": 1
+  "required": true,
+  "package": "com.bvengo.soundcontroller.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [],
+  "client": [
+    "GameOptionsScreenAccessor",
+    "ScreenAccessor",
+    "SoundManagerAccessor",
+    "SoundOptionsScreenMixin",
+    "SoundSystemAccessor",
+    "SoundSystemMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
   }
 }
