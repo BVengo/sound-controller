@@ -47,7 +47,7 @@ public class SoundConfig {
         if(file.exists()) {
             try (Reader reader = new FileReader(file)) {
                 soundVolumes = gson.fromJson(reader, type);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 SoundController.LOGGER.error("Unable to load sound config from file.", e);
                 soundVolumes = new TreeMap<>();
             }
@@ -87,6 +87,7 @@ public class SoundConfig {
     public Float getVolumeMultiplier(String soundId) {
         if (!this.soundVolumes.containsKey(soundId)) {
             SoundController.LOGGER.warn("Unable to find volume for sound " + soundId + ", returning 1.0f");
+            this.setVolumeMultiplier(soundId, 1.0f);
         }
         return soundVolumes.getOrDefault(soundId, 1.0f);
     }

@@ -1,8 +1,10 @@
 package com.bvengo.soundcontroller.mixin;
 
+import net.minecraft.client.sound.SoundListener;
 import net.minecraft.client.sound.SoundSystem;
 import net.minecraft.sound.SoundCategory;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 
@@ -10,4 +12,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface SoundSystemAccessor {
     @Invoker("getAdjustedVolume")
     float invokeGetAdjustedVolume(float volume, SoundCategory category);
+    @Invoker("updateSoundVolume")
+    void invokeUpdateSoundVolume(SoundCategory category, float volume);
 }
