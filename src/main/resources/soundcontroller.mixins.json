@@ -6,11 +6,12 @@
     "client": [
         "GameOptionsScreenAccessor",
         "ScreenAccessor",
+        "SoundManagerAccessor",
         "SoundOptionsScreenMixin",
-        "SoundSystemMixin",
-        "SoundSystemAccessor"
+        "SoundSystemAccessor",
+        "SoundSystemMixin"
     ],
     "injectors": {
         "defaultRequire": 1
-  }
+    }
 }

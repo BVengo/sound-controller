@@ -1,6 +1,8 @@
 package com.bvengo.soundcontroller.ui;
 
 import com.bvengo.soundcontroller.config.SoundConfig;
+import com.bvengo.soundcontroller.mixin.SoundManagerAccessor;
+import com.bvengo.soundcontroller.mixin.SoundSystemAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -9,7 +11,9 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.*;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
+import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.screen.ScreenTexts;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 
 import static com.bvengo.soundcontroller.Constants.SOUND_SCREEN_TITLE;
@@ -50,14 +54,12 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
         this.addDrawableChild(toggleButton);
 
         // Add options - width, height, top, bottom, itemHeight (decompiled code isn't very helpful here)
-        this.optionButtons = new OptionListWidget(this.client, this.width, this.height-32, 64, this.height - 32, 25);
+        this.optionButtons = new OptionListWidget(this.client, this.width, this.height - 32, 64, this.height - 32, 25);
         loadOptions();
 
         this.addSelectableChild(this.optionButtons);
-        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> {
-            config.save();
-            this.client.setScreen(this.parent);
-        }).dimensions(this.width / 2 - 100, this.height - 27, 200, 20).build());
+        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close())
+                .dimensions(this.width / 2 - 100, this.height - 27, 200, 20).build());
 
         this.setInitialFocus(this.searchField);
     }
@@ -81,14 +83,19 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
                     id,
                     SimpleOption.emptyTooltip(),
                     (prefix, value) -> {
-                        if (value == 0.0) {
+                        if (Math.round(value.floatValue() * 100f) < 1) {
                             return Text.translatable("options.generic_value", prefix, ScreenTexts.OFF);
                         }
-                        return Text.translatable("options.percent_value", prefix, (int) (value * 100.0));
+                        return Text.translatable("options.percent_value", prefix, Math.round(value.floatValue() * 100f));
                     },
                     SimpleOption.DoubleSliderCallbacks.INSTANCE,
                     1.0,
-                    value -> config.setVolumeMultiplier(id, value.floatValue()));
+                    value -> {
+                        config.setVolumeMultiplier(id, Math.round(value.floatValue() * 100f) / 100f);
+                        SoundSystemAccessor soundSystem = (SoundSystemAccessor) ((SoundManagerAccessor) MinecraftClient.getInstance().getSoundManager()).getSoundSystem();
+                        // Dummy values, sound category can be anything but MASTER
+                        soundSystem.invokeUpdateSoundVolume(SoundCategory.AMBIENT, 1.0f);
+                    });
 
             option.setValue(initialValue);
 
