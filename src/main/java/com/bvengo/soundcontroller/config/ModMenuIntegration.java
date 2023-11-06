@@ -1,7 +1,7 @@
 package com.bvengo.soundcontroller.config;
 
 import com.bvengo.soundcontroller.mixin.ScreenAccessor;
-import com.bvengo.soundcontroller.ui.AllSoundOptionsScreen;
+import com.bvengo.soundcontroller.gui.AllSoundOptionsScreen;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 

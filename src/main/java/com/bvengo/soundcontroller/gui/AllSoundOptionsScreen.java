@@ -1,4 +1,4 @@
-package com.bvengo.soundcontroller.ui;
+package com.bvengo.soundcontroller.gui;
 
 import com.bvengo.soundcontroller.config.SoundConfig;
 import com.bvengo.soundcontroller.mixin.SoundManagerAccessor;
@@ -11,7 +11,6 @@ import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.*;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
-import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
@@ -21,14 +20,11 @@ import static com.bvengo.soundcontroller.Constants.SEARCH_FIELD_TITLE;
 import static com.bvengo.soundcontroller.Constants.SEARCH_FIELD_PLACEHOLDER;
 import static com.bvengo.soundcontroller.Constants.SEARCH_FILTER_TOOLTIP;
 
-import static com.bvengo.soundcontroller.Constants.FILTER_BUTTON_LOCATION;
-
 public class AllSoundOptionsScreen extends GameOptionsScreen {
     SoundConfig config = SoundConfig.getInstance();
 
     private OptionListWidget optionButtons;
     private TextFieldWidget searchField;
-    private TexturedButtonWidget toggleButton;
 
     private boolean showModifiedOnly = false;
 
@@ -43,12 +39,14 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
         this.searchField.setChangedListener(serverName -> this.loadOptions());
         this.addSelectableChild(this.searchField);
 
-        // Add filter button - x, y, width, height, u, v, hoveredVOffset, location, textureWidth, textureHeight, onPress
-        this.toggleButton = new TexturedButtonWidget(this.width - 52, 35, 20, 20, 0, 0, 20,
-                FILTER_BUTTON_LOCATION, 20, 40, (button) -> {
+
+        // Add filter button - x, y, width, height, textures, pressAction
+        FilterButtonWidget toggleButton = new FilterButtonWidget(this.width - 52, 35, 20, 20,
+            (button) -> {
             showModifiedOnly = !showModifiedOnly;
             loadOptions();
         });
+        
         toggleButton.setTooltip(Tooltip.of(SEARCH_FILTER_TOOLTIP));
 
         this.addDrawableChild(toggleButton);
@@ -117,11 +115,14 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context);
+        super.render(context, mouseX, mouseY, delta);
         optionButtons.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
         context.drawTextWithShadow(this.textRenderer, SEARCH_FIELD_TITLE, 32, 40, 0xA0A0A0);
         this.searchField.render(context, mouseX, mouseY, delta);
-        super.render(context, mouseX, mouseY, delta);
+    }
+
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.renderBackgroundTexture(context);
     }
 }
