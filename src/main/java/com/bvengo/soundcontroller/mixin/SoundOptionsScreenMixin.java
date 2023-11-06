@@ -1,7 +1,7 @@
 package com.bvengo.soundcontroller.mixin;
 
 import com.bvengo.soundcontroller.Constants;
-import com.bvengo.soundcontroller.ui.AllSoundOptionsScreen;
+import com.bvengo.soundcontroller.gui.AllSoundOptionsScreen;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
