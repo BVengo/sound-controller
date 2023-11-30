@@ -2,5 +2,6 @@
     "soundcontroller.options.title": "Individual Sounds",
     "soundcontroller.options.search.title": "Search:",
     "soundcontroller.options.search.placeholder": "Search for a sound...",
-    "soundcontroller.options.filter.tooltip": "Show only modified volumes"
+    "soundcontroller.options.filter.tooltip": "Show only modified volumes",
+    "soundcontroller.options.override": "Override"
 }

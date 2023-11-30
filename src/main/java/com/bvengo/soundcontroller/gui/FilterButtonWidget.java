@@ -30,7 +30,7 @@ public class FilterButtonWidget extends ButtonWidget {
         return mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
     }
 
-    public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
         // Check mouseX, mouseY for hover
         boolean isHovered = this.checkHovered(mouseX, mouseY);
 
