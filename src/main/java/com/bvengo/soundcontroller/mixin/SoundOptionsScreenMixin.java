@@ -17,9 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SoundOptionsScreen.class)
 public abstract class SoundOptionsScreenMixin {
-    @Inject(method = "init", at = @At(value = "INVOKE",
-            target = "Lnet/minecraft/client/gui/screen/option/SoundOptionsScreen;addSelectableChild(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;",
-            shift = At.Shift.AFTER), cancellable = true)
+    @Inject(method = "init", at = @At(value = "INVOKE", ordinal = 1,
+            target = "net/minecraft/client/gui/screen/option/SoundOptionsScreen.addDrawableChild (Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;",
+            shift = At.Shift.BEFORE), cancellable = true)
     private void replaceDoneButton(CallbackInfo ci) {
         // Set up accessors and variables
         ScreenAccessor screenAccessor = (ScreenAccessor) (Object) this;
