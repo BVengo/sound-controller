@@ -2,7 +2,6 @@ package com.bvengo.soundcontroller;
 
 import com.bvengo.soundcontroller.mixin.SoundSystemAccessor;
 import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 public class VolumeData {
@@ -29,12 +28,10 @@ public class VolumeData {
     }
 
     public Float getAdjustedVolume(SoundInstance sound, SoundSystemAccessor soundSystem) {
-        Identifier soundId = sound.getId();
-
         float adjustment = this.getVolume();
         float soundVolume = sound.getVolume();
 
-        if(!this.getOverride()) {
+        if (!this.getOverride()) {
             float categoryVolume = soundSystem.invokeGetSoundVolume(sound.getCategory());
             adjustment *= categoryVolume;
         }
@@ -59,9 +56,7 @@ public class VolumeData {
     }
 
     public boolean inFilter(String search, boolean showModifiedOnly) {
-        return (
-            this.id.toLowerCase().contains(search) &&
-            (!showModifiedOnly || this.isModified())
-        );
+        return (this.id.toLowerCase().contains(search) &&
+                (!showModifiedOnly || this.isModified()));
     }
 }
