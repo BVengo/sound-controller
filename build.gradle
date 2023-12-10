@@ -32,6 +32,8 @@ dependencies {
 	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}", {
 		exclude module: 'fabric-api'
 	}
+
+	modImplementation "net.fabricmc.fabric-api:fabric-api-deprecated:${project.fabric_version}"
 }
 
 processResources {
