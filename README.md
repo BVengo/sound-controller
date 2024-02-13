@@ -22,8 +22,8 @@ This mod is available on [GitHub](https://www.github.com/BVengo/sound-controller
 
 ---
 
-## Support me!
+## Contributing
+Contributions and suggestions are always welcome! Please limit all issues to only one feature at a time - feel free to open multiple at once if you have many ideas. Similarly, please limit pull requests to a single feature at a time and try to follow the existing code style.
 
-<a href='https://ko-fi.com/C0C7DZ3FB' target='_blank'><img height='36' style='border:0px;height:36px;' src='https://storage.ko-fi.com/cdn/kofi3.png?v=3' border='0' alt='Buy Me a Coffee at ko-fi.com' /></a>
 
-If you enjoy what I do, then please consider supporting me. It really helps me to put time into maintaining these projects. Thanks!
+To further discuss or get notifications of new updates, check out my [Discord](https://discord.gg/WFKEHSZ9). If you like what I do, consider supporting me on Ko-Fi! [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/C0C7DZ3FB)
