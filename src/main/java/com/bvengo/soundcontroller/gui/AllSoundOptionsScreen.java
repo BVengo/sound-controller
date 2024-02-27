@@ -14,7 +14,8 @@ import net.minecraft.screen.ScreenTexts;
 import static com.bvengo.soundcontroller.Constants.SOUND_SCREEN_TITLE;
 import static com.bvengo.soundcontroller.Constants.SEARCH_FIELD_TITLE;
 import static com.bvengo.soundcontroller.Constants.SEARCH_FIELD_PLACEHOLDER;
-import static com.bvengo.soundcontroller.Constants.SEARCH_FILTER_TOOLTIP;
+import static com.bvengo.soundcontroller.Constants.FILTER_BUTTON_TOOLTIP;
+import static com.bvengo.soundcontroller.Constants.SUBTITLES_BUTTON_TOOLTIP;
 
 public class AllSoundOptionsScreen extends GameOptionsScreen {
     VolumeConfig config = VolumeConfig.getInstance();
@@ -31,20 +32,33 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
     @Override
     protected void init() {
         // Add search field - x, y, width, height
-        this.searchField = new TextFieldWidget(this.textRenderer, 80, 35, this.width - 142, 20, SEARCH_FIELD_PLACEHOLDER);
+        this.searchField = new TextFieldWidget(this.textRenderer, 80, 35, this.width - 167, 20,
+                SEARCH_FIELD_PLACEHOLDER);
         this.searchField.setChangedListener(serverName -> this.loadOptions());
         this.addSelectableChild(this.searchField);
 
         // Add filter button - x, y, width, height, textures, pressAction
-        FilterButtonWidget toggleButton = new FilterButtonWidget(this.width - 52, 35, 20, 20,
+        HoverableButtonWidget filterButton = new HoverableButtonWidget("filter",
+                this.width - 77, 35, 20, 20,
                 (button) -> {
                     showModifiedOnly = !showModifiedOnly;
                     loadOptions();
                 });
 
-        toggleButton.setTooltip(Tooltip.of(SEARCH_FILTER_TOOLTIP));
+        filterButton.setTooltip(Tooltip.of(FILTER_BUTTON_TOOLTIP));
 
-        this.addDrawableChild(toggleButton);
+        this.addDrawableChild(filterButton);
+
+        // Add subtitles button - x, y, width, height, textures, pressAction
+        HoverableButtonWidget subtitlesButton = new HoverableButtonWidget("subtitles",
+                this.width - 52, 35, 20, 20,
+                (button) -> {
+                    // TODO: Add functionality
+                });
+
+        subtitlesButton.setTooltip(Tooltip.of(SUBTITLES_BUTTON_TOOLTIP));
+
+        this.addDrawableChild(subtitlesButton);
 
         this.optionButtons = new OptionListWidget(this.client, this.width, this.height - 96, 64, 25);
         loadOptions();
