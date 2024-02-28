@@ -16,10 +16,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SoundOptionsScreen.class)
-public abstract class SoundOptionsScreenMixin {
-    @Inject(method = "init", at = @At(value = "INVOKE", ordinal = 1,
-            target = "net/minecraft/client/gui/screen/option/SoundOptionsScreen.addDrawableChild (Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;",
-            shift = At.Shift.BEFORE), cancellable = true)
+public class SoundOptionsScreenMixin {
+    @Inject(method = "init", at = @At(value = "INVOKE", ordinal = 1, target = "net/minecraft/client/gui/screen/option/SoundOptionsScreen.addDrawableChild (Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;", shift = At.Shift.BEFORE), cancellable = true)
     private void replaceDoneButton(CallbackInfo ci) {
         // Set up accessors and variables
         ScreenAccessor screenAccessor = (ScreenAccessor) (Object) this;
@@ -35,7 +33,7 @@ public abstract class SoundOptionsScreenMixin {
         // Button to sounds volume list
         screenAccessor.invokeAddDrawableChild(ButtonWidget.builder(Constants.SOUND_SCREEN_TITLE, (button) -> {
             client.options.write();
-            client.setScreen(new AllSoundOptionsScreen((Screen)(Object)this, options));
+            client.setScreen(new AllSoundOptionsScreen((Screen) (Object) this, options));
         }).dimensions(width / 2 - 155, height - 27, 150, 20).build());
 
         // DONE button
