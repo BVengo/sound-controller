@@ -1,39 +1,43 @@
 package com.bvengo.soundcontroller.mixin;
 
+import net.minecraft.client.gui.LayeredDrawer;
+import net.minecraft.client.gui.hud.SubtitlesHud;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.gui.RawSubtitlesHud;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.gui.hud.SubtitlesHud;
-import net.minecraft.client.render.item.ItemRenderer;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
     private RawSubtitlesHud rawSubtitlesHud;
 
+    @Shadow @Final private SubtitlesHud subtitlesHud;
+
     // inject at end of constructor
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void init(MinecraftClient client, ItemRenderer itemRenderer, CallbackInfo ci) {
+    @Inject(method = "<init>(Lnet/minecraft/client/MinecraftClient;)V", at = @At("RETURN"))
+    private void init(MinecraftClient client, CallbackInfo ci) {
         rawSubtitlesHud = new RawSubtitlesHud(client);
     }
 
-    @WrapOperation(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/SubtitlesHud;render(Lnet/minecraft/client/gui/DrawContext;)V"))
-    private void renderSubtitles(SubtitlesHud subtitlesHud, DrawContext context, Operation<Void> original) {
-        VolumeConfig config = VolumeConfig.getInstance();
+    @Redirect(method = "<init>(Lnet/minecraft/client/MinecraftClient;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/LayeredDrawer;addLayer(Lnet/minecraft/client/gui/LayeredDrawer$Layer;)Lnet/minecraft/client/gui/LayeredDrawer;", ordinal = 13))
+    private LayeredDrawer renderSubtitles(LayeredDrawer instance, LayeredDrawer.Layer layer) {
+        return instance.addLayer((context, tickDelta) -> {
+            VolumeConfig config = VolumeConfig.getInstance();
 
-        if (config.areSubtitlesEnabled()) {
-            rawSubtitlesHud.render(context);
-        } else {
-            original.call(subtitlesHud, context);
-        }
+            if (config.areSubtitlesEnabled()) {
+                rawSubtitlesHud.render(context);
+            } else {
+                subtitlesHud.render(context);
+            }
+        });
     }
 }
