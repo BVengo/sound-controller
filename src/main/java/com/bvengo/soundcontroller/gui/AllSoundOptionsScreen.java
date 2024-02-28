@@ -57,6 +57,7 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
                 });
 
         subtitlesButton.setTooltip(Tooltip.of(SUBTITLES_BUTTON_TOOLTIP));
+        subtitlesButton.isToggled = config.areSubtitlesEnabled();
 
         this.addDrawableChild(subtitlesButton);
 

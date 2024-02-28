@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 @Environment(EnvType.CLIENT)
 public class HoverableButtonWidget extends ButtonWidget {
-    private boolean isToggled = false;
+    public boolean isToggled = false;
 
     private Identifier ON_TEXTURE;
     private Identifier OFF_TEXTURE;
