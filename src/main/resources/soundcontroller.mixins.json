@@ -9,7 +9,8 @@
         "SoundManagerAccessor",
         "SoundOptionsScreenMixin",
         "SoundSystemAccessor",
-        "SoundSystemMixin"
+        "SoundSystemMixin",
+        "InGameHudMixin"
     ],
     "injectors": {
         "defaultRequire": 1
