@@ -53,7 +53,7 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
         HoverableButtonWidget subtitlesButton = new HoverableButtonWidget("subtitles",
                 this.width - 52, 35, 20, 20,
                 (button) -> {
-                    // TODO: Add functionality
+                    config.toggleSubtitles();
                 });
 
         subtitlesButton.setTooltip(Tooltip.of(SUBTITLES_BUTTON_TOOLTIP));
