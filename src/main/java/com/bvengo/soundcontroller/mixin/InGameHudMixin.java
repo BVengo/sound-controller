@@ -23,7 +23,7 @@ public class InGameHudMixin {
     @Shadow @Final private SubtitlesHud subtitlesHud;
 
     // inject at end of constructor
-    @Inject(method = "<init>(Lnet/minecraft/client/MinecraftClient;)V", at = @At("RETURN"))
+    @Inject(method = "<init>(Lnet/minecraft/client/MinecraftClient;)V", at = @At("TAIL"))
     private void init(MinecraftClient client, CallbackInfo ci) {
         rawSubtitlesHud = new RawSubtitlesHud(client);
     }
