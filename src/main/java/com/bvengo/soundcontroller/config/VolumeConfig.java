@@ -14,15 +14,18 @@ import java.io.*;
 import java.lang.reflect.Type;
 import java.util.TreeMap;
 
-
 public class VolumeConfig {
     private static VolumeConfig instance;
 
     private TreeMap<String, VolumeData> soundVolumes;
 
-    private static final File file = new File(FabricLoader.getInstance().getConfigDir().toFile(), SoundController.MOD_ID + ".json");
+    private static final File file = new File(FabricLoader.getInstance().getConfigDir().toFile(),
+            SoundController.MOD_ID + ".json");
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final Type type = new TypeToken<TreeMap<String, VolumeData>>(){}.getType();
+    private static final Type type = new TypeToken<TreeMap<String, VolumeData>>() {
+    }.getType();
+
+    private boolean subtitlesEnabled = false;
 
     private VolumeConfig() {
         load();
@@ -43,11 +46,13 @@ public class VolumeConfig {
 
     private void loadVolumes() {
         // If the file exists, load the existing configs into soundVolumes
-        if(file.exists()) {
+        if (file.exists()) {
             try (Reader reader = new FileReader(file)) {
                 soundVolumes = gson.fromJson(reader, type);
             } catch (Exception e) {
-                SoundController.LOGGER.error("Unable to load sound config from file. Perhaps the latest update changed the config structure?", e);
+                SoundController.LOGGER.error(
+                        "Unable to load sound config from file. Perhaps the latest update changed the config structure?",
+                        e);
                 soundVolumes = new TreeMap<>();
             }
         } else {
@@ -76,8 +81,7 @@ public class VolumeConfig {
                 .collect(
                         TreeMap::new,
                         (map, entry) -> map.put(entry.getKey(), entry.getValue()),
-                        TreeMap::putAll
-                );
+                        TreeMap::putAll);
 
         try (Writer writer = new FileWriter(file)) {
             gson.toJson(modifiedValues, writer);
@@ -92,5 +96,13 @@ public class VolumeConfig {
 
     public VolumeData getVolumeData(String soundId) {
         return soundVolumes.getOrDefault(soundId, new VolumeData(soundId));
+    }
+
+    public boolean areSubtitlesEnabled() {
+        return subtitlesEnabled;
+    }
+
+    public void toggleSubtitles() {
+        subtitlesEnabled = !subtitlesEnabled;
     }
 }
