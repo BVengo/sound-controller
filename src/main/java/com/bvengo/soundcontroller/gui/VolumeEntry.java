@@ -22,7 +22,7 @@ public class VolumeEntry {
         init();
     }
 
-    protected void init() {
+    private void init() {
         // Volume slider
         this.volumeOption = new SimpleOption<>(
                 volumeData.getId(),
