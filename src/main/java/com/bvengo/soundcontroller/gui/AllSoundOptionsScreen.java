@@ -22,7 +22,7 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
 
     protected final Screen parent;
 
-    private OptionListWidget volumeListWidget;
+    private VolumeListWidget volumeListWidget;
     private TextFieldWidget searchField;
 
     private boolean showModifiedOnly = false;
@@ -83,7 +83,7 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
     }
 
     private void addVolumeList() {
-        this.volumeListWidget = new OptionListWidget(this.client, this.width, this.height - 96, this);
+        this.volumeListWidget = new VolumeListWidget(this.client, this.width, this.height - 96, this);
         loadOptions();
         this.addDrawableChild(this.volumeListWidget);
     }
@@ -105,8 +105,8 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
                 continue;
             }
 
-            VolumeEntry entry = new VolumeEntry(volumeData);
-            this.volumeListWidget.addSingleOptionEntry(entry.volumeOption);
+            VolumeWidgetEntry volumeEntry = new VolumeWidgetEntry(volumeData, this, this.gameOptions);
+            this.volumeListWidget.addWidgetEntry(volumeEntry);
         }
     }
 

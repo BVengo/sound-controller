@@ -1,16 +1,21 @@
 package com.bvengo.soundcontroller;
 
 import com.bvengo.soundcontroller.mixin.SoundSystemAccessor;
+
+import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
+import net.minecraft.client.sound.SoundManager;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 public class VolumeData {
-    private final String id;
+    private final Identifier soundId;
     private Float volume;
     private boolean shouldOverride;
 
     public VolumeData(String id, float volume, boolean shouldOverride) {
-        this.id = id;
+        this.soundId = new Identifier(id);
         this.volume = volume;
         this.shouldOverride = shouldOverride;
     }
@@ -20,7 +25,7 @@ public class VolumeData {
     }
 
     public String getId() {
-        return id;
+        return soundId.toString();
     }
 
     public Float getVolume() {
@@ -56,7 +61,12 @@ public class VolumeData {
     }
 
     public boolean inFilter(String search, boolean showModifiedOnly) {
-        return (this.id.toLowerCase().contains(search) &&
+        return (this.getId().toLowerCase().contains(search) &&
                 (!showModifiedOnly || this.isModified()));
+    }
+
+    public void playSound(SoundManager soundManager) {
+        SoundEvent soundEvent = SoundEvent.of(soundId);
+        soundManager.play(PositionedSoundInstance.master(soundEvent, 1.0f));
     }
 }
