@@ -4,8 +4,7 @@ import net.minecraft.client.sound.SoundManager;
 
 public class AudioButtonWidget extends HoverableButtonWidget {
     public AudioButtonWidget(int x, int y, int width, int height, PressAction pressAction) {
-        // TODO: Draw audio buttons
-        super("filter", x, y, width, height, pressAction);
+        super("audio", x, y, width, height, pressAction);
     }
 
     @Override
