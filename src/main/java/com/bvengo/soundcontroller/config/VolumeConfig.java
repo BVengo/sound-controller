@@ -9,6 +9,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.util.Identifier;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -60,6 +61,19 @@ public class VolumeConfig {
             SoundController.LOGGER.info("Unable to find sound config file, creating new one.");
             soundVolumes = new TreeMap<>();
         }
+
+        // Loop over the sound volumes and remove any invalid entries
+        soundVolumes.entrySet().removeIf(entry -> {
+            String soundId = entry.getKey();
+            VolumeData volumeData = entry.getValue();
+
+            if(Identifier.tryParse(volumeData.getId()) == null) {
+                SoundController.LOGGER.warn("Removing invalid sound volume entry: " + soundId);
+                return true;
+            }
+
+            return false;
+        });
     }
 
     private void updateVolumes() {
