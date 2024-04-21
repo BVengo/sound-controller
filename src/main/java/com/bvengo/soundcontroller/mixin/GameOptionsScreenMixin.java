@@ -44,7 +44,7 @@ public class GameOptionsScreenMixin {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addFooter(DirectionalLayoutWidget.horizontal().spacing(8));
 
         // To individual volume options screen
-        AllSoundOptionsScreen volumeOptionsScreen = new AllSoundOptionsScreen(parent, options);
+        AllSoundOptionsScreen volumeOptionsScreen = new AllSoundOptionsScreen((SoundOptionsScreen)(Object)this, options);
         addLayoutButton(client, directionalLayoutWidget, Constants.SOUND_SCREEN_TITLE, volumeOptionsScreen);
         addLayoutButton(client, directionalLayoutWidget, ScreenTexts.DONE, parent);
 
