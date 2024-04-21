@@ -9,13 +9,16 @@ public class AudioButtonWidget extends HoverableButtonWidget {
 
     @Override
     public void onPress() {
+        super.onPress();
         isToggled = true;
     }
 
     @Override
     public void onRelease(double mouseX, double mouseY) {
-        isToggled = false;
-        onPress.onPress(this);
+        // Release toggle texture on release (this is a trigger, nto a toggle)
+        if(isToggled) {
+            isToggled = false;
+        }
     }
 
     @Override
