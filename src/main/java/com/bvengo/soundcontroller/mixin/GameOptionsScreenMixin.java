@@ -45,13 +45,14 @@ public class GameOptionsScreenMixin {
 
         // To individual volume options screen
         AllSoundOptionsScreen volumeOptionsScreen = new AllSoundOptionsScreen((SoundOptionsScreen)(Object)this, options);
-        addLayoutButton(client, directionalLayoutWidget, Constants.SOUND_SCREEN_TITLE, volumeOptionsScreen);
-        addLayoutButton(client, directionalLayoutWidget, ScreenTexts.DONE, parent);
+        soundcontroller$addLayoutButton(client, directionalLayoutWidget, Constants.SOUND_SCREEN_TITLE, volumeOptionsScreen);
+        soundcontroller$addLayoutButton(client, directionalLayoutWidget, ScreenTexts.DONE, parent);
 
         ci.cancel();
     }
 
-    private void addLayoutButton(MinecraftClient client, DirectionalLayoutWidget layout, Text text, Screen nextScreen) {
+    @Unique
+    private void soundcontroller$addLayoutButton(MinecraftClient client, DirectionalLayoutWidget layout, Text text, Screen nextScreen) {
         layout.add(ButtonWidget.builder(text, button -> {
             client.setScreen(nextScreen);
         }).build());
