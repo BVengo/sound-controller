@@ -19,6 +19,15 @@ public class AudioButtonWidget extends HoverableButtonWidget {
     }
 
     @Override
+    protected void updateHovered(int mouseX, int mouseY) {
+        super.updateHovered(mouseX, mouseY);
+
+        if(!isHovered && isToggled) {
+            isToggled = false;
+        }
+    }
+
+    @Override
     public void playDownSound(SoundManager soundManager) {
         // Do nothing so other sounds are heard instead.
     }
