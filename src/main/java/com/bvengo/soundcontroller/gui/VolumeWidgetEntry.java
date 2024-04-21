@@ -24,7 +24,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     private final Screen screen;
     private final GameOptions gameOptions;
 
-    private static final int sliderWidth = 275;
+    private static final int sliderWidth = 310;
     private static final int buttonWidth = 20;
     private static final int padding = 8;
     public static final int totalWidth = sliderWidth + buttonWidth + padding;
