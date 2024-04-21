@@ -53,7 +53,7 @@ public class HoverableButtonWidget extends ButtonWidget {
     }
 
     public void onPress() {
-        onPress.onPress(this);
+        super.onPress();
         isToggled = !isToggled;
     }
 }
