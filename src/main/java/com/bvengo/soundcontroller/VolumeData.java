@@ -10,14 +10,14 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 public class VolumeData {
-    private final Identifier soundId;
+    private final String soundId;
     private Float volume;
-    private boolean shouldOverride;
+//    private boolean shouldOverride;
 
     public VolumeData(String id, float volume, boolean shouldOverride) {
-        this.soundId = new Identifier(id);
+        this.soundId = id;
         this.volume = volume;
-        this.shouldOverride = shouldOverride;
+//        this.shouldOverride = shouldOverride;
     }
 
     public VolumeData(String id) {
@@ -25,7 +25,7 @@ public class VolumeData {
     }
 
     public String getId() {
-        return soundId.toString();
+        return soundId;
     }
 
     public Float getVolume() {
@@ -36,10 +36,10 @@ public class VolumeData {
         float adjustment = this.getVolume();
         float soundVolume = sound.getVolume();
 
-        if (!this.getOverride()) {
-            float categoryVolume = soundSystem.invokeGetSoundVolume(sound.getCategory());
-            adjustment *= categoryVolume;
-        }
+//        if (!this.getOverride()) {
+//            float categoryVolume = soundSystem.invokeGetSoundVolume(sound.getCategory());
+//            adjustment *= categoryVolume;
+//        }
 
         return MathHelper.clamp(adjustment * soundVolume, 0.0F, 1.0F);
     }
@@ -48,16 +48,17 @@ public class VolumeData {
         this.volume = volume;
     }
 
-    public boolean getOverride() {
-        return shouldOverride;
-    }
+//    public boolean getOverride() {
+//        return shouldOverride;
+//    }
 
-    public void setOverride(boolean shouldOverride) {
-        this.shouldOverride = shouldOverride;
-    }
+//    public void setOverride(boolean shouldOverride) {
+//        this.shouldOverride = shouldOverride;
+//    }
 
     public boolean isModified() {
-        return this.volume != 1.0f || this.shouldOverride;
+//        return this.volume != 1.0f || this.shouldOverride;
+        return this.volume != 1.0f;
     }
 
     public boolean inFilter(String search, boolean showModifiedOnly) {
@@ -66,7 +67,7 @@ public class VolumeData {
     }
 
     public void playSound(SoundManager soundManager) {
-        SoundEvent soundEvent = SoundEvent.of(soundId);
+        SoundEvent soundEvent = SoundEvent.of(new Identifier(soundId));
         soundManager.play(PositionedSoundInstance.master(soundEvent, 1.0f));
     }
 }
