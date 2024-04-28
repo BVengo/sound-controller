@@ -36,10 +36,8 @@ public class VolumeData {
         float adjustment = this.getVolume();
         float soundVolume = sound.getVolume();
 
-//        if (!this.getOverride()) {
-//            float categoryVolume = soundSystem.invokeGetSoundVolume(sound.getCategory());
-//            adjustment *= categoryVolume;
-//        }
+        float categoryVolume = soundSystem.invokeGetSoundVolume(sound.getCategory());
+        adjustment *= categoryVolume;
 
         return MathHelper.clamp(adjustment * soundVolume, 0.0F, 1.0F);
     }
