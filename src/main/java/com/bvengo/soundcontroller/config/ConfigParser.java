@@ -35,6 +35,7 @@ public class ConfigParser {
 			parseConfig(config.getVolumes(), jsonObject);
 		} catch (Exception e) {
 			SoundController.LOGGER.error("Error reading config file, creating a new one. Original error: ", e);
+			moveOldConfig();
 			buildEmptyConfig();
 		}
 	}
