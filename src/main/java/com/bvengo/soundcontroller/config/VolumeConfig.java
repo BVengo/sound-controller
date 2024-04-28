@@ -17,19 +17,17 @@ import java.util.TreeMap;
 
 public class VolumeConfig {
     private static VolumeConfig instance;
+    public static final int CONFIG_VERSION = 4;
 
     private TreeMap<String, VolumeData> soundVolumes;
-
-    private static final File file = new File(FabricLoader.getInstance().getConfigDir().toFile(),
-            SoundController.MOD_ID + ".json");
-    private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-    private static final Type type = new TypeToken<TreeMap<String, VolumeData>>() {
-    }.getType();
 
     private boolean subtitlesEnabled = false;
 
     private VolumeConfig() {
-        load();
+        soundVolumes = new TreeMap<>();
+        ConfigParser.loadConfig(this);
+        updateVolumes();
+        ConfigParser.saveConfig(this);
     }
 
     public static VolumeConfig getInstance() {
@@ -39,41 +37,8 @@ public class VolumeConfig {
         return instance;
     }
 
-    public void load() {
-        loadVolumes();
-        updateVolumes();
-        save();
-    }
-
-    private void loadVolumes() {
-        // If the file exists, load the existing configs into soundVolumes
-        if (file.exists()) {
-            try (Reader reader = new FileReader(file)) {
-                soundVolumes = gson.fromJson(reader, type);
-            } catch (Exception e) {
-                SoundController.LOGGER.error(
-                        "Unable to load sound config from file. Perhaps the latest update changed the config structure?",
-                        e);
-                soundVolumes = new TreeMap<>();
-            }
-        } else {
-            // If the file doesn't exist, initialise an empty map
-            SoundController.LOGGER.info("Unable to find sound config file, creating new one.");
-            soundVolumes = new TreeMap<>();
-        }
-
-        // Loop over the sound volumes and remove any invalid entries
-        soundVolumes.entrySet().removeIf(entry -> {
-            String soundId = entry.getKey();
-            VolumeData volumeData = entry.getValue();
-
-            if(Identifier.tryParse(volumeData.getId()) == null) {
-                SoundController.LOGGER.warn("Removing invalid sound volume entry: " + soundId);
-                return true;
-            }
-
-            return false;
-        });
+    public void save() {
+        ConfigParser.saveConfig(this);
     }
 
     private void updateVolumes() {
@@ -83,24 +48,6 @@ public class VolumeConfig {
                 String soundId = soundEvent.getId().toString();
                 soundVolumes.putIfAbsent(soundId, new VolumeData(soundId));
             }
-        }
-    }
-
-    public void save() {
-        // Only save sounds that have been modified
-        TreeMap<String, VolumeData> modifiedValues = soundVolumes
-                .entrySet()
-                .stream()
-                .filter(entry -> entry.getValue().isModified())
-                .collect(
-                        TreeMap::new,
-                        (map, entry) -> map.put(entry.getKey(), entry.getValue()),
-                        TreeMap::putAll);
-
-        try (Writer writer = new FileWriter(file)) {
-            gson.toJson(modifiedValues, writer);
-        } catch (IOException e) {
-            SoundController.LOGGER.error("Unable to save sound config to file.", e);
         }
     }
 

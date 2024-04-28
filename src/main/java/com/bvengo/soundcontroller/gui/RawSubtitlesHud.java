@@ -161,7 +161,7 @@ public class RawSubtitlesHud implements SoundInstanceListener {
     }
 
     public void onSoundPlayed(SoundInstance sound, WeightedSoundSet soundSet, float range) {
-        if (sound == SoundManager.MISSING_SOUND) {
+        if (sound.getSound() == SoundManager.MISSING_SOUND) {
             return;
         }
 

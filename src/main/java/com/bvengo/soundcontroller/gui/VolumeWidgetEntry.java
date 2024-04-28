@@ -30,7 +30,6 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     public static final int totalWidth = sliderWidth + buttonWidth + padding;
 
     public SimpleOption<Double> volumeOption;
-    // public SimpleOption<Boolean> overrideOption;
 
     public ClickableWidget volumeSlider;
     public HoverableButtonWidget playSoundButton;
@@ -65,14 +64,6 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
                 });
         this.volumeOption.setValue(volumeData.getVolume().doubleValue());
         this.volumeSlider = volumeOption.createWidget(gameOptions, 0, 0, sliderWidth);
-
-        // Override mode button
-        // this.overrideOption = SimpleOption.ofBoolean(
-        //         MOD_ID + ".options.override",
-        //         false,
-        //         volumeData::setOverride
-        // );
-        // this.overrideOption.setValue(volumeData.getOverride());
         
         this.playSoundButton = new AudioButtonWidget(0, 0, buttonWidth, buttonWidth,
             (button) -> {

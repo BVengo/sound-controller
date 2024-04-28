@@ -12,16 +12,18 @@ import net.minecraft.util.math.MathHelper;
 public class VolumeData {
     private final String soundId;
     private Float volume;
-//    private boolean shouldOverride;
 
-    public VolumeData(String id, float volume, boolean shouldOverride) {
+    public VolumeData(String id, float volume) {
         this.soundId = id;
-        this.volume = volume;
-//        this.shouldOverride = shouldOverride;
+        this.volume = MathHelper.clamp(volume, 0.0f, 1.0f);
     }
 
     public VolumeData(String id) {
-        this(id, 1.0f, false);
+        this(id, 1.0f);
+    }
+
+    public boolean isValid() {
+        return (this.soundId != null && Identifier.tryParse(this.soundId) != null);
     }
 
     public String getId() {
@@ -46,16 +48,7 @@ public class VolumeData {
         this.volume = volume;
     }
 
-//    public boolean getOverride() {
-//        return shouldOverride;
-//    }
-
-//    public void setOverride(boolean shouldOverride) {
-//        this.shouldOverride = shouldOverride;
-//    }
-
     public boolean isModified() {
-//        return this.volume != 1.0f || this.shouldOverride;
         return this.volume != 1.0f;
     }
 
