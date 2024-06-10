@@ -46,6 +46,9 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
         this.setInitialFocus(this.searchField);
     }
 
+    @Override
+    protected void addOptions() {}
+
     private void addSearchField() {
         // Add search field - x, y, width, height
         this.searchField = new TextFieldWidget(this.textRenderer, 80, 35, this.width - 167, 20,

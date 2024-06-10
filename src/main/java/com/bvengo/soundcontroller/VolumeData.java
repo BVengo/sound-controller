@@ -58,7 +58,7 @@ public class VolumeData {
     }
 
     public void playSound(SoundManager soundManager) {
-        SoundEvent soundEvent = SoundEvent.of(new Identifier(soundId));
+        SoundEvent soundEvent = SoundEvent.of(Identifier.of(soundId));
         soundManager.play(PositionedSoundInstance.master(soundEvent, 1.0f));
     }
 }
