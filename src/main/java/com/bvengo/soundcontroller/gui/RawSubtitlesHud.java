@@ -1,8 +1,10 @@
 package com.bvengo.soundcontroller.gui;
 
+import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import net.fabricmc.api.EnvType;
@@ -10,13 +12,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.SubtitlesHud.SubtitleEntry;
-import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.client.sound.SoundInstanceListener;
-import net.minecraft.client.sound.SoundListenerTransform;
-import net.minecraft.client.sound.SoundManager;
-import net.minecraft.client.sound.WeightedSoundSet;
+import net.minecraft.client.sound.*;
 import net.minecraft.text.Text;
+import net.minecraft.util.Colors;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -31,8 +29,6 @@ public class RawSubtitlesHud implements SoundInstanceListener {
 
     private int subtitlesWidth = 0;
 
-    private boolean enabled;
-
     public RawSubtitlesHud(MinecraftClient client) {
         this.client = client;
     }
@@ -41,13 +37,11 @@ public class RawSubtitlesHud implements SoundInstanceListener {
         // Check if subtitles are enabled in the config and register a listener if so.
         if (config.areSubtitlesEnabled()) {
             soundManager.registerListener(this);
-            enabled = true;
+            return true;
         } else {
             soundManager.unregisterListener(this);
-            enabled = false;
+            return false;
         }
-
-        return (enabled);
     }
 
     public void render(DrawContext context) {
@@ -73,8 +67,16 @@ public class RawSubtitlesHud implements SoundInstanceListener {
         Vec3d position = transform.position();
 
         double displayTime = client.options.getNotificationDisplayTime().getValue();
-        for (SubtitleEntry subtitleEntry : entries) {
-            if (subtitleEntry.canHearFrom(position) && entryShouldBeDisplayed(subtitleEntry, displayTime)) {
+
+        Iterator<SubtitleEntry> iterator = entries.iterator();
+        while (iterator.hasNext()) {
+            SubtitleEntry subtitleEntry = iterator.next();
+            if (subtitleEntry.timeExpired(displayTime)) {
+                iterator.remove();
+                continue;
+            }
+
+            if (subtitleEntry.canHearFrom(position)) {
                 audibleEntries.add(subtitleEntry);
 
                 int entryWidth = client.textRenderer.getWidth(subtitleEntry.getText());
@@ -86,11 +88,6 @@ public class RawSubtitlesHud implements SoundInstanceListener {
                 + this.client.textRenderer.getWidth(">") + this.client.textRenderer.getWidth(" ");
     }
 
-    private boolean entryShouldBeDisplayed(SubtitleEntry entry, double displayTime) {
-        double endTime = entry.getTime() + 3000.0 * displayTime;
-        return endTime > (double) Util.getMeasuringTimeMs();
-    }
-
     private void renderEntries(DrawContext context, SoundListenerTransform transform) {
         int scaledWindowWidth = context.getScaledWindowWidth();
         int scaledWindowHeight = context.getScaledWindowHeight();
@@ -98,7 +95,7 @@ public class RawSubtitlesHud implements SoundInstanceListener {
         int textBackgroundColor = client.options.getTextBackgroundColor(0.8F);
         TextRenderer textRenderer = Objects.requireNonNull(client.textRenderer);
 
-        double displayTime = (Double) client.options.getNotificationDisplayTime().getValue();
+        double displayTime = client.options.getNotificationDisplayTime().getValue();
 
         // Audio position
         Vec3d position = transform.position();
@@ -115,7 +112,7 @@ public class RawSubtitlesHud implements SoundInstanceListener {
             SubtitleEntry subtitleEntry = audibleEntries.get(i);
 
             // Audio direction
-            Vec3d audioDirection = subtitleEntry.getPosition().subtract(position).normalize();
+            Vec3d audioDirection = subtitleEntry.getDirection(position);
             double rightDot = audioDirection.dotProduct(right);
             double forwardDot = audioDirection.dotProduct(forward);
 
@@ -153,11 +150,8 @@ public class RawSubtitlesHud implements SoundInstanceListener {
     }
 
     private int calculateSubtitleColour(SubtitleEntry subtitleEntry, double displayTime) {
-        int opacity = MathHelper.floor(MathHelper.clampedLerp(255.0F, 75.0F,
-                (float) (Util.getMeasuringTimeMs() - subtitleEntry.getTime()) / (float) (3000.0 * displayTime)));
-
-        int colour = (opacity << 16 | opacity << 8 | opacity) + 0xFF000000; // Direct addition of alpha value
-        return colour;
+        int opacity = MathHelper.floor(MathHelper.clampedLerp(255.0F, 75.0F, (float) subtitleEntry.timeRatioExpired(displayTime)));
+        return (opacity << 16 | opacity << 8 | opacity) + Colors.BLACK; // Direct addition of alpha value
     }
 
     public void onSoundPlayed(SoundInstance sound, WeightedSoundSet soundSet, float range) {
@@ -167,15 +161,56 @@ public class RawSubtitlesHud implements SoundInstanceListener {
 
         Text soundId = Text.of(sound.getId().toString());
 
-        if (!entries.isEmpty()) {
-            for (SubtitleEntry subtitleEntry : entries) {
-                if (subtitleEntry.getText().equals(soundId)) {
-                    subtitleEntry.reset(new Vec3d(sound.getX(), sound.getY(), sound.getZ()));
-                    return;
-                }
+        for (SubtitleEntry subtitleEntry : entries) {
+            if (subtitleEntry.getText().equals(soundId)) {
+                subtitleEntry.reset(sound.getX(), sound.getY(), sound.getZ());
+                return;
             }
         }
 
         entries.add(new SubtitleEntry(soundId, range, new Vec3d(sound.getX(), sound.getY(), sound.getZ())));
+    }
+
+    @Environment(value=EnvType.CLIENT)
+    static class SubtitleEntry {
+        private final Text text;
+        private final float range;
+        private long time;
+        private Vec3d pos;
+
+        public SubtitleEntry(Text text, float range, Vec3d pos) {
+            this.text = text;
+            this.range = range;
+            this.pos = pos;
+            this.time = Util.getMeasuringTimeMs();
+        }
+
+        public Text getText() {
+            return this.text;
+        }
+
+        public boolean timeExpired(double displayTime) {
+            return (double)(Util.getMeasuringTimeMs() - time) > (displayTime * 3000);
+        }
+
+        public double timeRatioExpired(double displayTime) {
+            return (Util.getMeasuringTimeMs() - time) / (3000.0 * displayTime);
+        }
+
+        public boolean canHearFrom(Vec3d pos) {
+            if (Float.isInfinite(this.range)) {
+                return true;
+            }
+            return pos.isInRange(this.pos, this.range);
+        }
+
+        public Vec3d getDirection(Vec3d pos) {
+            return this.pos.subtract(pos).normalize();
+        }
+
+        public void reset(double x, double y, double z) {
+            this.time = Util.getMeasuringTimeMs();
+            this.pos = new Vec3d(x, y, z);
+        }
     }
 }

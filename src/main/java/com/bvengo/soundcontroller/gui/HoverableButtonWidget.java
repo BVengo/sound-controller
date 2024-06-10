@@ -14,10 +14,10 @@ public class HoverableButtonWidget extends ButtonWidget {
     protected boolean isToggled = false;
     protected boolean isHovered = false;
 
-    private Identifier ON_TEXTURE;
-    private Identifier OFF_TEXTURE;
-    private Identifier ON_HOVER_TEXTURE;
-    private Identifier OFF_HOVER_TEXTURE;
+    private final Identifier ON_TEXTURE;
+    private final Identifier OFF_TEXTURE;
+    private final Identifier ON_HOVER_TEXTURE;
+    private final Identifier OFF_HOVER_TEXTURE;
 
     String buttonId;
 
@@ -26,10 +26,10 @@ public class HoverableButtonWidget extends ButtonWidget {
 
         this.buttonId = buttonId;
 
-        ON_TEXTURE = new Identifier(SoundController.MOD_ID, buttonId + "_button_on");
-        OFF_TEXTURE = new Identifier(SoundController.MOD_ID, buttonId + "_button_off");
-        ON_HOVER_TEXTURE = new Identifier(SoundController.MOD_ID, buttonId + "_button_on_hovered");
-        OFF_HOVER_TEXTURE = new Identifier(SoundController.MOD_ID, buttonId + "_button_off_hovered");
+        ON_TEXTURE = Identifier.of(SoundController.MOD_ID, buttonId + "_button_on");
+        OFF_TEXTURE = Identifier.of(SoundController.MOD_ID, buttonId + "_button_off");
+        ON_HOVER_TEXTURE = Identifier.of(SoundController.MOD_ID, buttonId + "_button_on_hovered");
+        OFF_HOVER_TEXTURE = Identifier.of(SoundController.MOD_ID, buttonId + "_button_off_hovered");
     }
 
     protected void updateHovered(int mouseX, int mouseY) {
