@@ -19,14 +19,14 @@ body:
       label: Steps to Reproduce
       description: Steps to reproduce the behavior.
     validations:
-      required: true
+      required: false
   - type: textarea
     id: expected-behavior
     attributes:
       label: Expected Behavior
       description: What behaviour did you expect to observe?
     validations:
-      required: true
+      required: false
   - type: textarea
     id: screenshots
     attributes:
