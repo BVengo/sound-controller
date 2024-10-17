@@ -1,0 +1,8 @@
+{
+    "soundcontroller.options.title": "独立声音配置",
+    "soundcontroller.options.search.title": "搜索:",
+    "soundcontroller.options.search.placeholder": "搜索声音...",
+    "soundcontroller.options.filter.tooltip": "仅显示已修改的音量",
+    "soundcontroller.options.subtitles.tooltip": "显示带有声音 ID 的字幕（将关闭原版字幕）",
+    "soundcontroller.options.override": "覆写"
+}
