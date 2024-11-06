@@ -1,6 +1,5 @@
 package com.bvengo.soundcontroller.gui;
 
-import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
