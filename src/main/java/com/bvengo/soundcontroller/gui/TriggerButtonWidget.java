@@ -10,9 +10,13 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.util.Identifier;
 
+/**
+ * Custom button widget that is used as a trigger rather than a toggle.
+ * i.e. it is only active while the button is being pressed.
+ */
 @Environment(EnvType.CLIENT)
-public class HoverableButtonWidget extends ButtonWidget {
-    protected boolean isToggled = false;
+public class TriggerButtonWidget extends ButtonWidget {
+    protected boolean isPressed = false;
     protected boolean isHovered = false;
 
     private final Identifier ON_TEXTURE;
@@ -22,7 +26,7 @@ public class HoverableButtonWidget extends ButtonWidget {
 
     String buttonId;
 
-    public HoverableButtonWidget(String buttonId, int x, int y, int width, int height, PressAction pressAction) {
+    public TriggerButtonWidget(String buttonId, int x, int y, int width, int height, PressAction pressAction) {
         super(x, y, width, height, ScreenTexts.EMPTY, pressAction, DEFAULT_NARRATION_SUPPLIER);
 
         this.buttonId = buttonId;
@@ -33,7 +37,7 @@ public class HoverableButtonWidget extends ButtonWidget {
         OFF_HOVER_TEXTURE = Identifier.of(SoundController.MOD_ID, buttonId + "_button_off_hovered");
     }
 
-    protected void updateHovered(int mouseX, int mouseY) {
+    protected void updateHovered(double mouseX, double mouseY) {
         isHovered = (
             mouseX >= getX() &&
             mouseY >= getY() && 
@@ -47,14 +51,27 @@ public class HoverableButtonWidget extends ButtonWidget {
         // Check mouseX, mouseY for hover
         updateHovered(mouseX, mouseY);
 
-        Identifier texture = isToggled ? (isHovered ? ON_HOVER_TEXTURE : ON_TEXTURE)
+        Identifier texture = isPressed ? (isHovered ? ON_HOVER_TEXTURE : ON_TEXTURE)
                 : (isHovered ? OFF_HOVER_TEXTURE : OFF_TEXTURE);
 
         context.drawGuiTexture(RenderLayer::getGuiTextured, texture, getX(), getY(), width, height);
     }
 
+    @Override
     public void onPress() {
-        super.onPress();
-        isToggled = !isToggled;
+        isPressed = true;
+    }
+
+    @Override
+    public void onRelease(double mouseX, double mouseY) {
+        // Release toggle texture on release, and perform press action.
+        // Only perform press action if button remains hovered.
+        updateHovered(mouseX, mouseY);
+
+        if(isHovered) {
+            this.onPress.onPress(this);
+        }
+
+        isPressed = false;
     }
 }

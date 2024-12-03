@@ -32,7 +32,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     public SimpleOption<Double> volumeOption;
 
     public ClickableWidget volumeSlider;
-    public HoverableButtonWidget playSoundButton;
+    public TriggerButtonWidget playSoundButton;
 
     public VolumeWidgetEntry(VolumeData volumeData, Screen screen, GameOptions gameOptions) {
         this.volumeData = volumeData;
