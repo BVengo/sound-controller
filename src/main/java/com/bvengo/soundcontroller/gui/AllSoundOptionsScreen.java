@@ -17,6 +17,9 @@ import static com.bvengo.soundcontroller.Constants.SEARCH_FIELD_PLACEHOLDER;
 import static com.bvengo.soundcontroller.Constants.FILTER_BUTTON_TOOLTIP;
 import static com.bvengo.soundcontroller.Constants.SUBTITLES_BUTTON_TOOLTIP;
 
+/**
+ * Screen that displays all sound options.
+ */
 public class AllSoundOptionsScreen extends GameOptionsScreen {
     VolumeConfig config = VolumeConfig.getInstance();
 
@@ -59,7 +62,7 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
 
     private void addFilterButton() {
         // Add filter button - x, y, width, height, textures, pressAction
-        HoverableButtonWidget filterButton = new HoverableButtonWidget("filter",
+        TriggerButtonWidget filterButton = new TriggerButtonWidget("filter",
                 this.width - 77, 35, 20, 20,
                 (button) -> {
                     showModifiedOnly = !showModifiedOnly;
@@ -73,14 +76,14 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
 
     private void addSubtitlesButton() {
         // Add subtitles button - x, y, width, height, textures, pressAction
-        HoverableButtonWidget subtitlesButton = new HoverableButtonWidget("subtitles",
+        TriggerButtonWidget subtitlesButton = new TriggerButtonWidget("subtitles",
                 this.width - 52, 35, 20, 20,
                 (button) -> {
                     config.toggleSubtitles();
                 });
 
         subtitlesButton.setTooltip(Tooltip.of(SUBTITLES_BUTTON_TOOLTIP));
-        subtitlesButton.isToggled = config.areSubtitlesEnabled();
+        subtitlesButton.isPressed = config.areSubtitlesEnabled();
 
         this.addDrawableChild(subtitlesButton);
     }
