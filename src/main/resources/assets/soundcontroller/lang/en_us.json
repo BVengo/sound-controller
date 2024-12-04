@@ -4,5 +4,7 @@
     "soundcontroller.options.search.placeholder": "Search for a sound...",
     "soundcontroller.options.filter.tooltip": "Show only modified volumes",
     "soundcontroller.options.subtitles.tooltip": "Display subtitles with sound IDs (will turn off vanilla subtitles)",
+    "soundcontroller.options.play.tooltip": "Play sound",
+    "soundcontroller.options.reset.tooltip": "Reset sound to default",
     "soundcontroller.options.override": "Override"
 }

@@ -6,6 +6,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.widget.ElementListWidget;
 
+/**
+ * The list widget that contains all the individual records. Contains a list of {@link VolumeWidgetEntry}.
+ */
 @Environment(value=EnvType.CLIENT)
 public class VolumeListWidget extends ElementListWidget<VolumeWidgetEntry> {
     private static final int rowWidth = VolumeWidgetEntry.totalWidth;

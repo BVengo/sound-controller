@@ -2,6 +2,7 @@ package com.bvengo.soundcontroller.gui;
 
 import com.bvengo.soundcontroller.VolumeData;
 import com.bvengo.soundcontroller.config.VolumeConfig;
+import com.bvengo.soundcontroller.gui.buttons.ToggleButtonWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
@@ -11,11 +12,11 @@ import net.minecraft.client.gui.widget.*;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.screen.ScreenTexts;
 
-import static com.bvengo.soundcontroller.Constants.SOUND_SCREEN_TITLE;
-import static com.bvengo.soundcontroller.Constants.SEARCH_FIELD_TITLE;
-import static com.bvengo.soundcontroller.Constants.SEARCH_FIELD_PLACEHOLDER;
-import static com.bvengo.soundcontroller.Constants.FILTER_BUTTON_TOOLTIP;
-import static com.bvengo.soundcontroller.Constants.SUBTITLES_BUTTON_TOOLTIP;
+import static com.bvengo.soundcontroller.Translations.SOUND_SCREEN_TITLE;
+import static com.bvengo.soundcontroller.Translations.SEARCH_FIELD_TITLE;
+import static com.bvengo.soundcontroller.Translations.SEARCH_FIELD_PLACEHOLDER;
+import static com.bvengo.soundcontroller.Translations.FILTER_BUTTON_TOOLTIP;
+import static com.bvengo.soundcontroller.Translations.SUBTITLES_BUTTON_TOOLTIP;
 
 /**
  * Screen that displays all sound options.
@@ -62,7 +63,7 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
 
     private void addFilterButton() {
         // Add filter button - x, y, width, height, textures, pressAction
-        TriggerButtonWidget filterButton = new TriggerButtonWidget("filter",
+        ToggleButtonWidget filterButton = new ToggleButtonWidget("filter",
                 this.width - 77, 35, 20, 20,
                 (button) -> {
                     showModifiedOnly = !showModifiedOnly;
@@ -76,14 +77,14 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
 
     private void addSubtitlesButton() {
         // Add subtitles button - x, y, width, height, textures, pressAction
-        TriggerButtonWidget subtitlesButton = new TriggerButtonWidget("subtitles",
+        ToggleButtonWidget subtitlesButton = new ToggleButtonWidget("subtitles",
                 this.width - 52, 35, 20, 20,
                 (button) -> {
                     config.toggleSubtitles();
                 });
 
         subtitlesButton.setTooltip(Tooltip.of(SUBTITLES_BUTTON_TOOLTIP));
-        subtitlesButton.isPressed = config.areSubtitlesEnabled();
+        subtitlesButton.setToggled(config.areSubtitlesEnabled());
 
         this.addDrawableChild(subtitlesButton);
     }
