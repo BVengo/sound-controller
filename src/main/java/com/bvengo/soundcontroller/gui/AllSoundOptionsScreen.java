@@ -29,6 +29,9 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
     private VolumeListWidget volumeListWidget;
     private TextFieldWidget searchField;
 
+    private ToggleButtonWidget filterButton;
+    private ToggleButtonWidget subtitlesButton;
+
     private boolean showModifiedOnly = false;
 
     public AllSoundOptionsScreen(Screen parent, GameOptions options) {
@@ -63,30 +66,30 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
 
     private void addFilterButton() {
         // Add filter button - x, y, width, height, textures, pressAction
-        ToggleButtonWidget filterButton = new ToggleButtonWidget("filter",
+        this.filterButton = new ToggleButtonWidget("filter",
                 this.width - 77, 35, 20, 20,
                 (button) -> {
                     showModifiedOnly = !showModifiedOnly;
                     loadOptions();
                 });
 
-        filterButton.setTooltip(Tooltip.of(FILTER_BUTTON_TOOLTIP));
+        this.filterButton.setTooltip(Tooltip.of(FILTER_BUTTON_TOOLTIP));
 
-        this.addDrawableChild(filterButton);
+        this.addDrawableChild(this.filterButton);
     }
 
     private void addSubtitlesButton() {
         // Add subtitles button - x, y, width, height, textures, pressAction
-        ToggleButtonWidget subtitlesButton = new ToggleButtonWidget("subtitles",
+        this.subtitlesButton = new ToggleButtonWidget("subtitles",
                 this.width - 52, 35, 20, 20,
                 (button) -> {
                     config.toggleSubtitles();
                 });
 
-        subtitlesButton.setTooltip(Tooltip.of(SUBTITLES_BUTTON_TOOLTIP));
-        subtitlesButton.setToggled(config.areSubtitlesEnabled());
+        this.subtitlesButton.setTooltip(Tooltip.of(SUBTITLES_BUTTON_TOOLTIP));
+        this.subtitlesButton.setToggled(config.areSubtitlesEnabled());
 
-        this.addDrawableChild(subtitlesButton);
+        this.addDrawableChild(this.subtitlesButton);
     }
 
     private void addVolumeList() {
@@ -120,6 +123,8 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
     @Override
     public void removed() {
         config.save();
+        this.filterButton.setToggled(false);  // Reset filter button
+        this.searchField.setText("");  // Clear search field
     }
 
     @Override

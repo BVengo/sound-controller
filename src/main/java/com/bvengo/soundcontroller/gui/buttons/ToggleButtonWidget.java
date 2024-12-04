@@ -21,11 +21,14 @@ public class ToggleButtonWidget extends HoverableButtonWidget {
     }
 
     public void setToggled(boolean isToggled) {
+        // Forced toggle to a specific state
+        this.onPress.onPress(this);
         this.isPressed = isToggled;
     }
 
     @Override
     public void onPress() {
+        // Natural toggle when button is pressed
         this.onPress.onPress(this);
         isPressed = !isPressed;
     }
