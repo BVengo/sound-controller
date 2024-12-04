@@ -10,16 +10,19 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 
 public class VolumeData {
+    public static final Float DEFAULT_VOLUME = 1.0f;
+    public static final Float MAX_VOLUME = 2.0f;
+
     private final String soundId;
     private Float volume;
 
     public VolumeData(String id, float volume) {
         this.soundId = id;
-        this.volume = MathHelper.clamp(volume, 0.0f, 1.0f);
+        this.volume = MathHelper.clamp(volume, 0.0f, MAX_VOLUME);
     }
 
     public VolumeData(String id) {
-        this(id, 1.0f);
+        this(id, DEFAULT_VOLUME);
     }
 
     public boolean isValid() {
@@ -41,7 +44,7 @@ public class VolumeData {
         float categoryVolume = soundSystem.invokeGetSoundVolume(sound.getCategory());
         adjustment *= categoryVolume;
 
-        return MathHelper.clamp(adjustment * soundVolume, 0.0F, 1.0F);
+        return MathHelper.clamp(adjustment * soundVolume, 0.0F, MAX_VOLUME);
     }
 
     public void setVolume(float volume) {
@@ -49,7 +52,7 @@ public class VolumeData {
     }
 
     public boolean isModified() {
-        return this.volume != 1.0f;
+        return !this.volume.equals(DEFAULT_VOLUME);
     }
 
     public boolean inFilter(String search, boolean showModifiedOnly) {
