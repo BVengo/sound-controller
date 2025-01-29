@@ -1,10 +1,12 @@
 package com.bvengo.soundcontroller.mixin;
 
 import com.bvengo.soundcontroller.SoundController;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.sound.SoundCategory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundSystem;
@@ -12,8 +14,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(SoundSystem.class)
 public class SoundSystemMixin {
-    @ModifyVariable(method = "play(Lnet/minecraft/client/sound/SoundInstance;)V", at = @At(value = "STORE"), index = 8)
-    private float modifyH(float h, SoundInstance sound) {
+    @WrapOperation(method = "play(Lnet/minecraft/client/sound/SoundInstance;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundSystem;getAdjustedVolume(FLnet/minecraft/sound/SoundCategory;)F"))
+    private float modifyH(SoundSystem instance, float volume, SoundCategory category, Operation<Float> original, SoundInstance sound) {
         // h comes from getAdjustedVolume(float volume, Category category) - we can't inject there, because no ID is available
         return SoundController.CONFIG.getAdjustedVolume(sound, (SoundSystemAccessor) this);
     }
