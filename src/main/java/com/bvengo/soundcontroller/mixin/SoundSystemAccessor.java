@@ -7,9 +7,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(SoundSystem.class)
 public interface SoundSystemAccessor {
-    @Invoker("getAdjustedVolume")
-    float invokeGetAdjustedVolume(float volume, SoundCategory category);
-
     @Invoker("updateSoundVolume")
     void invokeUpdateSoundVolume(SoundCategory category, float volume);
 

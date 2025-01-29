@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "soundcontroller",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "icon": "assets/soundcontroller/icon.png",
 
     "name": "Sound Controller",
@@ -33,11 +33,14 @@
         "fabric-api": "*"
     },
     "recommends": {
-        "modmenu": ">=12.0.0"
+        "modmenu": "*"
     },
 
     "custom": {
         "modmenu": {
+            "links": {
+                "modmenu.discord": "https://discord.gg/gyTa5v7kKk"
+            },
             "update_checker": true
         }
     }

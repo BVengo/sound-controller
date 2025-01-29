@@ -29,7 +29,8 @@ public class GameOptionsScreenMixin {
     @Inject(method = "initFooter", at = @At("HEAD"), cancellable = true)
     private void replaceDoneButton(CallbackInfo ci) {
 
-        if (!((Object)this instanceof SoundOptionsScreen)) {
+		//noinspection ConstantValue
+		if (!((Object)this instanceof SoundOptionsScreen)) {
             return;
         }
 

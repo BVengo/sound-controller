@@ -1,21 +1,25 @@
 package com.bvengo.soundcontroller.config;
 
 import com.bvengo.soundcontroller.VolumeData;
+import com.bvengo.soundcontroller.mixin.SoundSystemAccessor;
+import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import java.util.TreeMap;
+import net.minecraft.util.Identifier;
+
+import java.util.HashMap;
 
 public class VolumeConfig {
     private static VolumeConfig instance;
     public static final int CONFIG_VERSION = 4;
 
-    private TreeMap<String, VolumeData> soundVolumes;
+    private final HashMap<Identifier, VolumeData> soundVolumes;
 
     private boolean subtitlesEnabled = false;
 
     private VolumeConfig() {
-        soundVolumes = new TreeMap<>();
+        soundVolumes = new HashMap<>();
         ConfigParser.loadConfig(this);
         updateVolumes();
         ConfigParser.saveConfig(this);
@@ -36,18 +40,23 @@ public class VolumeConfig {
         // Update map with any sounds missing from the config file
         for (SoundEvent soundEvent : Registries.SOUND_EVENT) {
             if (soundEvent != SoundEvents.INTENTIONALLY_EMPTY) {
-                String soundId = soundEvent.id().toString();
+                Identifier soundId = soundEvent.id();
                 soundVolumes.putIfAbsent(soundId, new VolumeData(soundId));
             }
         }
     }
 
-    public TreeMap<String, VolumeData> getVolumes() {
+    public HashMap<Identifier, VolumeData> getVolumes() {
         return soundVolumes;
     }
 
-    public VolumeData getVolumeData(String soundId) {
+    public VolumeData getVolumeData(Identifier soundId) {
         return soundVolumes.getOrDefault(soundId, new VolumeData(soundId));
+    }
+
+    public float getAdjustedVolume(SoundInstance sound, SoundSystemAccessor soundSystem) {
+        VolumeData volumeData = getVolumeData(sound.getId());
+        return volumeData.getAdjustedVolume(sound,  soundSystem);
     }
 
     public boolean areSubtitlesEnabled() {

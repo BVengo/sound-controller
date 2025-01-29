@@ -1,13 +1,10 @@
 package com.bvengo.soundcontroller.gui;
 
-import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.Translations;
 import com.bvengo.soundcontroller.Utils;
 import com.bvengo.soundcontroller.VolumeData;
 import com.bvengo.soundcontroller.gui.buttons.AudioButtonWidget;
 import com.bvengo.soundcontroller.gui.buttons.TriggerButtonWidget;
-import com.bvengo.soundcontroller.mixin.SoundManagerAccessor;
-import com.bvengo.soundcontroller.mixin.SoundSystemAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
@@ -20,7 +17,6 @@ import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.screen.ScreenTexts;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.Text;
 import java.util.List;
 
@@ -67,7 +63,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     private void addSlider() {
         // Volume slider (options)
         this.volumeOption = new SimpleOption<>(
-                volumeData.getId(),
+                volumeData.getId().toString(),
                 SimpleOption.emptyTooltip(),
                 (prefix, value) -> {
                     if (value < 0.01) {
