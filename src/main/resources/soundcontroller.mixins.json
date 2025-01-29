@@ -5,12 +5,12 @@
     "mixins": [],
     "client": [
         "GameOptionsScreenAccessor",
+        "GameOptionsScreenMixin",
         "ScreenAccessor",
         "SoundManagerAccessor",
-        "GameOptionsScreenMixin",
         "SoundSystemAccessor",
         "SoundSystemMixin",
-        "InGameHudMixin"
+        "SubtitlesHudMixin"
     ],
     "injectors": {
         "defaultRequire": 1

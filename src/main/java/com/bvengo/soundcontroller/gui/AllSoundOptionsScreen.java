@@ -1,6 +1,5 @@
 package com.bvengo.soundcontroller.gui;
 
-import com.bvengo.soundcontroller.VolumeData;
 import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.gui.buttons.ToggleButtonWidget;
 import net.minecraft.client.MinecraftClient;
@@ -69,33 +68,33 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
     private void addFilterButton() {
         // Add filter button - x, y, width, height, textures, pressAction
         this.filterButton = new ToggleButtonWidget("filter",
-                this.width - 77, 35, 20, 20,
+                this.searchField.getRight() + 8, 35, 20, 20,
                 (button) -> {
                     showModifiedOnly = !showModifiedOnly;
                     loadOptions();
-                });
+                },
+                false
+        );
 
         this.filterButton.setTooltip(Tooltip.of(FILTER_BUTTON_TOOLTIP));
-
         this.addDrawableChild(this.filterButton);
     }
 
     private void addSubtitlesButton() {
         // Add subtitles button - x, y, width, height, textures, pressAction
         this.subtitlesButton = new ToggleButtonWidget("subtitles",
-                this.width - 52, 35, 20, 20,
+                this.filterButton.getRight() + 4, 35, 20, 20,
                 (button) -> {
                     config.toggleSubtitles();
-                });
+                },
+                config.areSubtitlesEnabled());
 
         this.subtitlesButton.setTooltip(Tooltip.of(SUBTITLES_BUTTON_TOOLTIP));
-        this.subtitlesButton.setToggled(config.areSubtitlesEnabled());
-
         this.addDrawableChild(this.subtitlesButton);
     }
 
     private void addVolumeList() {
-        this.volumeListWidget = new VolumeListWidget(this.client, this.width, this.height - 96, this);
+        this.volumeListWidget = new VolumeListWidget(this.client, this.width, this.searchField.getBottom() + 32, this);
         loadOptions();
         this.addDrawableChild(this.volumeListWidget);
     }
@@ -124,7 +123,6 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
     @Override
     public void removed() {
         config.save();
-        this.filterButton.setToggled(false);  // Reset filter button
         this.searchField.setText("");  // Clear search field
     }
 

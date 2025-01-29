@@ -16,13 +16,8 @@ import net.minecraft.util.Identifier;
 @Environment(EnvType.CLIENT)
 public class ToggleButtonWidget extends HoverableButtonWidget {
 
-    public ToggleButtonWidget(String buttonId, int x, int y, int width, int height, PressAction pressAction) {
+    public ToggleButtonWidget(String buttonId, int x, int y, int width, int height, PressAction pressAction, boolean isToggled) {
         super(buttonId, x, y, width, height, pressAction);
-    }
-
-    public void setToggled(boolean isToggled) {
-        // Forced toggle to a specific state
-        this.onPress.onPress(this);
         this.isPressed = isToggled;
     }
 
