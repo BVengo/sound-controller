@@ -4,9 +4,11 @@ import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.VolumeData;
 import com.google.gson.*;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.util.Identifier;
 
 import java.io.*;
-import java.util.TreeMap;
+import java.util.Comparator;
+import java.util.HashMap;
 
 public class ConfigParser {
 	private static final File file = new File(FabricLoader.getInstance().getConfigDir().toFile(),
@@ -63,9 +65,10 @@ public class ConfigParser {
 		JsonArray sounds = new JsonArray();
 		config.getVolumes().values().stream()
 				.filter(volumeData -> volumeData.getVolume() != 1.0F)
+				.sorted(Comparator.comparing(v -> v.getId().toString()))
 				.forEach(volumeData -> {
 					JsonObject soundObject = new JsonObject();
-					soundObject.addProperty("soundId", volumeData.getId());
+					soundObject.addProperty("soundId", volumeData.getId().toString());
 					soundObject.addProperty("volume", volumeData.getVolume());
 					sounds.add(soundObject);
 				});
@@ -93,7 +96,7 @@ public class ConfigParser {
 	 * @param soundVolumes The map to store the parsed sound volumes.
 	 * @param jsonObject The JSON object to parse.
 	 */
-	private static void parseConfig(TreeMap<String, VolumeData> soundVolumes, JsonObject jsonObject) {
+	private static void parseConfig(HashMap<Identifier, VolumeData> soundVolumes, JsonObject jsonObject) {
 		int version = jsonObject.has("version") ? jsonObject.get("version").getAsInt() : -1;
 
 		// Check if the version key exists to determine the handling strategy
@@ -155,17 +158,20 @@ public class ConfigParser {
 	 * @param soundId The sound ID to add.
 	 * @param volume The volume to add.
 	 */
-	private static void addVolumeData(TreeMap<String, VolumeData> soundVolumes, String soundId, float volume) {
-		if (soundVolumes.containsKey(soundId)) {
-			SoundController.LOGGER.warn("Duplicate sound ID found in config: " + soundId + ". Taking first only.");
+	private static void addVolumeData(HashMap<Identifier, VolumeData> soundVolumes, String soundId, float volume) {
+		Identifier id = Identifier.tryParse(soundId);
+
+		if (soundVolumes.containsKey(id)) {
+			SoundController.LOGGER.warn("Duplicate sound ID found in config: {}. Taking first only.", soundId);
 			return;
 		}
 
-		VolumeData volumeData = new VolumeData(soundId, volume);
-		if(volumeData.isValid()) {
-			soundVolumes.put(soundId, volumeData);
+		VolumeData volumeData = new VolumeData(id, volume);
+
+		if(id != null) {
+			soundVolumes.put(id, volumeData);
 		} else {
-			SoundController.LOGGER.warn("Invalid sound ID found in config: " + soundId + ". Skipping.");
+			SoundController.LOGGER.warn("Invalid sound ID found in config: {}. Skipping.", soundId);
 		}
 	}
 
@@ -186,7 +192,7 @@ public class ConfigParser {
 	 * @param soundVolumes The map to store the parsed sound volumes.
 	 * @param jsonObject The JSON object to parse.
 	 */
-	private static void parseConfig4(TreeMap<String, VolumeData> soundVolumes, JsonObject jsonObject) {
+	private static void parseConfig4(HashMap<Identifier, VolumeData> soundVolumes, JsonObject jsonObject) {
 		JsonArray sounds = jsonObject.getAsJsonArray("sounds");
 		for (JsonElement soundElement : sounds) {
 			JsonObject soundObject = soundElement.getAsJsonObject();
@@ -227,7 +233,7 @@ public class ConfigParser {
 	 * @param soundVolumes The map to store the parsed sound volumes.
 	 * @param jsonObject The JSON object to parse.
 	 */
-	private static void parseConfigUnversioned(TreeMap<String, VolumeData> soundVolumes, JsonObject jsonObject) {
+	private static void parseConfigUnversioned(HashMap<Identifier, VolumeData> soundVolumes, JsonObject jsonObject) {
 		// Iterate over each entry in the JSON object assuming each key is a sound ID
 		jsonObject.entrySet().forEach(entry -> {
 			String key = entry.getKey();  // Should be the soundId as well

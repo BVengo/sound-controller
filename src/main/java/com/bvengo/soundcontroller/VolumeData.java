@@ -13,23 +13,19 @@ public class VolumeData {
     public static final Float DEFAULT_VOLUME = 1.0f;
     public static final Float MAX_VOLUME = 2.0f;
 
-    private final String soundId;
+    private final Identifier soundId;
     private Float volume;
 
-    public VolumeData(String id, float volume) {
+    public VolumeData(Identifier id, float volume) {
         this.soundId = id;
         this.volume = MathHelper.clamp(volume, 0.0f, MAX_VOLUME);
     }
 
-    public VolumeData(String id) {
+    public VolumeData(Identifier id) {
         this(id, DEFAULT_VOLUME);
     }
 
-    public boolean isValid() {
-        return (this.soundId != null && Identifier.tryParse(this.soundId) != null);
-    }
-
-    public String getId() {
+    public Identifier getId() {
         return soundId;
     }
 
@@ -38,13 +34,10 @@ public class VolumeData {
     }
 
     public Float getAdjustedVolume(SoundInstance sound, SoundSystemAccessor soundSystem) {
-        float adjustment = this.getVolume();
-        float soundVolume = sound.getVolume();
-
         float categoryVolume = soundSystem.invokeGetSoundVolume(sound.getCategory());
-        adjustment *= categoryVolume;
+        float adjustment = volume * categoryVolume;
 
-        return MathHelper.clamp(adjustment * soundVolume, 0.0F, MAX_VOLUME);
+        return MathHelper.clamp(adjustment * sound.getVolume(), 0.0F, MAX_VOLUME);
     }
 
     public void setVolume(float volume) {
@@ -56,12 +49,12 @@ public class VolumeData {
     }
 
     public boolean inFilter(String search, boolean showModifiedOnly) {
-        return (this.getId().toLowerCase().contains(search) &&
+        return (this.soundId.toString().toLowerCase().contains(search) &&
                 (!showModifiedOnly || this.isModified()));
     }
 
     public void playSound(SoundManager soundManager) {
-        SoundEvent soundEvent = SoundEvent.of(Identifier.of(soundId));
+        SoundEvent soundEvent = SoundEvent.of(soundId);
         soundManager.play(PositionedSoundInstance.master(soundEvent, 1.0f));
     }
 }

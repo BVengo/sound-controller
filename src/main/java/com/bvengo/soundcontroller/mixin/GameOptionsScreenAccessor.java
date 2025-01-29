@@ -1,6 +1,5 @@
 package com.bvengo.soundcontroller.mixin;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.option.GameOptions;
 import org.spongepowered.asm.mixin.Mixin;

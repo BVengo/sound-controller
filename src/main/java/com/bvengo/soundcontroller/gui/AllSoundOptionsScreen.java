@@ -12,6 +12,8 @@ import net.minecraft.client.gui.widget.*;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.screen.ScreenTexts;
 
+import java.util.Comparator;
+
 import static com.bvengo.soundcontroller.Translations.SOUND_SCREEN_TITLE;
 import static com.bvengo.soundcontroller.Translations.SEARCH_FIELD_TITLE;
 import static com.bvengo.soundcontroller.Translations.SEARCH_FIELD_PLACEHOLDER;
@@ -110,14 +112,13 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
         String search = this.searchField.getText().toLowerCase();
 
         // Update all buttons
-        for (VolumeData volumeData : config.getVolumes().values()) {
-            if (!volumeData.inFilter(search, showModifiedOnly)) {
-                continue;
-            }
-
-            VolumeWidgetEntry volumeEntry = new VolumeWidgetEntry(volumeData, this, this.gameOptions);
-            this.volumeListWidget.addWidgetEntry(volumeEntry);
-        }
+        config.getVolumes().values().stream()
+            .filter(volumeData -> volumeData.inFilter(search, showModifiedOnly))
+            .sorted(Comparator.comparing(v -> v.getId().toString()))
+            .forEach(volumeData -> {
+                VolumeWidgetEntry volumeEntry = new VolumeWidgetEntry(volumeData, this, this.gameOptions);
+                this.volumeListWidget.addWidgetEntry(volumeEntry);
+            });
     }
 
     @Override
