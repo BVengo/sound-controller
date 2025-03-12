@@ -18,7 +18,7 @@ public class VolumeData {
 
     public VolumeData(Identifier id, float volume) {
         this.soundId = id;
-        this.volume = MathHelper.clamp(volume, 0.0f, MAX_VOLUME);
+        this.volume = volume; // Removed clamping to allow manually setting over / under the slider
     }
 
     public VolumeData(Identifier id) {
