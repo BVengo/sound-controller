@@ -16,7 +16,7 @@ public class VolumeConfig {
 
     private final HashMap<Identifier, VolumeData> soundVolumes;
 
-    private boolean subtitlesEnabled = false;
+    public boolean subtitlesEnabled = false;
 
     private VolumeConfig() {
         soundVolumes = new HashMap<>();

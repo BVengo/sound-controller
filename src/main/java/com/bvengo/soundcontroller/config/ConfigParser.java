@@ -34,7 +34,7 @@ public class ConfigParser {
 				buildEmptyConfig();
 				return;
 			}
-			parseConfig(config.getVolumes(), jsonObject);
+			parseConfig(config, jsonObject);
 		} catch (Exception e) {
 			SoundController.LOGGER.error("Error reading config file, creating a new one. Original error: ", e);
 			moveOldConfig();
@@ -61,6 +61,7 @@ public class ConfigParser {
 	private static JsonObject createJsonConfig(VolumeConfig config) {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("version", VolumeConfig.CONFIG_VERSION);
+		jsonObject.addProperty("subtitlesEnabled", config.subtitlesEnabled);
 
 		JsonArray sounds = new JsonArray();
 		config.getVolumes().values().stream()
@@ -93,10 +94,10 @@ public class ConfigParser {
 	/**
 	 * Parses volume data from a JSON object into a map. Handles versioning.
 	 *
-	 * @param soundVolumes The map to store the parsed sound volumes.
+	 * @param config The config being updated.
 	 * @param jsonObject The JSON object to parse.
 	 */
-	private static void parseConfig(HashMap<Identifier, VolumeData> soundVolumes, JsonObject jsonObject) {
+	private static void parseConfig(VolumeConfig config, JsonObject jsonObject) {
 		int version = jsonObject.has("version") ? jsonObject.get("version").getAsInt() : -1;
 
 		// Check if the version key exists to determine the handling strategy
@@ -104,7 +105,7 @@ public class ConfigParser {
 			String msg = "Config file does not have a version number. Trying to parse old un-versioned format.";
 			SoundController.LOGGER.warn(msg);
 
-			parseConfigUnversioned(soundVolumes, jsonObject);
+			parseConfigUnversioned(config, jsonObject);
 			return;
 		}
 
@@ -120,7 +121,7 @@ public class ConfigParser {
 
 //		if (version == 4) {
 			// Currently always true
-			parseConfig4(soundVolumes, jsonObject);
+			parseConfig4(config, jsonObject);
 //		}
 	}
 
@@ -189,10 +190,16 @@ public class ConfigParser {
 	 * }
 	 * </pre>
 	 *
-	 * @param soundVolumes The map to store the parsed sound volumes.
+	 * @param config The config being updated.
 	 * @param jsonObject The JSON object to parse.
 	 */
-	private static void parseConfig4(HashMap<Identifier, VolumeData> soundVolumes, JsonObject jsonObject) {
+	private static void parseConfig4(VolumeConfig config, JsonObject jsonObject) {
+		JsonElement subtitlesElement = jsonObject.get("subtitlesEnabled");
+		if (subtitlesElement != null) {
+			config.subtitlesEnabled = subtitlesElement.getAsBoolean();
+		}
+
+		HashMap<Identifier, VolumeData> soundVolumes = config.getVolumes();
 		JsonArray sounds = jsonObject.getAsJsonArray("sounds");
 		for (JsonElement soundElement : sounds) {
 			JsonObject soundObject = soundElement.getAsJsonObject();
@@ -230,10 +237,12 @@ public class ConfigParser {
 	 * }
 	 * </pre>
 	 *
-	 * @param soundVolumes The map to store the parsed sound volumes.
+	 * @param config The config being updated.
 	 * @param jsonObject The JSON object to parse.
 	 */
-	private static void parseConfigUnversioned(HashMap<Identifier, VolumeData> soundVolumes, JsonObject jsonObject) {
+	private static void parseConfigUnversioned(VolumeConfig config, JsonObject jsonObject) {
+		HashMap<Identifier, VolumeData> soundVolumes = config.getVolumes();
+
 		// Iterate over each entry in the JSON object assuming each key is a sound ID
 		jsonObject.entrySet().forEach(entry -> {
 			String key = entry.getKey();  // Should be the soundId as well
