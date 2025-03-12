@@ -18,6 +18,8 @@ import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
+
 import java.util.List;
 
 /**
@@ -51,7 +53,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     }
 
     private int getPercentageValue(double value) {
-        return (int)Math.round(value * VolumeData.MAX_VOLUME * 100);
+        return (int) Math.round(value * 100);
     }
 
     private float getVolumeFromSlider(double value) {
@@ -66,18 +68,31 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
                 volumeData.getId().toString(),
                 SimpleOption.emptyTooltip(),
                 (prefix, value) -> {
-                    if (value < 0.01) {
+                    // Use volumeData instead of value, noting that it gets updated immediately by the slider as well.
+                    // This allows us to list the actual volume (which may be over/under set), not whatever the slider
+                    // is clamped to.
+                    int volume = getPercentageValue(volumeData.getVolume());
+
+                    if (volume == 0) {
                         return Text.translatable("options.generic_value", prefix, ScreenTexts.OFF);
                     }
-                    return Text.translatable("options.percent_value", prefix, getPercentageValue(value));
+
+                    if (volume > VolumeData.MAX_VOLUME * 100 || volume < 0) {
+                        // Make the value red if it's over the max
+                        return Text.translatable("options.generic_value",
+                                prefix,
+                                Text.literal(volume + "%").styled(style -> style.withColor(0xFF5555))
+                        );
+                    }
+
+                    return Text.translatable("options.percent_value", prefix, volume);
                 },
                 SimpleOption.DoubleSliderCallbacks.INSTANCE,
-                0.5,
+                Math.clamp(volumeData.getVolume().doubleValue() / VolumeData.MAX_VOLUME, 0.0, 1.0),
                 value -> {
                     volumeData.setVolume(getVolumeFromSlider(value));
                     Utils.updateExistingSounds();
                 });
-        this.volumeOption.setValue(volumeData.getVolume().doubleValue() / VolumeData.MAX_VOLUME);
 
         // Volume slider (widget, created from options)
         this.volumeSlider = volumeOption.createWidget(gameOptions, 0, 0, sliderWidth);
