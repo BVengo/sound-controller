@@ -40,7 +40,7 @@ public class VolumeConfig {
         // Update map with any sounds missing from the config file
         for (SoundEvent soundEvent : Registries.SOUND_EVENT) {
             if (soundEvent != SoundEvents.INTENTIONALLY_EMPTY) {
-                Identifier soundId = soundEvent.id();
+                Identifier soundId = soundEvent.getId();
                 soundVolumes.putIfAbsent(soundId, new VolumeData(soundId));
             }
         }

@@ -1,13 +1,7 @@
 package com.bvengo.soundcontroller.gui.buttons;
 
-import com.bvengo.soundcontroller.SoundController;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.util.Identifier;
 
 /**
  * Custom button widget that is used as a trigger rather than a toggle.

@@ -18,7 +18,6 @@ import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
 
 import java.util.List;
 

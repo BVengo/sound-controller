@@ -5,7 +5,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.util.Identifier;
 
@@ -40,6 +39,6 @@ public class HoverableButtonWidget extends ButtonWidget {
         Identifier texture = isPressed ? (hovered ? ON_HOVER_TEXTURE : ON_TEXTURE)
                 : (hovered ? OFF_HOVER_TEXTURE : OFF_TEXTURE);
 
-        context.drawGuiTexture(RenderLayer::getGuiTextured, texture, getX(), getY(), width, height);
+        context.drawGuiTexture(texture, getX(), getY(), width, height);
     }
 }
