@@ -1,7 +1,6 @@
 package com.bvengo.soundcontroller.mixin;
 
 import com.bvengo.soundcontroller.SoundController;
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.gui.hud.SubtitlesHud;
@@ -16,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class SubtitlesHudMixin {
 	@WrapOperation(method = "onSoundPlayed", at=@At(value = "INVOKE", target="Lnet/minecraft/client/sound/WeightedSoundSet;getSubtitle()Lnet/minecraft/text/Text;"))
 	private Text replaceSubtitleText(WeightedSoundSet instance, Operation<Text> original, SoundInstance sound) {
-		return SoundController.CONFIG.areSubtitlesEnabled() ? Text.of(sound.getId()) : original.call(instance);
+		return SoundController.CONFIG.areSubtitlesEnabled() ? Text.of(String.valueOf(sound.getId())) : original.call(instance);
 	}
 
 	@WrapOperation(

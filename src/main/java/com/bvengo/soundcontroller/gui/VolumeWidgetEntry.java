@@ -18,7 +18,6 @@ import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
 
 import java.util.List;
 
@@ -88,7 +87,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
                     return Text.translatable("options.percent_value", prefix, volume);
                 },
                 SimpleOption.DoubleSliderCallbacks.INSTANCE,
-                Math.clamp(volumeData.getVolume().doubleValue() / VolumeData.MAX_VOLUME, 0.0, 1.0),
+                Math.max(0.0, Math.min(1.0, volumeData.getVolume().doubleValue() / VolumeData.MAX_VOLUME)),
                 value -> {
                     volumeData.setVolume(getVolumeFromSlider(value));
                     Utils.updateExistingSounds();
@@ -127,10 +126,10 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
         this.volumeSlider.setPosition(leftSide, y);
         this.volumeSlider.render(context, mouseX, mouseY, tickDelta);
         
-        this.playSoundButton.setPosition(volumeSlider.getRight() + paddingAfterSearch, y);
+        this.playSoundButton.setPosition(volumeSlider.getX() + volumeSlider.getWidth() + paddingAfterSearch, y);
         this.playSoundButton.render(context, mouseX, mouseY, tickDelta);
 
-        this.resetButton.setPosition(playSoundButton.getRight() + paddingBetweenButtons, y);
+        this.resetButton.setPosition(playSoundButton.getX() + playSoundButton.getWidth() + paddingBetweenButtons, y);
         this.resetButton.render(context, mouseX, mouseY, tickDelta);
     }
 
