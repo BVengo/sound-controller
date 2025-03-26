@@ -1,7 +1,6 @@
 package com.bvengo.soundcontroller.mixin;
 
 import com.bvengo.soundcontroller.SoundController;
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.client.gui.hud.SubtitlesHud;
