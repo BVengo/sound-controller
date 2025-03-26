@@ -5,7 +5,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.util.Identifier;
 
@@ -29,17 +28,18 @@ public class HoverableButtonWidget extends ButtonWidget {
 
         this.buttonId = buttonId;
 
-        ON_TEXTURE = Identifier.of(SoundController.MOD_ID, buttonId + "_button_on");
-        OFF_TEXTURE = Identifier.of(SoundController.MOD_ID, buttonId + "_button_off");
-        ON_HOVER_TEXTURE = Identifier.of(SoundController.MOD_ID, buttonId + "_button_on_hovered");
-        OFF_HOVER_TEXTURE = Identifier.of(SoundController.MOD_ID, buttonId + "_button_off_hovered");
+        String TEXTURE_PATH = "textures/gui/sprites/";
+        ON_TEXTURE = Identifier.of(SoundController.MOD_ID, TEXTURE_PATH + buttonId + "_button_on.png");
+        OFF_TEXTURE = Identifier.of(SoundController.MOD_ID, TEXTURE_PATH + buttonId + "_button_off.png");
+        ON_HOVER_TEXTURE = Identifier.of(SoundController.MOD_ID, TEXTURE_PATH + buttonId + "_button_on_hovered.png");
+        OFF_HOVER_TEXTURE = Identifier.of(SoundController.MOD_ID, TEXTURE_PATH + buttonId + "_button_off_hovered.png");
     }
 
     @Override
-    public void renderWidget(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void renderButton(DrawContext context, int mouseX, int mouseY, float delta) {
         Identifier texture = isPressed ? (hovered ? ON_HOVER_TEXTURE : ON_TEXTURE)
                 : (hovered ? OFF_HOVER_TEXTURE : OFF_TEXTURE);
 
-        context.drawGuiTexture(RenderLayer::getGuiTextured, texture, getX(), getY(), width, height);
+        context.drawTexture(texture, getX(), getY(), 0, 0, width, height, 20, 20);
     }
 }
