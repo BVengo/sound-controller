@@ -1,6 +1,7 @@
 package com.bvengo.soundcontroller.gui.buttons;
 
 import com.bvengo.soundcontroller.SoundController;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
@@ -40,6 +41,10 @@ public class HoverableButtonWidget extends ButtonWidget {
         Identifier texture = isPressed ? (hovered ? ON_HOVER_TEXTURE : ON_TEXTURE)
                 : (hovered ? OFF_HOVER_TEXTURE : OFF_TEXTURE);
 
-        context.drawGuiTexture(RenderLayer::getGuiTextured, texture, getX(), getY(), width, height);
+        context.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
+        RenderSystem.enableBlend();
+        RenderSystem.enableDepthTest();
+        context.drawGuiTexture(texture, this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        context.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 }

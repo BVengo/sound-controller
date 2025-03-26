@@ -88,7 +88,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
                     return Text.translatable("options.percent_value", prefix, volume);
                 },
                 SimpleOption.DoubleSliderCallbacks.INSTANCE,
-                Math.clamp(volumeData.getVolume().doubleValue() / VolumeData.MAX_VOLUME, 0.0, 1.0),
+                Math.max(0.0, Math.min(1.0, volumeData.getVolume().doubleValue() / VolumeData.MAX_VOLUME)),
                 value -> {
                     volumeData.setVolume(getVolumeFromSlider(value));
                     Utils.updateExistingSounds();

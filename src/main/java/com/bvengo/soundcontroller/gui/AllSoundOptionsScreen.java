@@ -38,9 +38,6 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
     public AllSoundOptionsScreen(Screen parent, GameOptions options) {
         super(parent, options, SOUND_SCREEN_TITLE);
         this.parent = parent;
-
-        // Increase header height to make room for search field. Includes 8 extra padding below.
-        layout.setHeaderHeight(layout.getHeaderHeight() + 28);
     }
 
     @Override
@@ -51,18 +48,19 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
         addVolumeList();
         addDoneButton();
 
+        this.addDrawableChild(this.volumeListWidget);  // For some reason has to be first or the header won't render
+        this.addDrawableChild(this.searchField);
+        this.addDrawableChild(this.filterButton);
+        this.addDrawableChild(this.subtitlesButton);
+
         this.setInitialFocus(this.searchField);
     }
-
-    @Override
-    protected void addOptions() {}
 
     private void addSearchField() {
         // Add search field - x, y, width, height
         this.searchField = new TextFieldWidget(this.textRenderer, 80, 35, this.width - 167, 20,
                 SEARCH_FIELD_PLACEHOLDER);
         this.searchField.setChangedListener(serverName -> this.loadOptions());
-        this.addSelectableChild(this.searchField);
     }
 
     private void addFilterButton() {
@@ -77,7 +75,6 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
         );
 
         this.filterButton.setTooltip(Tooltip.of(FILTER_BUTTON_TOOLTIP));
-        this.addDrawableChild(this.filterButton);
     }
 
     private void addSubtitlesButton() {
@@ -90,13 +87,15 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
                 config.areSubtitlesEnabled());
 
         this.subtitlesButton.setTooltip(Tooltip.of(SUBTITLES_BUTTON_TOOLTIP));
-        this.addDrawableChild(this.subtitlesButton);
     }
 
     private void addVolumeList() {
-        this.volumeListWidget = new VolumeListWidget(this.client, this.width, this.searchField.getBottom() + 32, this);
+        int y = this.searchField.getY() + this.searchField.getHeight() + 8;
+        int width = this.width;
+        int height = this.height - y - 32;
+
+        this.volumeListWidget = new VolumeListWidget(this.client, width, height, y);
         loadOptions();
-        this.addDrawableChild(this.volumeListWidget);
     }
 
     private void addDoneButton() {
@@ -106,7 +105,7 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
 
     private void loadOptions() {
         this.volumeListWidget.children().clear();
-        this.volumeListWidget.setScrollY(0);
+        this.volumeListWidget.setScrollAmount(0);
 
         String search = this.searchField.getText().toLowerCase();
 
@@ -143,9 +142,8 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
         context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
         context.drawTextWithShadow(this.textRenderer, SEARCH_FIELD_TITLE, 32, 40, 0xA0A0A0);
-        this.searchField.render(context, mouseX, mouseY, delta);
+        super.render(context, mouseX, mouseY, delta);
     }
 }
