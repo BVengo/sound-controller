@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(SoundSystem.class)
 public class SoundSystemMixin {
-    @WrapOperation(method = "play(Lnet/minecraft/client/sound/SoundInstance;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundSystem;getAdjustedVolume(FLnet/minecraft/sound/SoundCategory;)F"))
+    @WrapOperation(method = "play(Lnet/minecraft/client/sound/SoundInstance;)Lnet/minecraft/client/sound/SoundSystem$PlayResult;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/SoundSystem;getAdjustedVolume(FLnet/minecraft/sound/SoundCategory;)F"))
     private float modifyH(SoundSystem instance, float volume, SoundCategory category, Operation<Float> original, SoundInstance sound) {
         // h comes from getAdjustedVolume(float volume, Category category) - we can't inject there, because no ID is available
         return SoundController.CONFIG.getAdjustedVolume(sound, (SoundSystemAccessor) this);

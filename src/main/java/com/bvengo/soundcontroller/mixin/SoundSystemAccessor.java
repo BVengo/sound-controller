@@ -10,6 +10,6 @@ public interface SoundSystemAccessor {
     @Invoker("updateSoundVolume")
     void invokeUpdateSoundVolume(SoundCategory category, float volume);
 
-    @Invoker("getSoundVolume")
+    @Invoker("method_72233")
     float invokeGetSoundVolume(SoundCategory category);
 }
