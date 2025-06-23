@@ -18,7 +18,6 @@ import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
-import net.minecraft.text.Texts;
 
 import java.util.List;
 
@@ -43,6 +42,8 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     public TriggerButtonWidget playSoundButton;
     public TriggerButtonWidget resetButton;
 
+    private static final float MAX_VOLUME = 2.0f;
+
     public VolumeWidgetEntry(VolumeData volumeData, Screen screen, GameOptions gameOptions) {
         this.volumeData = volumeData;
         this.screen = screen;
@@ -59,7 +60,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     private float getVolumeFromSlider(double value) {
         // 1 -> MAX_VALUE
         // Requires multiplying by 100 to round the value to 2dp.
-        return Math.round(value * VolumeData.MAX_VOLUME * 100) / 100.0f;
+        return Math.round(value * MAX_VOLUME * 100) / 100.0f;
     }
 
     private void addSlider() {
@@ -77,7 +78,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
                         return Text.translatable("options.generic_value", prefix, ScreenTexts.OFF);
                     }
 
-                    if (volume > VolumeData.MAX_VOLUME * 100 || volume < 0) {
+                    if (volume > MAX_VOLUME * 100 || volume < 0) {
                         // Make the value red if it's over the max
                         return Text.translatable("options.generic_value",
                                 prefix,
@@ -88,7 +89,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
                     return Text.translatable("options.percent_value", prefix, volume);
                 },
                 SimpleOption.DoubleSliderCallbacks.INSTANCE,
-                Math.clamp(volumeData.getVolume().doubleValue() / VolumeData.MAX_VOLUME, 0.0, 1.0),
+                Math.clamp(volumeData.getVolume().doubleValue() / MAX_VOLUME, 0.0, 1.0),
                 value -> {
                     volumeData.setVolume(getVolumeFromSlider(value));
                     Utils.updateExistingSounds();

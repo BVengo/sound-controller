@@ -7,11 +7,9 @@ import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 
 public class VolumeData {
     public static final Float DEFAULT_VOLUME = 1.0f;
-    public static final Float MAX_VOLUME = 2.0f;
 
     private final Identifier soundId;
     private Float volume;
@@ -37,7 +35,7 @@ public class VolumeData {
         float categoryVolume = soundSystem.invokeGetSoundVolume(sound.getCategory());
         float adjustment = volume * categoryVolume;
 
-        return MathHelper.clamp(adjustment * sound.getVolume(), 0.0F, MAX_VOLUME);
+        return Math.max(adjustment * sound.getVolume(), 0.0F);
     }
 
     public void setVolume(float volume) {
