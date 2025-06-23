@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "soundcontroller",
-    "version": "1.2.2",
+    "version": "1.2.3",
     "icon": "assets/soundcontroller/icon.png",
 
     "name": "Sound Controller",
