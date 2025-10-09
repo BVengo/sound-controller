@@ -1,6 +1,5 @@
 package com.bvengo.soundcontroller.mixin;
 
-import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundSystem;
 import net.minecraft.sound.SoundCategory;
 import org.spongepowered.asm.mixin.Mixin;

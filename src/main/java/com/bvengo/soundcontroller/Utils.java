@@ -3,12 +3,7 @@ package com.bvengo.soundcontroller;
 import com.bvengo.soundcontroller.mixin.SoundManagerAccessor;
 import com.bvengo.soundcontroller.mixin.SoundSystemAccessor;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.AbstractSoundInstance;
-import net.minecraft.client.sound.AggressiveBeeSoundInstance;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvents;
 
 public class Utils {
 	public static void updateExistingSounds() {
