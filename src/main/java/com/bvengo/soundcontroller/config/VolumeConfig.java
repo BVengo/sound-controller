@@ -56,7 +56,7 @@ public class VolumeConfig {
 
     public float getAdjustedVolume(SoundInstance sound, SoundSystemAccessor soundSystem) {
         VolumeData volumeData = getVolumeData(sound.getId());
-        return volumeData.getAdjustedVolume(sound,  soundSystem);
+        return volumeData.getAdjustedVolume(sound);
     }
 
     public boolean areSubtitlesEnabled() {
