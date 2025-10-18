@@ -2,6 +2,7 @@ package com.bvengo.soundcontroller.gui.buttons;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.input.AbstractInput;
 
 /**
  * Custom button widget that is used as a trigger rather than a toggle.
@@ -16,7 +17,7 @@ public class ToggleButtonWidget extends HoverableButtonWidget {
     }
 
     @Override
-    public void onPress() {
+    public void onPress(AbstractInput input) {
         // Natural toggle when button is pressed
         this.onPress.onPress(this);
         isPressed = !isPressed;
