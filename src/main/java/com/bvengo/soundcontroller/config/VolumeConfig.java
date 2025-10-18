@@ -1,7 +1,6 @@
 package com.bvengo.soundcontroller.config;
 
 import com.bvengo.soundcontroller.VolumeData;
-import com.bvengo.soundcontroller.mixin.SoundSystemAccessor;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.registry.Registries;
 import net.minecraft.sound.SoundEvent;
@@ -54,9 +53,9 @@ public class VolumeConfig {
         return soundVolumes.getOrDefault(soundId, new VolumeData(soundId));
     }
 
-    public float getAdjustedVolume(SoundInstance sound, SoundSystemAccessor soundSystem) {
+    public float getAdjustedVolume(SoundInstance sound) {
         VolumeData volumeData = getVolumeData(sound.getId());
-        return volumeData.getAdjustedVolume(sound,  soundSystem);
+        return volumeData.getAdjustedVolume(sound);
     }
 
     public boolean areSubtitlesEnabled() {

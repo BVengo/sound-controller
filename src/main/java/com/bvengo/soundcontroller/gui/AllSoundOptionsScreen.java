@@ -105,7 +105,7 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
     }
 
     private void loadOptions() {
-        this.volumeListWidget.children().clear();
+        this.volumeListWidget.clearEntriesPublic();
         this.volumeListWidget.setScrollY(0);
 
         String search = this.searchField.getText().toLowerCase();

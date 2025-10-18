@@ -1,7 +1,6 @@
 package com.bvengo.soundcontroller;
 
-import com.bvengo.soundcontroller.mixin.SoundSystemAccessor;
-
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundManager;
@@ -31,9 +30,9 @@ public class VolumeData {
         return volume;
     }
 
-    public Float getAdjustedVolume(SoundInstance sound, SoundSystemAccessor soundSystem) {
-        float categoryVolume = soundSystem.invokeGetSoundVolume(sound.getCategory());
-        float adjustment = volume * categoryVolume;
+    public Float getAdjustedVolume(SoundInstance sound) {
+        float baseCategoryVolume = MinecraftClient.getInstance().options.getSoundVolume(sound.getCategory());
+        float adjustment = volume * baseCategoryVolume;
 
         return Math.max(adjustment * sound.getVolume(), 0.0F);
     }

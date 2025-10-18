@@ -122,20 +122,6 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     }
 
     @Override
-    public void render(DrawContext context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        int leftSide = (this.screen.width - totalWidth) / 2;
-
-        this.volumeSlider.setPosition(leftSide, y);
-        this.volumeSlider.render(context, mouseX, mouseY, tickDelta);
-        
-        this.playSoundButton.setPosition(volumeSlider.getRight() + paddingAfterSearch, y);
-        this.playSoundButton.render(context, mouseX, mouseY, tickDelta);
-
-        this.resetButton.setPosition(playSoundButton.getRight() + paddingBetweenButtons, y);
-        this.resetButton.render(context, mouseX, mouseY, tickDelta);
-    }
-
-    @Override
     public List<? extends Element> children() {
         return List.of(volumeSlider, playSoundButton, resetButton);
     }
@@ -143,5 +129,19 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     @Override
     public List<? extends Selectable> selectableChildren() {
         return List.of(volumeSlider, playSoundButton, resetButton);
+    }
+
+    @Override
+    public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        int leftSide = (this.screen.width - totalWidth) / 2;
+
+        this.volumeSlider.setPosition(leftSide, getY());
+        this.volumeSlider.render(context, mouseX, mouseY, tickDelta);
+
+        this.playSoundButton.setPosition(volumeSlider.getRight() + paddingAfterSearch, getY());
+        this.playSoundButton.render(context, mouseX, mouseY, tickDelta);
+
+        this.resetButton.setPosition(playSoundButton.getRight() + paddingBetweenButtons, getY());
+        this.resetButton.render(context, mouseX, mouseY, tickDelta);
     }
 }
