@@ -122,16 +122,6 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     }
 
     @Override
-    public List<? extends Element> children() {
-        return List.of(volumeSlider, playSoundButton, resetButton);
-    }
-
-    @Override
-    public List<? extends Selectable> selectableChildren() {
-        return List.of(volumeSlider, playSoundButton, resetButton);
-    }
-
-    @Override
     public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
         int leftSide = (this.screen.width - totalWidth) / 2;
 
@@ -143,5 +133,15 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
 
         this.resetButton.setPosition(playSoundButton.getRight() + paddingBetweenButtons, getY());
         this.resetButton.render(context, mouseX, mouseY, tickDelta);
+    }
+
+    @Override
+    public List<? extends Element> children() {
+        return List.of(volumeSlider, playSoundButton, resetButton);
+    }
+
+    @Override
+    public List<? extends Selectable> selectableChildren() {
+        return List.of(volumeSlider, playSoundButton, resetButton);
     }
 }

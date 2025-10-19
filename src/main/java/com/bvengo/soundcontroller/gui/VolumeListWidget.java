@@ -28,8 +28,9 @@ public class VolumeListWidget extends ElementListWidget<VolumeWidgetEntry> {
         return rowWidth;
     }
 
-    public void clearEntriesPublic() {
-        this.clearEntries();
+    @Override
+    public void clearEntries() {
+        super.clearEntries();
     }
 }
 
