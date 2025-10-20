@@ -2,38 +2,24 @@ package com.bvengo.soundcontroller.mixin;
 
 import com.bvengo.soundcontroller.Translations;
 import com.bvengo.soundcontroller.gui.AllSoundOptionsScreen;
-
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.screen.option.SoundOptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.gui.widget.ThreePartsLayoutWidget;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.screen.ScreenTexts;
-
 import net.minecraft.text.Text;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(GameOptionsScreen.class)
-public class GameOptionsScreenMixin {
-    @Shadow @Final public ThreePartsLayoutWidget layout;
-
-    @Inject(method = "initFooter", at = @At("HEAD"), cancellable = true)
-    private void replaceDoneButton(CallbackInfo ci) {
-
-		//noinspection ConstantValue
-		if (!((Object)this instanceof SoundOptionsScreen)) {
-            return;
-        }
-
+@Mixin(SoundOptionsScreen.class)
+public abstract class SoundOptionsScreenMixin extends ExtendGameOptionsScreenMixin {
+    @Override
+    protected Widget replaceDoneButton(ThreePartsLayoutWidget instance, Widget widget, Operation<Widget> original) {
         ScreenAccessor screenAccessor = (ScreenAccessor) (Object) this;
         GameOptionsScreenAccessor gameOptionsScreenAccessor = (GameOptionsScreenAccessor) (Object) this;
 
@@ -48,7 +34,7 @@ public class GameOptionsScreenMixin {
         soundcontroller$addLayoutButton(client, directionalLayoutWidget, Translations.SOUND_SCREEN_TITLE, volumeOptionsScreen);
         soundcontroller$addLayoutButton(client, directionalLayoutWidget, ScreenTexts.DONE, parent);
 
-        ci.cancel();
+        return directionalLayoutWidget;
     }
 
     @Unique
