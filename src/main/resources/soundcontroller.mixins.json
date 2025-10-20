@@ -5,7 +5,8 @@
     "mixins": [],
     "client": [
         "GameOptionsScreenAccessor",
-        "GameOptionsScreenMixin",
+        "ExtendGameOptionsScreenMixin",
+        "SoundOptionsScreenMixin",
         "ScreenAccessor",
         "SoundManagerAccessor",
         "SoundSystemAccessor",
