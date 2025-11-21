@@ -6,5 +6,16 @@
     "soundcontroller.options.subtitles.tooltip": "Display subtitles with sound IDs (will turn off vanilla subtitles)",
     "soundcontroller.options.play.tooltip": "Play sound",
     "soundcontroller.options.reset.tooltip": "Reset sound to default",
-    "soundcontroller.options.override": "Override"
+    "soundcontroller.options.manual_input.placeholder": "Enter percentages like 50, 12.5, or 150%.",
+    "soundcontroller.options.manual_input.error": "Enter a valid non-negative number.",
+    "soundcontroller.options.override": "Override",
+    "soundcontroller.options.category.screen": "%s Sounds",
+    "soundcontroller.options.category.ambient": "Ambient",
+    "soundcontroller.options.category.block": "Block",
+    "soundcontroller.options.category.entity": "Entity",
+    "soundcontroller.options.category.item": "Item",
+    "soundcontroller.options.category.music": "Music",
+    "soundcontroller.options.category.weather": "Weather",
+    "soundcontroller.options.category.ui": "UI",
+    "soundcontroller.options.category.miscellaneous": "Miscellaneous"
 }

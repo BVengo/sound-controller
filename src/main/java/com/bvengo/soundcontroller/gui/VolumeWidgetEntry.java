@@ -6,18 +6,23 @@ import com.bvengo.soundcontroller.VolumeData;
 import com.bvengo.soundcontroller.gui.buttons.AudioButtonWidget;
 import com.bvengo.soundcontroller.gui.buttons.TriggerButtonWidget;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.ClickableWidget;
+import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.ElementListWidget.Entry;
+import net.minecraft.client.input.CharInput;
+import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
@@ -41,8 +46,19 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     public ClickableWidget volumeSlider;
     public TriggerButtonWidget playSoundButton;
     public TriggerButtonWidget resetButton;
+    private TextFieldWidget manualInputField;
+    private boolean manualEditActive;
+    private Float manualOriginalVolume;
 
     private static final float MAX_VOLUME = 2.0f;
+    private static final int ERROR_COLOR = 0xFF5555;
+    private static final int[] BLOCKED_NAV_KEYS = new int[] {
+            GLFW.GLFW_KEY_UP,
+            GLFW.GLFW_KEY_DOWN,
+            GLFW.GLFW_KEY_LEFT,
+            GLFW.GLFW_KEY_RIGHT,
+            GLFW.GLFW_KEY_TAB
+    };
 
     public VolumeWidgetEntry(VolumeData volumeData, Screen screen, GameOptions gameOptions) {
         this.volumeData = volumeData;
@@ -82,7 +98,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
                         // Make the value red if it's over the max
                         return Text.translatable("options.generic_value",
                                 prefix,
-                                Text.literal(volume + "%").styled(style -> style.withColor(0xFF5555))
+                                Text.literal(volume + "%").styled(style -> style.withColor(ERROR_COLOR))
                         );
                     }
 
@@ -97,6 +113,10 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
 
         // Volume slider (widget, created from options)
         this.volumeSlider = volumeOption.createWidget(gameOptions, 0, 0, sliderWidth);
+    }
+
+    public void rebuildSlider() {
+        addSlider();
     }
 
     private void addPlayButton() {
@@ -124,24 +144,245 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
         int leftSide = (this.screen.width - totalWidth) / 2;
+        int top = getY();
 
-        this.volumeSlider.setPosition(leftSide, getY());
-        this.volumeSlider.render(context, mouseX, mouseY, tickDelta);
+        this.volumeSlider.setPosition(leftSide, top);
+        if (this.manualEditActive && this.manualInputField != null) {
+            this.manualInputField.setPosition(leftSide, top);
+            this.manualInputField.setWidth(sliderWidth);
+            this.manualInputField.render(context, mouseX, mouseY, tickDelta);
+        } else {
+            this.volumeSlider.render(context, mouseX, mouseY, tickDelta);
+        }
 
-        this.playSoundButton.setPosition(volumeSlider.getRight() + paddingAfterSearch, getY());
+        this.playSoundButton.setPosition(volumeSlider.getRight() + paddingAfterSearch, top);
         this.playSoundButton.render(context, mouseX, mouseY, tickDelta);
 
-        this.resetButton.setPosition(playSoundButton.getRight() + paddingBetweenButtons, getY());
+        this.resetButton.setPosition(playSoundButton.getRight() + paddingBetweenButtons, top);
         this.resetButton.render(context, mouseX, mouseY, tickDelta);
     }
 
     @Override
     public List<? extends Element> children() {
+        if (this.manualEditActive && this.manualInputField != null) {
+            return List.of(manualInputField, playSoundButton, resetButton);
+        }
+
         return List.of(volumeSlider, playSoundButton, resetButton);
     }
 
     @Override
     public List<? extends Selectable> selectableChildren() {
+        if (this.manualEditActive && this.manualInputField != null) {
+            return List.of(manualInputField, playSoundButton, resetButton);
+        }
+
         return List.of(volumeSlider, playSoundButton, resetButton);
+    }
+
+    @Override
+    public boolean mouseClicked(Click click, boolean doubleClick) {
+        if (click.button() == 1 && isMouseWithinEntry(click.x(), click.y())) {
+            startManualEdit();
+            return true;
+        }
+
+        if (this.manualEditActive && this.manualInputField != null && this.manualInputField.mouseClicked(click, doubleClick)) {
+            return true;
+        }
+
+        return super.mouseClicked(click, doubleClick);
+    }
+
+    @Override
+    public boolean mouseReleased(Click click) {
+        if (this.manualEditActive && this.manualInputField != null && this.manualInputField.mouseReleased(click)) {
+            return true;
+        }
+
+        return super.mouseReleased(click);
+    }
+
+    @Override
+    public boolean mouseDragged(Click click, double deltaX, double deltaY) {
+        if (this.manualEditActive && this.manualInputField != null && this.manualInputField.mouseDragged(click, deltaX, deltaY)) {
+            return true;
+        }
+
+        return super.mouseDragged(click, deltaX, deltaY);
+    }
+
+    @Override
+    public boolean keyPressed(KeyInput input) {
+        if (this.manualEditActive && this.manualInputField != null) {
+            int key = input.key();
+            if (key == GLFW.GLFW_KEY_ESCAPE) {
+                cancelManualEdit();
+                return true;
+            }
+
+            if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER) {
+                return commitManualEdit();
+            }
+
+            if (isBlockedNavigationKey(key)) {
+                return true;
+            }
+
+            if (this.manualInputField.keyPressed(input)) {
+                return true;
+            }
+        }
+
+        return super.keyPressed(input);
+    }
+
+    @Override
+    public boolean keyReleased(KeyInput input) {
+        if (this.manualEditActive && this.manualInputField != null && this.manualInputField.keyReleased(input)) {
+            return true;
+        }
+
+        return super.keyReleased(input);
+    }
+
+    @Override
+    public boolean charTyped(CharInput input) {
+        if (this.manualEditActive && this.manualInputField != null && this.manualInputField.charTyped(input)) {
+            return true;
+        }
+
+        return super.charTyped(input);
+    }
+
+    private boolean isMouseWithinEntry(double mouseX, double mouseY) {
+        if (this.volumeSlider == null) {
+            return false;
+        }
+
+        int leftSide = (this.screen.width - totalWidth) / 2;
+        int rightSide = leftSide + totalWidth;
+        int top = this.getY();
+        int bottom = top + Math.max(this.volumeSlider.getHeight(), buttonSize);
+
+        return mouseX >= leftSide && mouseX <= rightSide && mouseY >= top && mouseY <= bottom;
+    }
+
+    private void startManualEdit() {
+        if (this.manualEditActive) {
+            return;
+        }
+
+        this.manualOriginalVolume = this.volumeData.getVolume();
+        this.manualInputField = new TextFieldWidget(
+                MinecraftClient.getInstance().textRenderer,
+                0,
+                0,
+                sliderWidth,
+                this.volumeSlider.getHeight(),
+                Text.empty()
+        );
+        this.manualInputField.setMaxLength(16);
+        this.manualInputField.setDrawsBackground(true);
+        this.manualInputField.setText("");
+        this.manualInputField.setSuggestion(Translations.MANUAL_INPUT_PLACEHOLDER.getString());
+        this.manualInputField.setPlaceholder(Translations.MANUAL_INPUT_PLACEHOLDER);
+        this.manualInputField.setChangedListener(value -> resetManualInputFieldStyle());
+        this.manualInputField.setFocused(true);
+        this.setFocused(this.manualInputField);
+        resetManualInputFieldStyle();
+        this.manualEditActive = true;
+    }
+
+    private boolean commitManualEdit() {
+        if (!this.manualEditActive || this.manualInputField == null) {
+            return false;
+        }
+
+        Float parsedValue = parseManualInput(this.manualInputField.getText());
+        if (parsedValue == null) {
+            indicateManualInputError();
+            return true;
+        }
+
+        this.volumeData.setVolume(parsedValue);
+        Utils.updateExistingSounds();
+        stopManualEdit();
+        return true;
+    }
+
+    private void cancelManualEdit() {
+        if (!this.manualEditActive) {
+            return;
+        }
+
+        if (this.manualOriginalVolume != null) {
+            this.volumeData.setVolume(this.manualOriginalVolume);
+            Utils.updateExistingSounds();
+        }
+
+        stopManualEdit();
+    }
+
+    private void stopManualEdit() {
+        this.manualEditActive = false;
+        this.manualInputField = null;
+        this.manualOriginalVolume = null;
+        this.setFocused(null);
+        rebuildSlider();
+    }
+
+    private Float parseManualInput(String input) {
+        if (input == null) {
+            return null;
+        }
+
+        String trimmed = input.trim();
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+
+        boolean endsWithPercent = trimmed.endsWith("%");
+        if (endsWithPercent) {
+            trimmed = trimmed.substring(0, trimmed.length() - 1).trim();
+            if (trimmed.isEmpty()) {
+                return null;
+            }
+        }
+
+        try {
+            double value = Double.parseDouble(trimmed);
+            value /= 100.0;
+
+            if (Double.isNaN(value) || Double.isInfinite(value) || value < 0) {
+                return null;
+            }
+
+            return (float) value;
+        } catch (NumberFormatException ex) {
+            return null;
+        }
+    }
+
+    private void resetManualInputFieldStyle() {
+        if (this.manualInputField != null) {
+            this.manualInputField.setEditableColor(TextFieldWidget.DEFAULT_EDITABLE_COLOR);
+        }
+    }
+
+    private void indicateManualInputError() {
+        if (this.manualInputField != null) {
+            this.manualInputField.setEditableColor(ERROR_COLOR);
+        }
+    }
+
+    private boolean isBlockedNavigationKey(int key) {
+        for (int blocked : BLOCKED_NAV_KEYS) {
+            if (blocked == key) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

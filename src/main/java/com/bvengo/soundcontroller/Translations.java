@@ -11,6 +11,16 @@ public abstract class Translations {
         public static final Text SUBTITLES_BUTTON_TOOLTIP = translatableOf("subtitles.tooltip");
         public static final Text RESET_BUTTON_TOOLTIP = translatableOf("reset.tooltip");
         public static final Text PLAY_BUTTON_TOOLTIP = translatableOf("play.tooltip");
+        public static final Text MANUAL_INPUT_PLACEHOLDER = translatableOf("manual_input.placeholder");
+        public static final Text MANUAL_INPUT_ERROR = translatableOf("manual_input.error");
+        public static final Text CATEGORY_AMBIENT = translatableOf("category.ambient");
+        public static final Text CATEGORY_BLOCK = translatableOf("category.block");
+        public static final Text CATEGORY_ENTITY = translatableOf("category.entity");
+        public static final Text CATEGORY_ITEM = translatableOf("category.item");
+        public static final Text CATEGORY_MUSIC = translatableOf("category.music");
+        public static final Text CATEGORY_WEATHER = translatableOf("category.weather");
+        public static final Text CATEGORY_UI = translatableOf("category.ui");
+        public static final Text CATEGORY_MISCELLANEOUS = translatableOf("category.miscellaneous");
 
         public static Text translatableOf(String key) {
             return Text.translatable(getTranslationKey(key));
@@ -18,5 +28,9 @@ public abstract class Translations {
 
         public static String getTranslationKey(String key) {
             return SoundController.MOD_ID + ".options." + key;
+        }
+
+        public static Text categoryScreenTitle(Text categoryName) {
+            return Text.translatable(getTranslationKey("category.screen"), categoryName);
         }
 }

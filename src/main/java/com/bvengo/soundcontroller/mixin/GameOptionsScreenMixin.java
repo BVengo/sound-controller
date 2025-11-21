@@ -1,7 +1,7 @@
 package com.bvengo.soundcontroller.mixin;
 
 import com.bvengo.soundcontroller.Translations;
-import com.bvengo.soundcontroller.gui.AllSoundOptionsScreen;
+import com.bvengo.soundcontroller.gui.SoundCategorySelectionScreen;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
@@ -44,8 +44,8 @@ public class GameOptionsScreenMixin {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addFooter(DirectionalLayoutWidget.horizontal().spacing(8));
 
         // To individual volume options screen
-        AllSoundOptionsScreen volumeOptionsScreen = new AllSoundOptionsScreen((SoundOptionsScreen)(Object)this, options);
-        soundcontroller$addLayoutButton(client, directionalLayoutWidget, Translations.SOUND_SCREEN_TITLE, volumeOptionsScreen);
+        SoundCategorySelectionScreen selectionScreen = new SoundCategorySelectionScreen((SoundOptionsScreen)(Object)this, options);
+        soundcontroller$addLayoutButton(client, directionalLayoutWidget, Translations.SOUND_SCREEN_TITLE, selectionScreen);
         soundcontroller$addLayoutButton(client, directionalLayoutWidget, ScreenTexts.DONE, parent);
 
         ci.cancel();
