@@ -1,5 +1,6 @@
 package com.bvengo.soundcontroller.gui;
 
+import com.bvengo.soundcontroller.VolumeData;
 import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.gui.buttons.ToggleButtonWidget;
 import net.minecraft.client.MinecraftClient;
@@ -12,8 +13,8 @@ import net.minecraft.client.option.GameOptions;
 import net.minecraft.screen.ScreenTexts;
 
 import java.util.Comparator;
+import java.util.Locale;
 
-import static com.bvengo.soundcontroller.Translations.SOUND_SCREEN_TITLE;
 import static com.bvengo.soundcontroller.Translations.SEARCH_FIELD_TITLE;
 import static com.bvengo.soundcontroller.Translations.SEARCH_FIELD_PLACEHOLDER;
 import static com.bvengo.soundcontroller.Translations.FILTER_BUTTON_TOOLTIP;
@@ -27,6 +28,7 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
 
     protected final Screen parent;
 
+    private final IndividualSoundCategory category;
     private VolumeListWidget volumeListWidget;
     private TextFieldWidget searchField;
 
@@ -35,9 +37,10 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
 
     private boolean showModifiedOnly = false;
 
-    public AllSoundOptionsScreen(Screen parent, GameOptions options) {
-        super(parent, options, SOUND_SCREEN_TITLE);
+    public AllSoundOptionsScreen(Screen parent, GameOptions options, IndividualSoundCategory category) {
+        super(parent, options, category.getScreenTitle());
         this.parent = parent;
+        this.category = category;
 
         // Increase header height to make room for search field. Includes 8 extra padding below.
         layout.setHeaderHeight(layout.getHeaderHeight() + 28);
@@ -108,12 +111,15 @@ public class AllSoundOptionsScreen extends GameOptionsScreen {
         this.volumeListWidget.clearEntries();
         this.volumeListWidget.setScrollY(0);
 
-        String search = this.searchField.getText().toLowerCase();
+        String search = this.searchField.getText().toLowerCase(Locale.ROOT);
 
         // Update all buttons
         config.getVolumes().values().stream()
             .filter(volumeData -> volumeData.inFilter(search, showModifiedOnly))
-            .sorted(Comparator.comparing(v -> v.getId().toString()))
+            .filter(category::matches)
+            .sorted(Comparator
+                    .comparingInt((VolumeData v) -> IndividualSoundCategory.from(v).getSortOrder())
+                    .thenComparing(v -> v.getId().toString()))
             .forEach(volumeData -> {
                 VolumeWidgetEntry volumeEntry = new VolumeWidgetEntry(volumeData, this, this.gameOptions);
                 this.volumeListWidget.addWidgetEntry(volumeEntry);

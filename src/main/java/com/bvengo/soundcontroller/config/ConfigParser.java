@@ -4,11 +4,16 @@ import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.VolumeData;
 import com.google.gson.*;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.registry.Registries;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 public class ConfigParser {
 	private static final File file = new File(FabricLoader.getInstance().getConfigDir().toFile(),
@@ -65,7 +70,6 @@ public class ConfigParser {
 
 		JsonArray sounds = new JsonArray();
 		config.getVolumes().values().stream()
-				.filter(volumeData -> volumeData.getVolume() != 1.0F)
 				.sorted(Comparator.comparing(v -> v.getId().toString()))
 				.forEach(volumeData -> {
 					JsonObject soundObject = new JsonObject();
@@ -143,7 +147,8 @@ public class ConfigParser {
 	private static void buildEmptyConfig() {
 		JsonObject newConfig = new JsonObject();
 		newConfig.addProperty("version", VolumeConfig.CONFIG_VERSION);
-		newConfig.add("sounds", new JsonArray());
+		newConfig.addProperty("subtitlesEnabled", false);
+		newConfig.add("sounds", buildDefaultSoundsArray());
 
 		try (Writer writer = new FileWriter(file)) {
 			gson.toJson(newConfig, writer);
@@ -282,5 +287,26 @@ public class ConfigParser {
 
 			addVolumeData(soundVolumes, soundId, volume);
 		});
+	}
+
+	private static JsonArray buildDefaultSoundsArray() {
+		JsonArray sounds = new JsonArray();
+		List<SoundEvent> soundEvents = new ArrayList<>();
+		for (SoundEvent soundEvent : Registries.SOUND_EVENT) {
+			if (soundEvent != SoundEvents.INTENTIONALLY_EMPTY) {
+				soundEvents.add(soundEvent);
+			}
+		}
+
+		soundEvents.sort(Comparator.comparing(soundEvent -> soundEvent.id().toString()));
+
+		soundEvents.forEach(soundEvent -> {
+			JsonObject soundObject = new JsonObject();
+			soundObject.addProperty("soundId", soundEvent.id().toString());
+			soundObject.addProperty("volume", VolumeData.DEFAULT_VOLUME);
+			sounds.add(soundObject);
+		});
+
+		return sounds;
 	}
 }
