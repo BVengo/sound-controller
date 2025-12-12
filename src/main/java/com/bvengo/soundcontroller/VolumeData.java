@@ -1,11 +1,11 @@
 package com.bvengo.soundcontroller;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.sound.PositionedSoundInstance;
-import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.client.sound.SoundManager;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
 
 public class VolumeData {
     public static final Float DEFAULT_VOLUME = 1.0f;
@@ -31,7 +31,7 @@ public class VolumeData {
     }
 
     public Float getAdjustedVolume(SoundInstance sound) {
-        float baseCategoryVolume = MinecraftClient.getInstance().options.getSoundVolume(sound.getCategory());
+        float baseCategoryVolume = Minecraft.getInstance().options.getFinalSoundSourceVolume(sound.getSource());
         float adjustment = volume * baseCategoryVolume;
 
         return Math.max(adjustment * sound.getVolume(), 0.0F);
@@ -51,7 +51,7 @@ public class VolumeData {
     }
 
     public void playSound(SoundManager soundManager) {
-        SoundEvent soundEvent = SoundEvent.of(soundId);
-        soundManager.play(PositionedSoundInstance.master(soundEvent, 1.0f));
+        SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(soundId);
+        soundManager.play(SimpleSoundInstance.forUI(soundEvent, 1.0f));
     }
 }

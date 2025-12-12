@@ -4,13 +4,9 @@
     "compatibilityLevel": "JAVA_21",
     "mixins": [],
     "client": [
-        "GameOptionsScreenAccessor",
-        "GameOptionsScreenMixin",
-        "ScreenAccessor",
-        "SoundManagerAccessor",
-        "SoundSystemAccessor",
-        "SoundSystemMixin",
-        "SubtitlesHudMixin"
+      "OptionsSubScreenMixin",
+      "SoundEngineMixin",
+      "SubtitleOverlayMixin"
     ],
     "injectors": {
         "defaultRequire": 1
