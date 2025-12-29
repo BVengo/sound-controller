@@ -7,14 +7,6 @@
       "OptionsSubScreenMixin",
       "SoundEngineMixin",
       "SubtitleOverlayMixin"
-      "GameOptionsScreenAccessor",
-      "ExtendGameOptionsScreenMixin",
-      "SoundOptionsScreenMixin",
-      "ScreenAccessor",
-      "SoundManagerAccessor",
-      "SoundSystemAccessor",
-      "SoundSystemMixin",
-      "SubtitlesHudMixin"
     ],
     "injectors": {
         "defaultRequire": 1
