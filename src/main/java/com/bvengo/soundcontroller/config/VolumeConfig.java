@@ -1,13 +1,12 @@
 package com.bvengo.soundcontroller.config;
 
 import com.bvengo.soundcontroller.VolumeData;
-import net.minecraft.client.sound.SoundInstance;
-import net.minecraft.registry.Registries;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
-
 import java.util.HashMap;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
 
 public class VolumeConfig {
     private static VolumeConfig instance;
@@ -37,9 +36,9 @@ public class VolumeConfig {
 
     private void updateVolumes() {
         // Update map with any sounds missing from the config file
-        for (SoundEvent soundEvent : Registries.SOUND_EVENT) {
-            if (soundEvent != SoundEvents.INTENTIONALLY_EMPTY) {
-                Identifier soundId = soundEvent.id();
+        for (SoundEvent soundEvent : BuiltInRegistries.SOUND_EVENT) {
+            if (soundEvent != SoundEvents.EMPTY) {
+                Identifier soundId = soundEvent.location();
                 soundVolumes.putIfAbsent(soundId, new VolumeData(soundId));
             }
         }
@@ -54,7 +53,7 @@ public class VolumeConfig {
     }
 
     public float getAdjustedVolume(SoundInstance sound) {
-        VolumeData volumeData = getVolumeData(sound.getId());
+        VolumeData volumeData = getVolumeData(sound.getIdentifier());
         return volumeData.getAdjustedVolume(sound);
     }
 
