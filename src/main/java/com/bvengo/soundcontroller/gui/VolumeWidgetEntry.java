@@ -5,21 +5,20 @@ import com.bvengo.soundcontroller.Utils;
 import com.bvengo.soundcontroller.VolumeData;
 import com.bvengo.soundcontroller.gui.buttons.AudioButtonWidget;
 import com.bvengo.soundcontroller.gui.buttons.TriggerButtonWidget;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.tooltip.Tooltip;
-import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.widget.ElementListWidget.Entry;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.client.option.SimpleOption;
-import net.minecraft.client.sound.SoundManager;
-import net.minecraft.screen.ScreenTexts;
-import net.minecraft.text.Text;
-
 import java.util.List;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.OptionInstance;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList.Entry;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 
 /**
  * A widget entry allowing control of a single volume. Should be used in a {@link VolumeListWidget}.
@@ -28,7 +27,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     private final VolumeData volumeData;
     private final SoundManager soundManager;
     private final Screen screen;
-    private final GameOptions gameOptions;
+    private final Options options;
 
     private static final int sliderWidth = 310;
     private static final int buttonSize = 20;
@@ -36,19 +35,19 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     private static final int paddingBetweenButtons = 4;
     public static final int totalWidth = sliderWidth + buttonSize * 2 + paddingAfterSearch + paddingBetweenButtons;
 
-    public SimpleOption<Double> volumeOption;
+    public OptionInstance<Double> volumeOption;
 
-    public ClickableWidget volumeSlider;
+    public AbstractWidget volumeSlider;
     public TriggerButtonWidget playSoundButton;
     public TriggerButtonWidget resetButton;
 
     private static final float MAX_VOLUME = 2.0f;
 
-    public VolumeWidgetEntry(VolumeData volumeData, Screen screen, GameOptions gameOptions) {
+    public VolumeWidgetEntry(VolumeData volumeData, Screen screen, Options options) {
         this.volumeData = volumeData;
         this.screen = screen;
-        this.gameOptions = gameOptions;
-        this.soundManager = MinecraftClient.getInstance().getSoundManager();
+        this.options = options;
+        this.soundManager = Minecraft.getInstance().getSoundManager();
 
         init();
     }
@@ -65,9 +64,9 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
 
     private void addSlider() {
         // Volume slider (options)
-        this.volumeOption = new SimpleOption<>(
+        this.volumeOption = new OptionInstance<>(
                 volumeData.getId().toString(),
-                SimpleOption.emptyTooltip(),
+                OptionInstance.noTooltip(),
                 (prefix, value) -> {
                     // Use volumeData instead of value, noting that it gets updated immediately by the slider as well.
                     // This allows us to list the actual volume (which may be over/under set), not whatever the slider
@@ -75,20 +74,20 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
                     int volume = getPercentageValue(volumeData.getVolume());
 
                     if (volume == 0) {
-                        return Text.translatable("options.generic_value", prefix, ScreenTexts.OFF);
+                        return Component.translatable("options.generic_value", prefix, CommonComponents.OPTION_OFF);
                     }
 
                     if (volume > MAX_VOLUME * 100 || volume < 0) {
                         // Make the value red if it's over the max
-                        return Text.translatable("options.generic_value",
+                        return Component.translatable("options.generic_value",
                                 prefix,
-                                Text.literal(volume + "%").styled(style -> style.withColor(0xFF5555))
+                                Component.literal(volume + "%").withStyle(style -> style.withColor(0xFF5555))
                         );
                     }
 
-                    return Text.translatable("options.percent_value", prefix, volume);
+                    return Component.translatable("options.percent_value", prefix, volume);
                 },
-                SimpleOption.DoubleSliderCallbacks.INSTANCE,
+                OptionInstance.UnitDouble.INSTANCE,
                 Math.clamp(volumeData.getVolume().doubleValue() / MAX_VOLUME, 0.0, 1.0),
                 value -> {
                     volumeData.setVolume(getVolumeFromSlider(value));
@@ -96,7 +95,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
                 });
 
         // Volume slider (widget, created from options)
-        this.volumeSlider = volumeOption.createWidget(gameOptions, 0, 0, sliderWidth);
+        this.volumeSlider = volumeOption.createButton(options, 0, 0, sliderWidth);
     }
 
     private void addPlayButton() {
@@ -112,7 +111,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
                     Utils.updateExistingSounds();
                 });
 
-        this.resetButton.setTooltip(Tooltip.of(Translations.RESET_BUTTON_TOOLTIP));
+        this.resetButton.setTooltip(Tooltip.create(Translations.RESET_BUTTON_TOOLTIP));
     }
 
     private void init() {
@@ -122,7 +121,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+    public void renderContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
         int leftSide = (this.screen.width - totalWidth) / 2;
 
         this.volumeSlider.setPosition(leftSide, getY());
@@ -136,12 +135,12 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     }
 
     @Override
-    public List<? extends Element> children() {
+    public List<? extends GuiEventListener> children() {
         return List.of(volumeSlider, playSoundButton, resetButton);
     }
 
     @Override
-    public List<? extends Selectable> selectableChildren() {
+    public List<? extends NarratableEntry> narratables() {
         return List.of(volumeSlider, playSoundButton, resetButton);
     }
 }
