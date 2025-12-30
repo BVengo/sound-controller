@@ -1,5 +1,7 @@
 package com.bvengo.soundcontroller;
 
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.server.packs.PackType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,9 @@ public class SoundController implements ClientModInitializer {
 			// Load and register all sounds
 			CONFIG = VolumeConfig.getInstance();
 		});
+
+		ResourceLoader.get(PackType.CLIENT_RESOURCES)
+			.registerReloader(SoundReloadListener.ID, new SoundReloadListener());
 
 		LOGGER.info("{} loaded.", LOGGER.getName());
 	}
