@@ -13,6 +13,8 @@ public class VolumeData {
     private final Identifier soundId;
     private Float volume;
 
+    private SimpleSoundInstance currentSoundInstance = null;
+
     public VolumeData(Identifier id, float volume) {
         this.soundId = id;
         this.volume = volume; // Removed clamping to allow manually setting over / under the slider
@@ -52,6 +54,20 @@ public class VolumeData {
 
     public void playSound(SoundManager soundManager) {
         SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(soundId);
-        soundManager.play(SimpleSoundInstance.forUI(soundEvent, 1.0f));
+        currentSoundInstance = SimpleSoundInstance.forUI(soundEvent, 1.0f);
+        soundManager.play(currentSoundInstance);
+    }
+
+    public void toggleSound(SoundManager soundManager) {
+        if (soundManager.isActive(currentSoundInstance)) {
+            soundManager.stop(currentSoundInstance);
+            currentSoundInstance = null;
+        } else {
+            playSound(soundManager);
+        }
+    }
+
+    public boolean isActive(SoundManager soundManager) {
+        return soundManager.isActive(currentSoundInstance);
     }
 }
