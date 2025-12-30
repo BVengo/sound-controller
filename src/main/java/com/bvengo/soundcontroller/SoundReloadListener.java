@@ -20,6 +20,6 @@ public class SoundReloadListener implements ResourceManagerReloadListener {
 			return;
 		}
 
-		SoundController.CONFIG.updateAndSave();
+		SoundController.CONFIG.updateVolumes();
 	}
 }
