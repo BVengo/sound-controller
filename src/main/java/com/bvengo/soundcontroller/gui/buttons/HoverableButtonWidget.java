@@ -17,10 +17,10 @@ import net.minecraft.resources.Identifier;
 public class HoverableButtonWidget extends Button {
     protected boolean isPressed = false;
 
-    private final Identifier ON_TEXTURE;
-    private final Identifier OFF_TEXTURE;
-    private final Identifier ON_HOVER_TEXTURE;
-    private final Identifier OFF_HOVER_TEXTURE;
+    protected final Identifier ON_TEXTURE;
+    protected final Identifier OFF_TEXTURE;
+    protected final Identifier ON_HOVER_TEXTURE;
+    protected final Identifier OFF_HOVER_TEXTURE;
 
     String buttonId;
 
@@ -35,11 +35,14 @@ public class HoverableButtonWidget extends Button {
         OFF_HOVER_TEXTURE = Identifier.fromNamespaceAndPath(SoundController.MOD_ID, buttonId + "_button_off_hovered");
     }
 
+    protected Identifier getTextureIdentifier() {
+        return isPressed ? (isHovered ? ON_HOVER_TEXTURE : ON_TEXTURE)
+                : (isHovered ? OFF_HOVER_TEXTURE : OFF_TEXTURE);
+    }
+
     @Override
     public void renderContents(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        Identifier texture = isPressed ? (isHovered ? ON_HOVER_TEXTURE : ON_TEXTURE)
-                : (isHovered ? OFF_HOVER_TEXTURE : OFF_TEXTURE);
-
+        Identifier texture = getTextureIdentifier();
         context.blitSprite(RenderPipelines.GUI_TEXTURED, texture, getX(), getY(), width, height);
     }
 }
