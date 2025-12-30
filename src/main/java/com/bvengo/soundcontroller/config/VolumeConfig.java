@@ -2,7 +2,10 @@ package com.bvengo.soundcontroller.config;
 
 import com.bvengo.soundcontroller.VolumeData;
 import java.util.HashMap;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
@@ -36,12 +39,16 @@ public class VolumeConfig {
 
     private void updateVolumes() {
         // Update map with any sounds missing from the config file
-        for (SoundEvent soundEvent : BuiltInRegistries.SOUND_EVENT) {
-            if (soundEvent != SoundEvents.EMPTY) {
-                Identifier soundId = soundEvent.location();
-                soundVolumes.putIfAbsent(soundId, new VolumeData(soundId));
-            }
+        SoundManager soundManager = Minecraft.getInstance().getSoundManager();
+
+        for (Identifier id : soundManager.getAvailableSounds()) {
+            soundVolumes.putIfAbsent(id, new VolumeData(id));
         }
+    }
+
+    public void updateAndSave() {
+        updateVolumes();
+        ConfigParser.saveConfig(this);
     }
 
     public HashMap<Identifier, VolumeData> getVolumes() {
