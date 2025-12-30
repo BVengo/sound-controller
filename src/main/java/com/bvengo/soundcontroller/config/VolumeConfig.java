@@ -1,5 +1,6 @@
 package com.bvengo.soundcontroller.config;
 
+import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.VolumeData;
 import java.util.HashMap;
 
@@ -21,9 +22,7 @@ public class VolumeConfig {
 
     private VolumeConfig() {
         soundVolumes = new HashMap<>();
-        ConfigParser.loadConfig(this);
         updateVolumes();
-        ConfigParser.saveConfig(this);
     }
 
     public static VolumeConfig getInstance() {
@@ -37,17 +36,18 @@ public class VolumeConfig {
         ConfigParser.saveConfig(this);
     }
 
-    private void updateVolumes() {
+    public void updateVolumes() {
+        this.soundVolumes.clear();
+        
+        ConfigParser.loadConfig(this);
+
         // Update map with any sounds missing from the config file
         SoundManager soundManager = Minecraft.getInstance().getSoundManager();
 
         for (Identifier id : soundManager.getAvailableSounds()) {
             soundVolumes.putIfAbsent(id, new VolumeData(id));
         }
-    }
 
-    public void updateAndSave() {
-        updateVolumes();
         ConfigParser.saveConfig(this);
     }
 
@@ -59,9 +59,9 @@ public class VolumeConfig {
         return soundVolumes.getOrDefault(soundId, new VolumeData(soundId));
     }
 
-    public float getAdjustedVolume(SoundInstance sound) {
+    public float getAdjustedVolume(SoundInstance sound, float baseVolume) {
         VolumeData volumeData = getVolumeData(sound.getIdentifier());
-        return volumeData.getAdjustedVolume(sound);
+		return volumeData.getVolume() * baseVolume;
     }
 
     public boolean areSubtitlesEnabled() {
