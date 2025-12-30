@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "soundcontroller",
-    "version": "1.2.3",
+    "version": "1.2.4",
     "icon": "assets/soundcontroller/icon.png",
 
     "name": "Sound Controller",
@@ -28,7 +28,7 @@
     ],
     "depends": {
         "fabricloader": ">=0.16.0",
-        "minecraft": ">=1.21.9",
+        "minecraft": ">=1.21.11",
         "java": ">=21",
         "fabric-api": "*"
     },
