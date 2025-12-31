@@ -13,7 +13,11 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(SubtitleOverlay.class)
 public abstract class SubtitleOverlayMixin {
-	@WrapOperation(method = "onPlaySound", at=@At(value = "INVOKE", target= "Lnet/minecraft/client/sounds/WeighedSoundEvents;getSubtitle()Lnet/minecraft/network/chat/Component;"))
+	@WrapOperation(
+			method = "onPlaySound",
+			at = @At(
+					value = "INVOKE",
+					target = "Lnet/minecraft/client/sounds/WeighedSoundEvents;getSubtitle()Lnet/minecraft/network/chat/Component;"))
 	private Component replaceSubtitleText(WeighedSoundEvents instance, Operation<Component> original, SoundInstance sound) {
 		return SoundController.CONFIG.areSubtitlesEnabled() ? Component.translationArg(sound.getIdentifier()) : original.call(instance);
 	}
