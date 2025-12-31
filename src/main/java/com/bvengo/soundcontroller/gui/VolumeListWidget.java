@@ -4,18 +4,16 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
-import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 
 /**
  * The list widget that contains all the individual records. Contains a list of {@link VolumeWidgetEntry}.
  */
-@Environment(value=EnvType.CLIENT)
+@Environment(EnvType.CLIENT)
 public class VolumeListWidget extends ContainerObjectSelectionList<VolumeWidgetEntry> {
-    private static final int rowWidth = VolumeWidgetEntry.totalWidth;
-    private static final int rowHeight = 25;
+    private static final int ROW_HEIGHT = 25;
 
-    public VolumeListWidget(Minecraft client, int width, int i, OptionsSubScreen optionsScreen) {
-        super(client, width, optionsScreen.layout.getContentHeight(), optionsScreen.layout.getHeaderHeight(), rowHeight);
+    public VolumeListWidget(Minecraft client) {
+        super(client, 1, 1, 1, ROW_HEIGHT);
         this.centerListVertically = false;
     }
 
@@ -25,7 +23,7 @@ public class VolumeListWidget extends ContainerObjectSelectionList<VolumeWidgetE
 
     @Override
     public int getRowWidth() {
-        return rowWidth;
+        return Math.max(this.getWidth() - 50, 100);
     }
 
     @Override
@@ -33,4 +31,3 @@ public class VolumeListWidget extends ContainerObjectSelectionList<VolumeWidgetE
         super.clearEntries();
     }
 }
-

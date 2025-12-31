@@ -11,8 +11,6 @@ public class SoundReloadListener implements ResourceManagerReloadListener {
 	/**
 	 * Invoked every time client resources are reloaded
 	 * (e.g. F3+T, resource pack change, initial load).
-	 *
-	 * @param resourceManager the active resource manager
 	 */
 	@Override
 	public void onResourceManagerReload(final @NotNull ResourceManager resourceManager) {
@@ -20,6 +18,6 @@ public class SoundReloadListener implements ResourceManagerReloadListener {
 			return;
 		}
 
-		SoundController.CONFIG.updateVolumes();
+		SoundController.CONFIG.reload();
 	}
 }

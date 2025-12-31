@@ -1,13 +1,15 @@
 {
     "schemaVersion": 1,
-    "id": "soundcontroller",
-    "version": "1.2.4",
+    "id": "${id}",
+    "version": "${version}",
     "icon": "assets/soundcontroller/icon.png",
-
     "name": "Sound Controller",
     "description": "Have complete control over the volume of all sounds played in the game.",
     "authors": [
         "BVengo"
+    ],
+    "contributors": [
+        "litetex"
     ],
     "contact": {
         "sources": "https://github.com/BVengo/sound-controller",
@@ -27,21 +29,21 @@
         "soundcontroller.mixins.json"
     ],
     "depends": {
-        "fabricloader": ">=0.16.0",
-        "minecraft": ">=1.21.11",
-        "java": ">=21",
         "fabric-api": "*"
     },
     "recommends": {
-        "modmenu": "*"
+        "fabricloader": ">=${loader_version}",
+        "minecraft": ">=${minecraft_version}",
+        "fabric-api": ">=${fabric_api_version}",
+        "modmenu": ">=${modmenu_version}"
     },
 
     "custom": {
         "modmenu": {
             "links": {
-                "modmenu.discord": "https://discord.gg/gyTa5v7kKk"
-            },
-            "update_checker": true
+                "modmenu.discord": "https://discord.gg/gyTa5v7kKk",
+                "modmenu.modrinth": "https://modrinth.com/mod/${id}"
+            }
         }
     }
 }

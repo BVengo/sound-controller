@@ -1,22 +1,14 @@
 package com.bvengo.soundcontroller;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.Identifier;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
+
+import java.util.Objects;
 
 public class VolumeData {
     public static final Float DEFAULT_VOLUME = 1.0f;
 
     private final Identifier soundId;
-    private Float volume;
-
-    private SimpleSoundInstance currentSoundInstance = null;
+	private float volume;
 
     public VolumeData(Identifier id, float volume) {
         this.soundId = id;
@@ -28,11 +20,11 @@ public class VolumeData {
     }
 
     public Identifier getId() {
-        return soundId;
+		return this.soundId;
     }
 
-    public Float getVolume() {
-        return volume;
+	public float getVolume() {
+		return this.volume;
     }
 
     public void setVolume(float volume) {
@@ -40,46 +32,25 @@ public class VolumeData {
     }
 
     public boolean isModified() {
-        return !this.volume.equals(DEFAULT_VOLUME);
+		return !Objects.equals(DEFAULT_VOLUME, this.volume);
     }
 
     public boolean inFilter(String search, boolean showModifiedOnly) {
-        return (this.soundId.toString().toLowerCase().contains(search) &&
-                (!showModifiedOnly || this.isModified()));
+		return this.soundId.toString().toLowerCase().contains(search) &&
+				(!showModifiedOnly || this.isModified());
     }
 
-    public void playSound(SoundManager soundManager) {
-        final LocalPlayer player = Minecraft.getInstance().player;
-        SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(soundId);
+	@Override
+	public final boolean equals(Object o) {
+		if (!(o instanceof VolumeData that)) return false;
 
-        if (player != null) {
-            this.currentSoundInstance = new SimpleSoundInstance(
-                soundEvent, SoundSource.MASTER,
-                this.volume,  // Volume
-                1.0f,  // Pitch
-                RandomSource.create(),
-                player.getX(), player.getY(), player.getZ()  // Position
-            );
-        } else {
-            this.currentSoundInstance = SimpleSoundInstance.forUI(
-                soundEvent,
-                this.volume  // Volume
-            );
-        }
-
-        soundManager.play(this.currentSoundInstance);
+		return Objects.equals(this.soundId, that.soundId) && Objects.equals(this.getVolume(), that.getVolume());
     }
 
-    public void toggleSound(SoundManager soundManager) {
-        if (isActive(soundManager)) {
-            soundManager.stop(currentSoundInstance);
-            currentSoundInstance = null;
-        } else {
-            playSound(soundManager);
-        }
-    }
-
-    public boolean isActive(SoundManager soundManager) {
-        return soundManager.isActive(currentSoundInstance);
-    }
+	@Override
+	public int hashCode() {
+		int result = Objects.hashCode(this.soundId);
+		result = 31 * result + Objects.hashCode(this.getVolume());
+		return result;
+	}
 }

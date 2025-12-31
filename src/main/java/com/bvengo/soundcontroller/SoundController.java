@@ -1,16 +1,14 @@
 package com.bvengo.soundcontroller;
 
-import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
-import net.minecraft.server.packs.PackType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.bvengo.soundcontroller.config.VolumeConfig;
-
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.server.packs.PackType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Environment(EnvType.CLIENT)
 public class SoundController implements ClientModInitializer {
@@ -26,8 +24,8 @@ public class SoundController implements ClientModInitializer {
 		});
 
 		ResourceLoader.get(PackType.CLIENT_RESOURCES)
-			.registerReloader(SoundReloadListener.ID, new SoundReloadListener());
+				.registerReloader(SoundReloadListener.ID, new SoundReloadListener());
 
-		LOGGER.info("{} loaded.", LOGGER.getName());
+		LOGGER.info("{} loaded", LOGGER.getName());
 	}
 }

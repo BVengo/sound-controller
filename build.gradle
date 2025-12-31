@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
+	id 'fabric-loom' version '1.14.10'
 	id 'maven-publish'
 }
 
@@ -7,17 +7,23 @@ version = project.mod_version
 group = project.maven_group
 
 base {
-	archivesName = project.archives_base_name
+	archivesName = project.archivesBaseName
 }
 
 repositories {
-	// Add repositories to retrieve artifacts from in here.
-	// You should only use this when depending on other mods because
-	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
-	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
-	// for more information about repositories.
-	maven { url = "https://api.modrinth.com/maven" }
-	maven { url = "https://maven.terraformersmc.com/" }  // Mod Menu
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Terraformers"
+				url = "https://maven.terraformersmc.com/"
+			}
+		}
+		filter {
+			includeGroup 'com.terraformersmc'
+		}
+	}
+	// Fallback
+	mavenCentral()
 }
 
 dependencies {
@@ -26,20 +32,21 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	// Tells Gradle to use mod menu
-	modImplementation "com.terraformersmc:modmenu:${project.modmenu_version}", {
-		exclude module: 'fabric-api'
-	}
+	modLocalRuntime(modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}")
 }
 
 processResources {
 	inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": project.version,
+				"id": project.archivesBaseName,
+				"minecraft_version": project.minecraft_version,
+				"loader_version": project.loader_version,
+				"fabric_api_version": project.fabric_api_version,
+				"modmenu_version": project.modmenu_version
 	}
 }
 
@@ -67,7 +74,7 @@ jar {
 publishing {
 	publications {
 		create("mavenJava", MavenPublication) {
-			artifactId = project.archives_base_name
+			artifactId = project.archivesBaseName
 			from components.java
 		}
 	}
