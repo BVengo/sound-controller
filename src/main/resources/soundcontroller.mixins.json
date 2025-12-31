@@ -1,14 +1,14 @@
 {
-    "required": true,
-    "package": "com.bvengo.soundcontroller.mixin",
-    "compatibilityLevel": "JAVA_21",
-    "mixins": [],
-    "client": [
-      "OptionsSubScreenMixin",
-      "SoundEngineMixin",
-      "SubtitleOverlayMixin"
-    ],
-    "injectors": {
-        "defaultRequire": 1
-    }
+  "required": true,
+  "package": "com.bvengo.soundcontroller.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": [
+    "SoundEngineMixin",
+    "SoundOptionsScreenMixin",
+    "SubtitleOverlayMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

@@ -18,8 +18,7 @@ public class ToggleButtonWidget extends HoverableButtonWidget {
 
     @Override
     public void onPress(InputWithModifiers input) {
-        // Natural toggle when button is pressed
-        this.onPress.onPress(this);
-        isPressed = !isPressed;
+        super.onPress(input);
+        this.isPressed = !this.isPressed;
     }
 }

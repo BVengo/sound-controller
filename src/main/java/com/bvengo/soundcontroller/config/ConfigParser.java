@@ -2,61 +2,48 @@ package com.bvengo.soundcontroller.config;
 
 import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.VolumeData;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
-import java.io.*;
+import org.slf4j.Logger;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Comparator;
-import java.util.HashMap;
+import java.util.Map;
 
 public class ConfigParser {
-	private static final File file = new File(FabricLoader.getInstance().getConfigDir().toFile(),
-			SoundController.MOD_ID + ".json");
-	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+	private static final Logger LOG = SoundController.LOGGER;
 
-	/**
-	 * Loads data into a VolumeConfig object from a JSON file.
-	 *
-	 * @param config The VolumeConfig to load the data into.
-	 */
+	private static final Path FILE = FabricLoader.getInstance().getConfigDir().resolve(SoundController.MOD_ID + ".json");
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
 	public static void loadConfig(VolumeConfig config) {
-		if (!file.exists()) {
-			SoundController.LOGGER.info("Config file not found. Creating a new one.");
-			buildEmptyConfig();
+		if (!Files.exists(FILE)) {
+			LOG.info("Config file not found. Creating a new one.");
 			return;
 		}
 
-		try (Reader reader = new FileReader(file)) {
-			JsonObject jsonObject = gson.fromJson(reader, JsonObject.class);
+		try {
+			JsonObject jsonObject = GSON.fromJson(Files.readString(FILE), JsonObject.class);
 			if (jsonObject == null) {
-				SoundController.LOGGER.error("Config file is empty, creating a new one.");
-				buildEmptyConfig();
+				LOG.warn("Config file is empty, using defaults");
 				return;
 			}
 			parseConfig(config, jsonObject);
 		} catch (Exception e) {
-			SoundController.LOGGER.error("Error reading config file, creating a new one. Original error: ", e);
-			moveOldConfig();
-			buildEmptyConfig();
+			LOG.warn("Error reading config file, using defaults", e);
 		}
 	}
 
-	/**
-	 * Saves the provided VolumeConfig to a JSON file.
-	 *
-	 * @param config The VolumeConfig to save.
-	 */
-	public static void saveConfig(VolumeConfig config) {
-		JsonObject jsonObject = createJsonConfig(config);
-		saveToJsonFile(jsonObject);
+	public static synchronized void saveConfig(VolumeConfig config) {
+		saveToJsonFile(createJsonConfig(config));
 	}
 
-	/**
-	 * Creates a JsonObject from a VolumeConfig.
-	 *
-	 * @param config The VolumeConfig to convert to JSON.
-	 * @return JsonObject representing the provided VolumeConfig.
-	 */
 	private static JsonObject createJsonConfig(VolumeConfig config) {
 		JsonObject jsonObject = new JsonObject();
 		jsonObject.addProperty("version", VolumeConfig.CONFIG_VERSION);
@@ -77,92 +64,36 @@ public class ConfigParser {
 		return jsonObject;
 	}
 
-	/**
-	 * Writes a JsonObject to a JSON file.
-	 *
-	 * @param jsonObject The JsonObject to write to file.
-	 */
 	private static void saveToJsonFile(JsonObject jsonObject) {
-		try (Writer writer = new FileWriter(file)) {
-			gson.toJson(jsonObject, writer);
-		} catch (IOException e) {
-			SoundController.LOGGER.error("Unable to save sound config to file.", e);
+		try {
+			Files.writeString(FILE, GSON.toJson(jsonObject));
+		} catch (Exception e) {
+			LOG.warn("Unable to save sound config to file", e);
 		}
 	}
 
-	/**
-	 * Parses volume data from a JSON object into a map. Handles versioning.
-	 *
-	 * @param config The config being updated.
-	 * @param jsonObject The JSON object to parse.
-	 */
 	private static void parseConfig(VolumeConfig config, JsonObject jsonObject) {
 		int version = jsonObject.has("version") ? jsonObject.get("version").getAsInt() : -1;
 
-		// Check if the version key exists to determine the handling strategy
 		if (version == -1) {
-			String msg = "Config file does not have a version number. Trying to parse old un-versioned format.";
-			SoundController.LOGGER.warn(msg);
-
+			LOG.warn("Config file does not have a version. Trying to parse old un-versioned format");
 			parseConfigUnversioned(config, jsonObject);
 			return;
 		}
 
-		if (version < 4 || version > VolumeConfig.CONFIG_VERSION) {
-			String msg = "Version number invalid - must be between 4 and " + VolumeConfig.CONFIG_VERSION +
-					" (inclusive). Got " + version + " instead. Storing old config file with `old.` prefix, " +
-					"and initializing a new empty config file.";
-			SoundController.LOGGER.error(msg);
-			moveOldConfig();
-			buildEmptyConfig();
+		if (version == 4) {
+			parseConfig4(config, jsonObject);
 			return;
 		}
 
-//		if (version == 4) {
-			// Currently always true
-			parseConfig4(config, jsonObject);
-//		}
+		LOG.warn("Unknown config version {}, expected {} - not parsing", version, VolumeConfig.CONFIG_VERSION);
 	}
 
-	/**
-	 * Moves the old config file to a new file with a prefix of `old.`.
-	 */
-	private static void moveOldConfig() {
-		File oldFile = new File(file.getParentFile(), "old." + file.getName());
-		if (file.renameTo(oldFile)) {
-			SoundController.LOGGER.info("Renamed old config file to " + oldFile.getName());
-		} else {
-			SoundController.LOGGER.error("Failed to rename old config file.");
-		}
-	}
-
-	/**
-	 * Builds an empty config file with the current version number.
-	 */
-	private static void buildEmptyConfig() {
-		JsonObject newConfig = new JsonObject();
-		newConfig.addProperty("version", VolumeConfig.CONFIG_VERSION);
-		newConfig.add("sounds", new JsonArray());
-
-		try (Writer writer = new FileWriter(file)) {
-			gson.toJson(newConfig, writer);
-		} catch (IOException e) {
-			SoundController.LOGGER.error("Failed to create a new empty config file.", e);
-		}
-	}
-
-	/**
-	 * Adds a sound ID and volume to the soundVolumes map, provided the sound is valid.
-	 *
-	 * @param soundVolumes The map to store the sound volumes.
-	 * @param soundId The sound ID to add.
-	 * @param volume The volume to add.
-	 */
-	private static void addVolumeData(HashMap<Identifier, VolumeData> soundVolumes, String soundId, float volume) {
+	private static void addVolumeData(Map<Identifier, VolumeData> soundVolumes, String soundId, float volume) {
 		Identifier id = Identifier.tryParse(soundId);
 
 		if (soundVolumes.containsKey(id)) {
-			SoundController.LOGGER.warn("Duplicate sound ID found in config: {}. Taking first only.", soundId);
+			LOG.warn("Duplicate sound ID found in config: {}. Taking first only.", soundId);
 			return;
 		}
 
@@ -171,9 +102,10 @@ public class ConfigParser {
 		if(id != null) {
 			soundVolumes.put(id, volumeData);
 		} else {
-			SoundController.LOGGER.warn("Invalid sound ID found in config: {}. Skipping.", soundId);
+			LOG.warn("Invalid sound ID found in config: {}. Skipping.", soundId);
 		}
 	}
+
 
 	/**
 	 * Parse V4 configs. The structure is as follows:
@@ -188,9 +120,6 @@ public class ConfigParser {
 	 *    	...
 	 * }
 	 * </pre>
-	 *
-	 * @param config The config being updated.
-	 * @param jsonObject The JSON object to parse.
 	 */
 	private static void parseConfig4(VolumeConfig config, JsonObject jsonObject) {
 		JsonElement subtitlesElement = jsonObject.get("subtitlesEnabled");
@@ -198,7 +127,7 @@ public class ConfigParser {
 			config.subtitlesEnabled = subtitlesElement.getAsBoolean();
 		}
 
-		HashMap<Identifier, VolumeData> soundVolumes = config.getVolumes();
+		Map<Identifier, VolumeData> soundVolumes = config.getVolumes();
 		JsonArray sounds = jsonObject.getAsJsonArray("sounds");
 		for (JsonElement soundElement : sounds) {
 			JsonObject soundObject = soundElement.getAsJsonObject();
@@ -208,11 +137,12 @@ public class ConfigParser {
 			addVolumeData(soundVolumes, soundId, volume);
 		}
 
-		SoundController.LOGGER.info("Successfully loaded in configs.");
+		LOG.info("Successfully loaded in configs");
 	}
 
 	/**
-	 * Parse un-versioned configs. The structure is as follows:
+	 * Parse un-versioned configs (before 1.1.0/1.20.5).
+	 * The structure is as follows:
 	 * <pre>
 	 * {
 	 * 		// version 1:
@@ -224,23 +154,20 @@ public class ConfigParser {
 	 *    		"id": "minecraft:entity.player.hurt",
 	 *    		"volume": 0.5,
 	 *    		"shouldOverride": false
-	 *    	},
-	 *		...
+	 *        },
+	 * 		...
 	 *
 	 * 		// version 3:
 	 *    	"minecraft:entity.player.hurt": {
 	 *    		"soundId": "minecraft:entity.player.hurt",
 	 *    		"volume": 0.5
-	 *    	},
+	 *        },
 	 *    	...
 	 * }
 	 * </pre>
-	 *
-	 * @param config The config being updated.
-	 * @param jsonObject The JSON object to parse.
 	 */
 	private static void parseConfigUnversioned(VolumeConfig config, JsonObject jsonObject) {
-		HashMap<Identifier, VolumeData> soundVolumes = config.getVolumes();
+		Map<Identifier, VolumeData> soundVolumes = config.getVolumes();
 
 		// Iterate over each entry in the JSON object assuming each key is a sound ID
 		jsonObject.entrySet().forEach(entry -> {
@@ -250,18 +177,17 @@ public class ConfigParser {
 			String soundId;
 			float volume;
 
-			if(element.isJsonPrimitive()) {
-				if(element.getAsJsonPrimitive().isNumber()) {
+			if (element.isJsonPrimitive()) {
+				if (element.getAsJsonPrimitive().isNumber()) {
 					// Handle V1 format
 					soundId = key;
 					volume = element.getAsFloat();
 				} else {
 					String msg = "Unsupported config format for sound ID: " + key;
-					SoundController.LOGGER.error(msg);
+					LOG.error(msg);
 					throw new IllegalStateException(msg);
 				}
-			}
-			else {
+			} else {
 				JsonObject soundObject = element.getAsJsonObject();
 				if (soundObject.has("id")) {
 					// Handle V2 format
