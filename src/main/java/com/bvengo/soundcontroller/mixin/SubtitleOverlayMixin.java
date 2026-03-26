@@ -19,7 +19,7 @@ public class SubtitleOverlayMixin {
 	}
 
 	@WrapOperation(
-			method = "render",
+			method = "extractRenderState",
 			at = @At(value = "INVOKE",
 					target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;",
 					ordinal = 0) // Targets the first getShowSubtitles().getValue() call
@@ -29,7 +29,7 @@ public class SubtitleOverlayMixin {
 	}
 
 	@WrapOperation(
-			method = "render",
+			method = "extractRenderState",
 			at = @At(value = "INVOKE",
 					target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;",
 					ordinal = 1) // Targets the first getShowSubtitles().getValue() call

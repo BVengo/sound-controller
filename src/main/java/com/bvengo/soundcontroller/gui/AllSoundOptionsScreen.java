@@ -3,7 +3,7 @@ package com.bvengo.soundcontroller.gui;
 import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.gui.buttons.ToggleButtonWidget;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
@@ -141,10 +141,10 @@ public class AllSoundOptionsScreen extends OptionsSubScreen {
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredString(this.font, this.title, this.width / 2, 20, 0xFFFFFF);
-        context.drawString(this.font, SEARCH_FIELD_TITLE, 32, 40, 0xA0A0A0);
-        this.searchField.render(context, mouseX, mouseY, delta);
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(context, mouseX, mouseY, delta);
+        context.centeredText(this.font, this.title, this.width / 2, 20, 0xFFFFFF);
+        context.text(this.font, SEARCH_FIELD_TITLE, 32, 40, 0xA0A0A0);
+        this.searchField.extractRenderState(context, mouseX, mouseY, delta);
     }
 }
