@@ -26,7 +26,7 @@ public class SoundController implements ClientModInitializer {
 		});
 
 		ResourceLoader.get(PackType.CLIENT_RESOURCES)
-			.registerReloader(SoundReloadListener.ID, new SoundReloadListener());
+			.registerReloadListener(SoundReloadListener.ID, new SoundReloadListener());
 
 		LOGGER.info("{} loaded.", LOGGER.getName());
 	}
