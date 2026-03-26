@@ -9,7 +9,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList.Entry;
 import net.minecraft.client.gui.components.Tooltip;
@@ -121,19 +121,19 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     }
 
     @Override
-    public void renderContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+    public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float tickDelta) {
         int leftSide = (this.screen.width - totalWidth) / 2;
 
         this.volumeSlider.setPosition(leftSide, getY());
-        this.volumeSlider.render(context, mouseX, mouseY, tickDelta);
+        this.volumeSlider.extractRenderState(graphics, mouseX, mouseY, tickDelta);
 
         this.playSoundButton.setPosition(volumeSlider.getRight() + paddingAfterSearch, getY());
-        this.playSoundButton.render(context, mouseX, mouseY, tickDelta);
+        this.playSoundButton.extractRenderState(graphics, mouseX, mouseY, tickDelta);
 
         this.resetButton.setPosition(playSoundButton.getRight() + paddingBetweenButtons, getY());
-        this.resetButton.render(context, mouseX, mouseY, tickDelta);
-    }
+        this.resetButton.extractRenderState(graphics, mouseX, mouseY, tickDelta);
 
+    }
     @Override
     public List<? extends GuiEventListener> children() {
         return List.of(volumeSlider, playSoundButton, resetButton);
