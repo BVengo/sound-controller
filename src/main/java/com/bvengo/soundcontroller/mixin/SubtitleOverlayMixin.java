@@ -13,28 +13,28 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(SubtitleOverlay.class)
 public class SubtitleOverlayMixin {
-	@WrapOperation(method = "onPlaySound", at=@At(value = "INVOKE", target= "Lnet/minecraft/client/sounds/WeighedSoundEvents;getSubtitle()Lnet/minecraft/network/chat/Component;"))
+	@WrapOperation(method = "onPlaySound", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/WeighedSoundEvents;getSubtitle()Lnet/minecraft/network/chat/Component;"))
 	private Component replaceSubtitleText(WeighedSoundEvents instance, Operation<Component> original, SoundInstance sound) {
 		return SoundController.CONFIG.areSubtitlesEnabled() ? Component.translationArg(sound.getIdentifier()) : original.call(instance);
 	}
 
 	@WrapOperation(
-			method = "render",
+			method = "extractRenderState",
 			at = @At(value = "INVOKE",
 					target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;",
-					ordinal = 0) // Targets the first getShowSubtitles().getValue() call
+					ordinal = 0)
 	)
 	private Object modifyFirstShowSubtitlesCheck(OptionInstance instance, Operation<Object> original) {
-		return (Boolean)(original.call(instance)) || SoundController.CONFIG.areSubtitlesEnabled();
+		return (Boolean) (original.call(instance)) || SoundController.CONFIG.areSubtitlesEnabled();
 	}
 
 	@WrapOperation(
-			method = "render",
+			method = "extractRenderState",
 			at = @At(value = "INVOKE",
 					target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;",
-					ordinal = 1) // Targets the first getShowSubtitles().getValue() call
+					ordinal = 1)
 	)
 	private Object modifySecondShowSubtitlesCheck(OptionInstance instance, Operation<Object> original) {
-		return (Boolean)(original.call(instance)) || SoundController.CONFIG.areSubtitlesEnabled();
+		return (Boolean) (original.call(instance)) || SoundController.CONFIG.areSubtitlesEnabled();
 	}
 }
