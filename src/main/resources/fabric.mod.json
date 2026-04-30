@@ -1,13 +1,21 @@
 {
     "schemaVersion": 1,
     "id": "soundcontroller",
-    "version": "1.2.4",
+    "version": "1.2.5",
     "icon": "assets/soundcontroller/icon.png",
 
     "name": "Sound Controller",
     "description": "Have complete control over the volume of all sounds played in the game.",
     "authors": [
         "BVengo"
+    ],
+    "contributors": [
+        "JustAlittleWolf",
+        "YouQi-ovo",
+        "Maganoos",
+        "lonefelidae16",
+        "eikhren",
+        "CoolAid48"
     ],
     "contact": {
         "sources": "https://github.com/BVengo/sound-controller",
@@ -27,8 +35,8 @@
         "soundcontroller.mixins.json"
     ],
     "depends": {
-        "fabricloader": ">=0.16.0",
-        "minecraft": ">=26.1-alpha.4",
+        "fabricloader": ">=0.18.4",
+        "minecraft": ">=26.1",
         "java": ">=25",
         "fabric-api": "*"
     },
