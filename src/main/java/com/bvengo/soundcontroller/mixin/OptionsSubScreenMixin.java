@@ -35,6 +35,7 @@ public class OptionsSubScreenMixin {
 
 		//noinspection ConstantValue
 		if (!((Object)this instanceof SoundOptionsScreen)) {
+            original.call();
             return;
         }
 
