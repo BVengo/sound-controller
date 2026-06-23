@@ -35,6 +35,7 @@ public class OptionsSubScreenMixin {
 
 		//noinspection ConstantValue
 		if (!((Object)this instanceof SoundOptionsScreen)) {
+            original.call();
             return;
         }
 
@@ -52,7 +53,7 @@ public class OptionsSubScreenMixin {
     @Unique
     private void soundcontroller$addLayoutButton(Minecraft client, LinearLayout layout, Component text, Screen nextScreen) {
         layout.addChild(Button.builder(text, button -> {
-            client.setScreen(nextScreen);
+            client.setScreenAndShow(nextScreen);
         }).build());
     }
 }
