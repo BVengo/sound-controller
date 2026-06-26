@@ -1,11 +1,24 @@
 name: Bug Report
 description: File a bug report
 title: "[Bug]: "
+
 body:
   - type: markdown
     attributes:
       value: |
         Before reporting a crash, please ensure that you are on the latest version.
+
+  - type: dropdown
+    id: modloader
+    attributes:
+      label: Mod Loader
+      description: Which mod loader are you using?
+      options:
+        - Fabric
+        - Forge
+    validations:
+      required: true
+
   - type: textarea
     id: description
     attributes:
@@ -13,6 +26,7 @@ body:
       description: A clear and concise description of what the bug is.
     validations:
       required: true
+
   - type: textarea
     id: reproduce
     attributes:
@@ -20,6 +34,7 @@ body:
       description: Steps to reproduce the behavior.
     validations:
       required: false
+
   - type: textarea
     id: expected-behavior
     attributes:
@@ -27,6 +42,7 @@ body:
       description: What behaviour did you expect to observe?
     validations:
       required: false
+
   - type: textarea
     id: screenshots
     attributes:
@@ -34,20 +50,23 @@ body:
       description: If applicable, add screenshots to help explain your problem.
     validations:
       required: false
+
   - type: input
-    id: fabric-version
+    id: modloader-version
     attributes:
-      label: Fabric Version
-      description: Which version of Fabric are you using?
+      label: Mod Loader Version
+      description: Which version of your mod loader are you using?
     validations:
       required: false
+
   - type: input
     id: mod-version
     attributes:
       label: Mod Version
-      description: What version of the mod are you are using?
+      description: What version of the mod are you using?
     validations:
       required: true
+
   - type: textarea
     id: logs
     attributes:
@@ -56,6 +75,7 @@ body:
       render: shell
     validations:
       required: false
+
   - type: textarea
     id: other
     attributes:
