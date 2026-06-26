@@ -6,7 +6,7 @@
 
 We've all dealt with that loud portal before, or those ridiculously loud mob farms. Perhaps you're even listening out for a particular mob while caving. Have you ever wanted to just fine-tune those specific sounds without being limited by the category sliders?
 
-Sound Controller is a fabric mod providing complete volume control over the sounds played in the game. It adds an extra set of options to your sound settings, providing you with volume sliders for every single sound between 0-200%.
+Sound Controller is a client-side Minecraft mod providing complete volume control over the sounds played in the game. It adds an extra set of options to your sound settings, providing you with volume sliders for every single sound between 0-200%.
 
 By utilising the minecraft registry, this mod should also include all other sounds added to the game by your favourite mods (provided those mods add their sounds to the normal registry).
 

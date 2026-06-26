@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class SubtitleOverlayMixin {
 	@WrapOperation(method = "onPlaySound", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/WeighedSoundEvents;getSubtitle()Lnet/minecraft/network/chat/Component;"))
 	private Component replaceSubtitleText(WeighedSoundEvents instance, Operation<Component> original, SoundInstance sound) {
-		return SoundController.CONFIG.areSubtitlesEnabled() ? Component.translationArg(sound.getIdentifier()) : original.call(instance);
+		return SoundController.getConfig().areSubtitlesEnabled() ? Component.translationArg(sound.getIdentifier()) : original.call(instance);
 	}
 
 	@WrapOperation(
@@ -25,7 +25,7 @@ public class SubtitleOverlayMixin {
 					ordinal = 0)
 	)
 	private Object modifyFirstShowSubtitlesCheck(OptionInstance instance, Operation<Object> original) {
-		return (Boolean) (original.call(instance)) || SoundController.CONFIG.areSubtitlesEnabled();
+		return (Boolean) (original.call(instance)) || SoundController.getConfig().areSubtitlesEnabled();
 	}
 
 	@WrapOperation(
@@ -35,6 +35,6 @@ public class SubtitleOverlayMixin {
 					ordinal = 1)
 	)
 	private Object modifySecondShowSubtitlesCheck(OptionInstance instance, Operation<Object> original) {
-		return (Boolean) (original.call(instance)) || SoundController.CONFIG.areSubtitlesEnabled();
+		return (Boolean) (original.call(instance)) || SoundController.getConfig().areSubtitlesEnabled();
 	}
 }

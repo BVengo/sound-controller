@@ -1,8 +1,6 @@
 package com.bvengo.soundcontroller.gui.buttons;
 
 import com.bvengo.soundcontroller.SoundController;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -13,7 +11,6 @@ import net.minecraft.resources.Identifier;
  * Custom button widget that is used as a trigger rather than a toggle.
  * i.e. it is only active while the button is being pressed.
  */
-@Environment(EnvType.CLIENT)
 public class HoverableButtonWidget extends Button {
     protected boolean isPressed = false;
 

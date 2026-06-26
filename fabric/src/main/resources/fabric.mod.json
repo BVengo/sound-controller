@@ -25,7 +25,7 @@
     "environment": "client",
     "entrypoints": {
         "client": [
-            "com.bvengo.soundcontroller.SoundController"
+            "com.bvengo.soundcontroller.FabricSoundController"
         ],
         "modmenu": [
             "com.bvengo.soundcontroller.config.ModMenuIntegration"

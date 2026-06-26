@@ -3,16 +3,27 @@ package com.bvengo.soundcontroller.config;
 import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.VolumeData;
 import com.google.gson.*;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
 import java.io.*;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.HashMap;
 
 public class ConfigParser {
-	private static final File file = new File(FabricLoader.getInstance().getConfigDir().toFile(),
-			SoundController.MOD_ID + ".json");
+	private static Path configDir;
 	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+	public static void setConfigDir(Path configDir) {
+		ConfigParser.configDir = configDir;
+	}
+
+	private static File getFile() {
+		if (configDir == null) {
+			throw new IllegalStateException("Config directory has not been configured yet.");
+		}
+
+		return configDir.resolve(SoundController.MOD_ID + ".json").toFile();
+	}
 
 	/**
 	 * Loads data into a VolumeConfig object from a JSON file.
@@ -20,6 +31,7 @@ public class ConfigParser {
 	 * @param config The VolumeConfig to load the data into.
 	 */
 	public static void loadConfig(VolumeConfig config) {
+		File file = getFile();
 		if (!file.exists()) {
 			SoundController.LOGGER.info("Config file not found. Creating a new one.");
 			buildEmptyConfig();
@@ -83,6 +95,7 @@ public class ConfigParser {
 	 * @param jsonObject The JsonObject to write to file.
 	 */
 	private static void saveToJsonFile(JsonObject jsonObject) {
+		File file = getFile();
 		try (Writer writer = new FileWriter(file)) {
 			gson.toJson(jsonObject, writer);
 		} catch (IOException e) {
@@ -128,6 +141,7 @@ public class ConfigParser {
 	 * Moves the old config file to a new file with a prefix of `old.`.
 	 */
 	private static void moveOldConfig() {
+		File file = getFile();
 		File oldFile = new File(file.getParentFile(), "old." + file.getName());
 		if (file.renameTo(oldFile)) {
 			SoundController.LOGGER.info("Renamed old config file to " + oldFile.getName());
@@ -140,6 +154,7 @@ public class ConfigParser {
 	 * Builds an empty config file with the current version number.
 	 */
 	private static void buildEmptyConfig() {
+		File file = getFile();
 		JsonObject newConfig = new JsonObject();
 		newConfig.addProperty("version", VolumeConfig.CONFIG_VERSION);
 		newConfig.add("sounds", new JsonArray());

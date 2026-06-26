@@ -1,0 +1,28 @@
+modLoader = "javafml"
+loaderVersion = "[4,)"
+license = "LGPL-3.0"
+
+[[mods]]
+modId = "soundcontroller"
+version = "${version}"
+displayName = "Sound Controller"
+description = "Have complete control over the volume of all sounds played in the game."
+logoFile = "assets/soundcontroller/icon.png"
+authors = "BVengo"
+
+[[mixins]]
+config = "soundcontroller.mixins.json"
+
+[[dependencies.soundcontroller]]
+modId = "neoforge"
+type = "required"
+versionRange = "[${neoforge_version},)"
+ordering = "NONE"
+side = "CLIENT"
+
+[[dependencies.soundcontroller]]
+modId = "minecraft"
+type = "required"
+versionRange = "[${minecraft_version},)"
+ordering = "NONE"
+side = "CLIENT"
