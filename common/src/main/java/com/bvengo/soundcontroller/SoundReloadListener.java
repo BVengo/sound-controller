@@ -16,10 +16,6 @@ public class SoundReloadListener implements ResourceManagerReloadListener {
 	 */
 	@Override
 	public void onResourceManagerReload(final @NotNull ResourceManager resourceManager) {
-		if (SoundController.CONFIG == null) {
-			return;
-		}
-
-		SoundController.CONFIG.updateVolumes();
+		SoundController.getConfig().updateVolumes();
 	}
 }

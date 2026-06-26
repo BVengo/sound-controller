@@ -1,0 +1,68 @@
+plugins {
+	id 'net.neoforged.moddev'
+}
+
+base {
+	archivesName = "${project.archives_base_name}-neoforge"
+}
+
+sourceSets {
+	main {
+		java.srcDirs = ['src/main/java', '../common/src/main/java']
+		resources.srcDirs = ['src/main/resources', '../common/src/main/resources']
+	}
+}
+
+neoForge {
+	version = project.neoforge_version
+
+	runs {
+		client {
+			client()
+		}
+	}
+
+	mods {
+		soundcontroller {
+			sourceSet sourceSets.main
+		}
+	}
+}
+
+dependencies {
+	compileOnly "org.jetbrains:annotations:${project.jetbrains_annotations_version}"
+}
+
+processResources {
+	def props = [
+		version           : project.version,
+		minecraft_version : project.minecraft_version,
+		neoforge_version  : project.neoforge_version
+	]
+	inputs.properties(props)
+
+	filesMatching("META-INF/neoforge.mods.toml") {
+		expand props
+	}
+}
+
+java {
+	withSourcesJar()
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
+
+jar {
+	from(rootProject.file("LICENSE.md")) {
+		rename { "${it}_${project.base.archivesName.get()}" }
+	}
+}
+
+publishing {
+	publications {
+		create("mavenJava", MavenPublication) {
+			artifactId = project.base.archivesName.get()
+			from components.java
+		}
+	}
+}
