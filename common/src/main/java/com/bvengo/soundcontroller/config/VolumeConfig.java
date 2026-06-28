@@ -2,15 +2,15 @@ package com.bvengo.soundcontroller.config;
 
 import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.VolumeData;
+import com.bvengo.soundcontroller.region.RegionData;
 import java.util.HashMap;
+import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.phys.Vec3;
 
 public class VolumeConfig {
     private static VolumeConfig instance;
@@ -61,7 +61,32 @@ public class VolumeConfig {
 
     public float getAdjustedVolume(SoundInstance sound, float baseVolume) {
         VolumeData volumeData = getVolumeData(sound.getIdentifier());
-		return volumeData.getVolume() * baseVolume;
+        float volume = volumeData.getVolume() * baseVolume;
+
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player != null && mc.level != null) {
+            Vec3 playerPos = mc.player.position();
+            String serverKey = SoundController.getCurrentServerKey();
+            String worldKey = SoundController.getCurrentWorldKey();
+            Identifier soundId = sound.getIdentifier();
+
+            float minRegionVolume = Float.MAX_VALUE;
+            boolean hasOverride = false;
+
+            List<RegionData> active = SoundController.getRegionConfig().getActiveRegions(serverKey, worldKey, playerPos);
+            for (RegionData region : active) {
+                if (region.hasSoundOverride(soundId)) {
+                    minRegionVolume = Math.min(minRegionVolume, region.getVolumeForSound(soundId));
+                    hasOverride = true;
+                }
+            }
+
+            if (hasOverride) {
+                volume *= minRegionVolume;
+            }
+        }
+
+        return volume;
     }
 
     public boolean areSubtitlesEnabled() {
