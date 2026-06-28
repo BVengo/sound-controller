@@ -1,149 +1,83 @@
 package com.bvengo.soundcontroller.gui;
 
 import com.bvengo.soundcontroller.config.VolumeConfig;
-import com.bvengo.soundcontroller.gui.buttons.ToggleButtonWidget;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.tabs.MenuTabBar;
+import net.minecraft.client.gui.components.tabs.TabManager;
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
+import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.CommonComponents;
-import java.util.Comparator;
 
 import static com.bvengo.soundcontroller.Translations.SOUND_SCREEN_TITLE;
-import static com.bvengo.soundcontroller.Translations.SEARCH_FIELD_TITLE;
-import static com.bvengo.soundcontroller.Translations.SEARCH_FIELD_PLACEHOLDER;
-import static com.bvengo.soundcontroller.Translations.FILTER_BUTTON_TOOLTIP;
-import static com.bvengo.soundcontroller.Translations.SUBTITLES_BUTTON_TOOLTIP;
 
-/**
- * Screen that displays all sound options.
- */
-public class AllSoundOptionsScreen extends OptionsSubScreen {
-    VolumeConfig config = VolumeConfig.getInstance();
+public class AllSoundOptionsScreen extends Screen {
+    private final VolumeConfig config = VolumeConfig.getInstance();
+    private final Screen parent;
+    private final Options options;
+    private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
+    private final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 
-    protected final Screen parent;
-
-    private VolumeListWidget volumeListWidget;
-    private EditBox searchField;
-
-    private ToggleButtonWidget filterButton;
-
-    private boolean showModifiedOnly = false;
+    private MenuTabBar tabNavigationBar;
+    private GlobalSoundTab globalTab;
 
     public AllSoundOptionsScreen(Screen parent, Options options) {
-        super(parent, options, SOUND_SCREEN_TITLE);
+        super(SOUND_SCREEN_TITLE);
         this.parent = parent;
-
-        // Increase header height to make room for search field. Includes 8 extra padding below.
-        layout.setHeaderHeight(layout.getHeaderHeight() + 28);
+        this.options = options;
     }
 
     @Override
     protected void init() {
-        addSearchField();
-        addFilterButton();
-        addSubtitlesButton();
-        addVolumeList();
-        addDoneButton();
+        this.globalTab = new GlobalSoundTab(this, this.options);
 
-        this.setInitialFocus(this.searchField);
+        this.tabNavigationBar = MenuTabBar.builder(this.tabManager, this.width)
+            .addTab(this.globalTab)
+            .build();
+        this.addRenderableWidget(this.tabNavigationBar);
+
+        this.layout.addToFooter(Button.builder(CommonComponents.GUI_DONE, b -> this.onClose()).build());
+
+        this.tabNavigationBar.selectTab(0, false);
+        this.repositionElements();
+        this.layout.visitWidgets(this::addRenderableWidget);
+
+        this.setInitialFocus(this.globalTab.getSearchField());
     }
 
     @Override
-    protected void addOptions() {}
+    protected void repositionElements() {
+        if (this.tabNavigationBar == null) return;
 
-    private void addSearchField() {
-        // Add search field - x, y, width, height
-        this.searchField = new EditBox(this.font, 80, 35, this.width - 167, 20,
-                SEARCH_FIELD_PLACEHOLDER);
-        this.searchField.setResponder(serverName -> this.loadOptions());
-        this.addWidget(this.searchField);
-    }
+        this.tabNavigationBar.arrangeElements(this.width);
+        int tabBottom = this.tabNavigationBar.getRectangle().bottom();
 
-    private void addFilterButton() {
-        // Add filter button - x, y, width, height, textures, pressAction
-        this.filterButton = new ToggleButtonWidget("filter",
-                this.searchField.getRight() + 8, 35, 20, 20,
-                (button) -> {
-                    showModifiedOnly = !showModifiedOnly;
-                    loadOptions();
-                },
-                false
+        ScreenRectangle contentArea = new ScreenRectangle(
+            0, tabBottom, this.width, this.height - this.layout.getFooterHeight() - tabBottom
         );
+        this.tabManager.setTabArea(contentArea);
 
-        this.filterButton.setTooltip(Tooltip.create(FILTER_BUTTON_TOOLTIP));
-        this.addRenderableWidget(this.filterButton);
+        this.layout.setHeaderHeight(tabBottom);
+        this.layout.arrangeElements();
     }
 
-    private void addSubtitlesButton() {
-        // Add subtitles button - x, y, width, height, textures, pressAction
-        ToggleButtonWidget subtitlesButton = new ToggleButtonWidget("subtitles",
-                this.filterButton.getRight() + 4, 35, 20, 20,
-                (button) -> {
-                    config.toggleSubtitles();
-                },
-                config.areSubtitlesEnabled());
-
-        subtitlesButton.setTooltip(Tooltip.create(SUBTITLES_BUTTON_TOOLTIP));
-        this.addRenderableWidget(subtitlesButton);
+    @Override
+    public void resize(int width, int height) {
+        String search = this.globalTab != null ? this.globalTab.getSearchValue() : "";
+        super.resize(width, height);
+        if (this.globalTab != null) {
+            this.globalTab.setSearchValue(search);
+        }
     }
 
-    private void addVolumeList() {
-        this.volumeListWidget = new VolumeListWidget(this.minecraft, this.width, this.searchField.getBottom() + 32, this);
-        loadOptions();
-        this.addRenderableWidget(this.volumeListWidget);
-    }
-
-    private void addDoneButton() {
-        this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> this.onClose())
-                .bounds(this.width / 2 - 100, this.height - 27, 200, 20).build());
-    }
-
-    private void loadOptions() {
-        this.volumeListWidget.clearEntries();
-        this.volumeListWidget.setScrollAmount(0);
-
-        String search = this.searchField.getValue().toLowerCase();
-
-        // Update all buttons
-        config.getVolumes().values().stream()
-            .filter(volumeData -> volumeData.inFilter(search, showModifiedOnly))
-            .sorted(Comparator.comparing(v -> v.getId().toString()))
-            .forEach(volumeData -> {
-                VolumeWidgetEntry volumeEntry = new VolumeWidgetEntry(volumeData, this, this.options);
-                this.volumeListWidget.addWidgetEntry(volumeEntry);
-            });
+    @Override
+    public void onClose() {
+        this.minecraft.setScreenAndShow(this.parent);
     }
 
     @Override
     public void removed() {
         config.save();
-        this.searchField.setValue("");  // Clear search field
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        // Cache search before clearing
-        String search = this.searchField.getValue();
-
-        this.width = width;
-        this.height = height;
-
-        this.clearWidgets();
-        this.clearFocus();
-        this.init();
-
-        this.searchField.setValue(search);
-    }
-
-    @Override
-    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
-        super.extractRenderState(context, mouseX, mouseY, delta);
-        context.centeredText(this.font, this.title, this.width / 2, 20, 0xFFFFFF);
-        context.text(this.font, SEARCH_FIELD_TITLE, 32, 40, 0xA0A0A0);
-        this.searchField.extractRenderState(context, mouseX, mouseY, delta);
     }
 }
