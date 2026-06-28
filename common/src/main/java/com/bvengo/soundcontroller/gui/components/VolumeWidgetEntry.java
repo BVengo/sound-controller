@@ -1,4 +1,4 @@
-package com.bvengo.soundcontroller.gui;
+package com.bvengo.soundcontroller.gui.components;
 
 import com.bvengo.soundcontroller.Translations;
 import com.bvengo.soundcontroller.Utils;

@@ -4,6 +4,8 @@ import com.bvengo.soundcontroller.Translations;
 import com.bvengo.soundcontroller.VolumeData;
 import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.gui.buttons.ToggleButtonWidget;
+import com.bvengo.soundcontroller.gui.components.VolumeListWidget;
+import com.bvengo.soundcontroller.gui.components.VolumeWidgetEntry;
 import com.bvengo.soundcontroller.region.RegionData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;

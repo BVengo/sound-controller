@@ -2,6 +2,8 @@ package com.bvengo.soundcontroller.gui;
 
 import com.bvengo.soundcontroller.Translations;
 import com.bvengo.soundcontroller.config.VolumeConfig;
+import com.bvengo.soundcontroller.gui.regions.RegionsTab;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;

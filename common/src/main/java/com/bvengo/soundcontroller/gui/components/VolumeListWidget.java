@@ -1,4 +1,4 @@
-package com.bvengo.soundcontroller.gui;
+package com.bvengo.soundcontroller.gui.components;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
