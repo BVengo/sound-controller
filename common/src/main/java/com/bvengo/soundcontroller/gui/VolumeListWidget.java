@@ -2,7 +2,6 @@ package com.bvengo.soundcontroller.gui;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
-import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 
 /**
  * The list widget that contains all the individual records. Contains a list of {@link VolumeWidgetEntry}.
@@ -11,8 +10,8 @@ public class VolumeListWidget extends ContainerObjectSelectionList<VolumeWidgetE
     private static final int rowWidth = VolumeWidgetEntry.totalWidth;
     private static final int rowHeight = 25;
 
-    public VolumeListWidget(Minecraft client, int width, int i, OptionsSubScreen optionsScreen) {
-        super(client, width, optionsScreen.layout.getContentHeight(), optionsScreen.layout.getHeaderHeight(), rowHeight);
+    public VolumeListWidget(Minecraft client, int width, int height, int y) {
+        super(client, width, height, y, rowHeight);
         this.centerListVertically = false;
     }
 

@@ -6,5 +6,6 @@
     "soundcontroller.options.subtitles.tooltip": "Display subtitles with sound IDs (will turn off vanilla subtitles)",
     "soundcontroller.options.play.tooltip": "Play sound",
     "soundcontroller.options.reset.tooltip": "Reset sound to default",
-    "soundcontroller.options.override": "Override"
+    "soundcontroller.options.override": "Override",
+    "soundcontroller.options.tab.global": "Global"
 }
