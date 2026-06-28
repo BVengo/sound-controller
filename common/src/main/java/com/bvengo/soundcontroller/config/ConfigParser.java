@@ -17,6 +17,13 @@ public class ConfigParser {
 		ConfigParser.configDir = configDir;
 	}
 
+	public static Path getConfigDir() {
+		if (configDir == null) {
+			throw new IllegalStateException("Config directory has not been configured yet.");
+		}
+		return configDir;
+	}
+
 	private static File getFile() {
 		if (configDir == null) {
 			throw new IllegalStateException("Config directory has not been configured yet.");

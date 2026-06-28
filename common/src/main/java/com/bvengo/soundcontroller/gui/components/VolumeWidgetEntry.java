@@ -41,6 +41,16 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     public TriggerButtonWidget playSoundButton;
     public TriggerButtonWidget resetButton;
 
+    // Override centering to a sub-region of the screen (for two-column layouts).
+    // -1 means use screen.width (default full-screen centering).
+    private int panelX = 0;
+    private int panelWidth = -1;
+
+    public void setPanelBounds(int panelX, int panelWidth) {
+        this.panelX = panelX;
+        this.panelWidth = panelWidth;
+    }
+
     private static final float MAX_VOLUME = 2.0f;
 
     public VolumeWidgetEntry(VolumeData volumeData, Screen screen, Options options) {
@@ -122,8 +132,18 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
 
     @Override
     public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        int leftSide = (this.screen.width - totalWidth) / 2;
+        int leftSide, effectiveSliderWidth;
+        if (panelWidth >= 0) {
+            int padding = 8;
+            int buttonsWidth = buttonSize * 2 + paddingAfterSearch + paddingBetweenButtons;
+            effectiveSliderWidth = Math.max(20, panelWidth - buttonsWidth - padding * 2);
+            leftSide = panelX + padding;
+        } else {
+            effectiveSliderWidth = sliderWidth;
+            leftSide = panelX + (screen.width - totalWidth) / 2;
+        }
 
+        this.volumeSlider.setWidth(effectiveSliderWidth);
         this.volumeSlider.setPosition(leftSide, getY());
         this.volumeSlider.extractRenderState(context, mouseX, mouseY, tickDelta);
 

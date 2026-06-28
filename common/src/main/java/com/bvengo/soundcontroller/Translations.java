@@ -12,6 +12,9 @@ public abstract class Translations {
         public static final Component RESET_BUTTON_TOOLTIP = translatableOf("reset.tooltip");
         public static final Component PLAY_BUTTON_TOOLTIP = translatableOf("play.tooltip");
 
+        // Region translations (computed at call time, not as static fields, since they need fresh instances)
+
+
         public static Component translatableOf(String key) {
             return Component.translatable(getTranslationKey(key));
         }
