@@ -1,4 +1,4 @@
-package com.bvengo.soundcontroller.gui;
+package com.bvengo.soundcontroller.gui.regions;
 
 import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.VolumeData;
