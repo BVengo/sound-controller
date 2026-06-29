@@ -3,6 +3,7 @@ package com.bvengo.soundcontroller.gui.regions;
 import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.VolumeData;
 import com.bvengo.soundcontroller.config.RegionConfig;
+import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.region.RegionData;
 import com.bvengo.soundcontroller.region.RegionGeometry;
 import net.minecraft.client.Options;
@@ -31,6 +32,7 @@ public class RegionEditScreen extends Screen {
     private final String worldKey;
 
     private String workingName;
+    private HashMap<Identifier, VolumeData> workingSounds;
 
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
     private final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
@@ -60,8 +62,18 @@ public class RegionEditScreen extends Screen {
 
     @Override
     protected void init() {
+        if (workingSounds == null) {
+            workingSounds = new HashMap<>();
+            for (Identifier soundId : VolumeConfig.getInstance().getVolumes().keySet()) {
+                float vol = existingRegion != null
+                    ? existingRegion.getVolumeForSound(soundId)
+                    : VolumeData.DEFAULT_VOLUME;
+                workingSounds.put(soundId, new VolumeData(soundId, vol));
+            }
+        }
+
         generalTab = new RegionGeneralTab(existingRegion, serverKey, worldKey, workingName);
-        soundsTab = new RegionSoundsTab(this, options, existingRegion);
+        soundsTab = new RegionSoundsTab(this, options, workingSounds);
 
         tabNavigationBar = MenuTabBar.builder(tabManager, width)
             .addTab(generalTab)

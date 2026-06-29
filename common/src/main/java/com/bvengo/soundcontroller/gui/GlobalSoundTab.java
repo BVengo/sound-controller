@@ -1,15 +1,18 @@
 package com.bvengo.soundcontroller.gui;
 
 import com.bvengo.soundcontroller.Translations;
+import com.bvengo.soundcontroller.VolumeData;
 import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.gui.buttons.ToggleButtonWidget;
 import com.bvengo.soundcontroller.gui.components.VolumeListWidget;
 import com.bvengo.soundcontroller.gui.components.VolumeWidgetEntry;
+import com.bvengo.soundcontroller.gui.presets.PresetPickerScreen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -37,13 +40,16 @@ public class GlobalSoundTab implements Tab {
     private final EditBox searchField;
     private final ToggleButtonWidget filterButton;
     private final ToggleButtonWidget subtitlesButton;
+    private final Button loadPresetButton;
     private final VolumeListWidget volumeListWidget;
 
+    private final Runnable onSelected;
     private boolean showModifiedOnly = false;
 
-    public GlobalSoundTab(AllSoundOptionsScreen screen, Options options) {
+    public GlobalSoundTab(AllSoundOptionsScreen screen, Options options, Runnable onSelected) {
         this.screen = screen;
         this.options = options;
+        this.onSelected = onSelected;
 
         Font font = Minecraft.getInstance().font;
 
@@ -67,6 +73,15 @@ public class GlobalSoundTab implements Tab {
         );
         this.subtitlesButton.setTooltip(Tooltip.create(SUBTITLES_BUTTON_TOOLTIP));
 
+        this.loadPresetButton = Button.builder(Translations.translatableOf("preset.load"),
+            b -> Minecraft.getInstance().setScreenAndShow(new PresetPickerScreen(screen, preset -> {
+                for (var entry : preset.getSounds().entrySet()) {
+                    VolumeData vd = config.getVolumes().get(entry.getKey());
+                    if (vd != null) vd.setVolume(entry.getValue());
+                }
+            }))
+        ).size(90, 20).build();
+
         this.volumeListWidget = new VolumeListWidget(Minecraft.getInstance(), 200, 100, 0);
         loadOptions();
     }
@@ -87,11 +102,13 @@ public class GlobalSoundTab implements Tab {
         consumer.accept(this.searchField);
         consumer.accept(this.filterButton);
         consumer.accept(this.subtitlesButton);
+        consumer.accept(this.loadPresetButton);
         consumer.accept(this.volumeListWidget);
     }
 
     @Override
     public void doLayout(ScreenRectangle rect) {
+        this.onSelected.run();
         int top = rect.top() + 8;
         int searchFieldX = rect.left() + 80;
         int searchFieldWidth = rect.width() - 167;
@@ -101,6 +118,7 @@ public class GlobalSoundTab implements Tab {
 
         this.filterButton.setPosition(this.searchField.getRight() + 8, top);
         this.subtitlesButton.setPosition(this.filterButton.getRight() + 4, top);
+        this.loadPresetButton.setPosition(this.subtitlesButton.getRight() + 4, top);
 
         int labelY = top + (this.searchField.getHeight() - this.searchLabel.getHeight()) / 2;
         this.searchLabel.setPosition(rect.left() + 32, labelY);

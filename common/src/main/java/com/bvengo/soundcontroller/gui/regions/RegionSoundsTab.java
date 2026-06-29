@@ -2,15 +2,15 @@ package com.bvengo.soundcontroller.gui.regions;
 
 import com.bvengo.soundcontroller.Translations;
 import com.bvengo.soundcontroller.VolumeData;
-import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.gui.buttons.ToggleButtonWidget;
 import com.bvengo.soundcontroller.gui.components.VolumeListWidget;
 import com.bvengo.soundcontroller.gui.components.VolumeWidgetEntry;
-import com.bvengo.soundcontroller.region.RegionData;
+import com.bvengo.soundcontroller.gui.presets.PresetPickerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -40,22 +40,16 @@ public class RegionSoundsTab implements Tab {
     private final StringWidget searchLabel;
     private final EditBox searchField;
     private final ToggleButtonWidget filterButton;
+    private final Button loadPresetButton;
     private final VolumeListWidget volumeListWidget;
 
     private final HashMap<Identifier, VolumeData> workingSounds;
     private boolean showModifiedOnly = false;
 
-    public RegionSoundsTab(Screen screen, Options options, RegionData existingRegion) {
+    public RegionSoundsTab(Screen screen, Options options, HashMap<Identifier, VolumeData> workingSounds) {
         this.screen = screen;
         this.options = options;
-
-        workingSounds = new HashMap<>();
-        for (Identifier soundId : VolumeConfig.getInstance().getVolumes().keySet()) {
-            float vol = existingRegion != null
-                ? existingRegion.getVolumeForSound(soundId)
-                : VolumeData.DEFAULT_VOLUME;
-            workingSounds.put(soundId, new VolumeData(soundId, vol));
-        }
+        this.workingSounds = workingSounds;
 
         Font font = Minecraft.getInstance().font;
 
@@ -69,6 +63,15 @@ public class RegionSoundsTab implements Tab {
             loadSoundOptions();
         }, false);
         filterButton.setTooltip(Tooltip.create(FILTER_BUTTON_TOOLTIP));
+
+        loadPresetButton = Button.builder(Translations.translatableOf("preset.load"),
+            b -> Minecraft.getInstance().setScreenAndShow(new PresetPickerScreen(screen, preset -> {
+                for (var entry : preset.getSounds().entrySet()) {
+                    VolumeData vd = workingSounds.get(entry.getKey());
+                    if (vd != null) vd.setVolume(entry.getValue());
+                }
+            }))
+        ).size(90, 20).build();
 
         volumeListWidget = new VolumeListWidget(Minecraft.getInstance(), 200, 100, 0);
         loadSoundOptions();
@@ -89,6 +92,7 @@ public class RegionSoundsTab implements Tab {
         consumer.accept(searchLabel);
         consumer.accept(searchField);
         consumer.accept(filterButton);
+        consumer.accept(loadPresetButton);
         consumer.accept(volumeListWidget);
     }
 
@@ -101,8 +105,9 @@ public class RegionSoundsTab implements Tab {
         int labelWidth = font.width(SEARCH_FIELD_TITLE);
         searchLabel.setPosition(left, top + (20 - searchLabel.getHeight()) / 2);
         searchField.setPosition(left + labelWidth + 4, top);
-        searchField.setWidth(rect.width() - labelWidth - 20 - 4 - 4 - 16);
+        searchField.setWidth(rect.width() - labelWidth - 20 - 4 - 4 - 94 - 16);
         filterButton.setPosition(searchField.getRight() + 4, top);
+        loadPresetButton.setPosition(filterButton.getRight() + 4, top);
 
         int listTop = top + 28;
         volumeListWidget.updateSizeAndPosition(rect.width(), rect.height() - (listTop - rect.top()), listTop);
