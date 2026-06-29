@@ -30,5 +30,17 @@
     "soundcontroller.options.region.box.corner1": "Corner 1:",
     "soundcontroller.options.region.box.corner2": "Corner 2:",
     "soundcontroller.options.region.use_position": "Use my position",
-    "soundcontroller.options.region.save": "Save"
+    "soundcontroller.options.region.save": "Save",
+    "soundcontroller.options.tab.presets": "Presets",
+    "soundcontroller.options.preset.add": "Add Preset",
+    "soundcontroller.options.preset.create": "New Preset",
+    "soundcontroller.options.preset.edit": "Edit",
+    "soundcontroller.options.preset.edit.title": "Edit Preset",
+    "soundcontroller.options.preset.name.hint": "Preset name...",
+    "soundcontroller.options.preset.save": "Save",
+    "soundcontroller.options.preset.load": "Load Preset",
+    "soundcontroller.options.preset.load.apply": "Load",
+    "soundcontroller.options.preset.delete": "Delete",
+    "soundcontroller.options.preset.delete.tooltip": "Delete this preset",
+    "soundcontroller.options.preset.delete.confirm.title": "Delete Preset?"
 }
