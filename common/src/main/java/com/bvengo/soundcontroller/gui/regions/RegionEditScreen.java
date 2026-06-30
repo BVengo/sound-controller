@@ -72,7 +72,7 @@ public class RegionEditScreen extends Screen {
             }
         }
 
-        generalTab = new RegionGeneralTab(existingRegion, serverKey, worldKey, workingName);
+        generalTab = new RegionGeneralTab(existingRegion, worldKey, workingName);
         soundsTab = new RegionSoundsTab(this, options, workingSounds);
 
         tabNavigationBar = MenuTabBar.builder(tabManager, width)
