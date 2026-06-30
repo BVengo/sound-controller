@@ -2,11 +2,11 @@ package com.bvengo.soundcontroller.gui.regions;
 
 import com.bvengo.soundcontroller.Translations;
 import com.bvengo.soundcontroller.VolumeData;
-import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.gui.buttons.ToggleButtonWidget;
+import com.bvengo.soundcontroller.gui.buttons.TriggerButtonWidget;
 import com.bvengo.soundcontroller.gui.components.VolumeListWidget;
 import com.bvengo.soundcontroller.gui.components.VolumeWidgetEntry;
-import com.bvengo.soundcontroller.region.RegionData;
+import com.bvengo.soundcontroller.gui.presets.PresetPickerScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.Font;
@@ -40,35 +40,47 @@ public class RegionSoundsTab implements Tab {
     private final StringWidget searchLabel;
     private final EditBox searchField;
     private final ToggleButtonWidget filterButton;
+    private final TriggerButtonWidget loadPresetButton;
     private final VolumeListWidget volumeListWidget;
 
     private final HashMap<Identifier, VolumeData> workingSounds;
     private boolean showModifiedOnly = false;
 
-    public RegionSoundsTab(Screen screen, Options options, RegionData existingRegion) {
+    private static final int ROW_TOP_PADDING = 8;
+    private static final int LEFT_PADDING = 8;
+    private static final int LABEL_SEARCH_GAP = 4;
+    private static final int BUTTON_GAP = 4;
+    private static final int BUTTON_SIZE = 20;
+    private static final int RIGHT_PADDING = 8;
+    private static final int LIST_TOP_GAP = 8;
+
+    public RegionSoundsTab(Screen screen, Options options, HashMap<Identifier, VolumeData> workingSounds) {
         this.screen = screen;
         this.options = options;
-
-        workingSounds = new HashMap<>();
-        for (Identifier soundId : VolumeConfig.getInstance().getVolumes().keySet()) {
-            float vol = existingRegion != null
-                ? existingRegion.getVolumeForSound(soundId)
-                : VolumeData.DEFAULT_VOLUME;
-            workingSounds.put(soundId, new VolumeData(soundId, vol));
-        }
+        this.workingSounds = workingSounds;
 
         Font font = Minecraft.getInstance().font;
 
         searchLabel = new StringWidget(SEARCH_FIELD_TITLE, font);
 
-        searchField = new EditBox(font, 0, 0, 200, 20, SEARCH_FIELD_PLACEHOLDER);
+        searchField = new EditBox(font, 0, 0, 200, BUTTON_SIZE, SEARCH_FIELD_PLACEHOLDER);
         searchField.setResponder(s -> loadSoundOptions());
 
-        filterButton = new ToggleButtonWidget("filter", 0, 0, 20, 20, b -> {
+        filterButton = new ToggleButtonWidget("filter", 0, 0, BUTTON_SIZE, BUTTON_SIZE, b -> {
             showModifiedOnly = !showModifiedOnly;
             loadSoundOptions();
         }, false);
         filterButton.setTooltip(Tooltip.create(FILTER_BUTTON_TOOLTIP));
+
+        loadPresetButton = new TriggerButtonWidget("preset", 0, 0, BUTTON_SIZE, BUTTON_SIZE,
+            b -> Minecraft.getInstance().setScreenAndShow(new PresetPickerScreen(screen, preset -> {
+                for (var entry : preset.getSounds().entrySet()) {
+                    VolumeData vd = workingSounds.get(entry.getKey());
+                    if (vd != null) vd.setVolume(entry.getValue());
+                }
+            }))
+        );
+        loadPresetButton.setTooltip(Tooltip.create(Translations.translatableOf("preset.load")));
 
         volumeListWidget = new VolumeListWidget(Minecraft.getInstance(), 200, 100, 0);
         loadSoundOptions();
@@ -89,22 +101,29 @@ public class RegionSoundsTab implements Tab {
         consumer.accept(searchLabel);
         consumer.accept(searchField);
         consumer.accept(filterButton);
+        consumer.accept(loadPresetButton);
         consumer.accept(volumeListWidget);
     }
 
     @Override
     public void doLayout(ScreenRectangle rect) {
         Font font = Minecraft.getInstance().font;
-        int top = rect.top() + 8;
-        int left = rect.left() + 8;
+        int top = rect.top() + ROW_TOP_PADDING;
+        int left = rect.left() + LEFT_PADDING;
 
         int labelWidth = font.width(SEARCH_FIELD_TITLE);
-        searchLabel.setPosition(left, top + (20 - searchLabel.getHeight()) / 2);
-        searchField.setPosition(left + labelWidth + 4, top);
-        searchField.setWidth(rect.width() - labelWidth - 20 - 4 - 4 - 16);
-        filterButton.setPosition(searchField.getRight() + 4, top);
+        searchLabel.setPosition(left, top + (BUTTON_SIZE - searchLabel.getHeight()) / 2);
 
-        int listTop = top + 28;
+        int searchFieldX = left + labelWidth + LABEL_SEARCH_GAP;
+        int buttonsWidth = BUTTON_SIZE * 2 + BUTTON_GAP * 2 + RIGHT_PADDING;
+        int searchFieldWidth = Math.max(0, rect.left() + rect.width() - searchFieldX - buttonsWidth);
+
+        searchField.setPosition(searchFieldX, top);
+        searchField.setWidth(searchFieldWidth);
+        filterButton.setPosition(searchField.getRight() + BUTTON_GAP, top);
+        loadPresetButton.setPosition(filterButton.getRight() + BUTTON_GAP, top);
+
+        int listTop = searchField.getBottom() + LIST_TOP_GAP;
         volumeListWidget.updateSizeAndPosition(rect.width(), rect.height() - (listTop - rect.top()), listTop);
 
         loadSoundOptions();

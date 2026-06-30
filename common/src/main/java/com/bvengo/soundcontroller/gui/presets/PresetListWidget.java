@@ -1,15 +1,15 @@
-package com.bvengo.soundcontroller.gui.regions;
+package com.bvengo.soundcontroller.gui.presets;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 
-public class RegionListWidget extends ContainerObjectSelectionList<RegionListEntry> {
+public class PresetListWidget extends ContainerObjectSelectionList<PresetListEntry> {
     private static final int ROW_HEIGHT = 30;
-    private static final int ROW_WIDTH = 520;
+    private static final int ROW_WIDTH = 360;
     private static final int HORIZONTAL_MARGIN = 32;
     private static final int SCROLLBAR_RIGHT_PADDING = 8;
 
-    public RegionListWidget(Minecraft client, int width, int height, int y) {
+    public PresetListWidget(Minecraft client, int width, int height, int y) {
         super(client, width, height, y, ROW_HEIGHT);
         this.centerListVertically = false;
     }
@@ -29,7 +29,7 @@ public class RegionListWidget extends ContainerObjectSelectionList<RegionListEnt
         super.clearEntries();
     }
 
-    public void addWidgetEntry(RegionListEntry entry) {
+    public void addWidgetEntry(PresetListEntry entry) {
         this.addEntry(entry);
     }
 }

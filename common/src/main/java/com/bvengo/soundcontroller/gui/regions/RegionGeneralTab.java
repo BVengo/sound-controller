@@ -1,5 +1,6 @@
 package com.bvengo.soundcontroller.gui.regions;
 
+import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.Translations;
 import com.bvengo.soundcontroller.region.BoxGeometry;
 import com.bvengo.soundcontroller.region.RegionData;
@@ -13,6 +14,7 @@ import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -35,6 +37,7 @@ public class RegionGeneralTab implements Tab {
     }
 
     private final Layout layout = LinearLayout.vertical();
+    private final String worldKey;
 
     private GeometryType geometryType;
 
@@ -55,10 +58,10 @@ public class RegionGeneralTab implements Tab {
     private final EditBox bx2Field, by2Field, bz2Field;
     private final Button corner2PosButton;
 
-    private final StringWidget serverInfoLabel;
     private final StringWidget worldInfoLabel;
 
-    public RegionGeneralTab(RegionData existingRegion, String serverKey, String worldKey, String initialName) {
+    public RegionGeneralTab(RegionData existingRegion, String worldKey, String initialName) {
+        this.worldKey = worldKey;
         Font font = Minecraft.getInstance().font;
 
         double initSx = 0, initSy = 0, initSz = 0, initRadius = 16;
@@ -109,7 +112,6 @@ public class RegionGeneralTab implements Tab {
         szField = coordField(font, "Z", initSz);
         spherePosButton = Button.builder(translatableOf("region.use_position"),
             b -> fillPosition(sxField, syField, szField)).size(200, 20).build();
-        spherePosButton.active = Minecraft.getInstance().player != null;
         radiusGroupLabel = new StringWidget(translatableOf("region.sphere.radius"), font);
         radiusField = new EditBox(font, 0, 0, 200, 20, Component.literal("16"));
         radiusField.setValue(fmt(initRadius));
@@ -120,20 +122,17 @@ public class RegionGeneralTab implements Tab {
         bz1Field = coordField(font, "Z", initBz1);
         corner1PosButton = Button.builder(translatableOf("region.use_position"),
             b -> fillPosition(bx1Field, by1Field, bz1Field)).size(200, 20).build();
-        corner1PosButton.active = Minecraft.getInstance().player != null;
         box2GroupLabel = new StringWidget(translatableOf("region.box.corner2"), font);
         bx2Field = coordField(font, "X", initBx2);
         by2Field = coordField(font, "Y", initBy2);
         bz2Field = coordField(font, "Z", initBz2);
         corner2PosButton = Button.builder(translatableOf("region.use_position"),
             b -> fillPosition(bx2Field, by2Field, bz2Field)).size(200, 20).build();
-        corner2PosButton.active = Minecraft.getInstance().player != null;
 
-        serverInfoLabel = new StringWidget(
-            Component.literal(serverKey).withStyle(s -> s.withColor(0x888888)), font);
         worldInfoLabel = new StringWidget(
             Component.literal(worldKey).withStyle(s -> s.withColor(0x888888)), font);
 
+        updatePositionButtonState();
         updateGeometryVisibility();
     }
 
@@ -169,7 +168,6 @@ public class RegionGeneralTab implements Tab {
         consumer.accept(by2Field);
         consumer.accept(bz2Field);
         consumer.accept(corner2PosButton);
-        consumer.accept(serverInfoLabel);
         consumer.accept(worldInfoLabel);
     }
 
@@ -227,9 +225,9 @@ public class RegionGeneralTab implements Tab {
 
         // World info pinned to bottom-right
         int bottom = rect.bottom() - 8;
-        serverInfoLabel.setPosition(rl, bottom - 22);
         worldInfoLabel.setPosition(rl, bottom - 10);
 
+        updatePositionButtonState();
         updateGeometryVisibility();
     }
 
@@ -306,9 +304,32 @@ public class RegionGeneralTab implements Tab {
     private void fillPosition(EditBox x, EditBox y, EditBox z) {
         var player = Minecraft.getInstance().player;
         if (player == null) return;
+        if (!SoundController.getCurrentWorldKey().equals(worldKey)) return;
         x.setValue(fmt(Math.round(player.getX())));
         y.setValue(fmt(Math.round(player.getY())));
         z.setValue(fmt(Math.round(player.getZ())));
+    }
+
+    private void updatePositionButtonState() {
+        Minecraft mc = Minecraft.getInstance();
+        boolean inWorld = mc.player != null && mc.level != null;
+        boolean sameWorld = inWorld && SoundController.getCurrentWorldKey().equals(worldKey);
+
+        Tooltip tooltip = null;
+        if (!inWorld) {
+            tooltip = Tooltip.create(translatableOf("region.use_position.requires_world"));
+        } else if (!sameWorld) {
+            tooltip = Tooltip.create(translatableOf("region.use_position.different_world"));
+        }
+
+        setPositionButtonState(spherePosButton, sameWorld, tooltip);
+        setPositionButtonState(corner1PosButton, sameWorld, tooltip);
+        setPositionButtonState(corner2PosButton, sameWorld, tooltip);
+    }
+
+    private void setPositionButtonState(Button button, boolean active, Tooltip tooltip) {
+        button.active = active;
+        button.setTooltip(tooltip);
     }
 
     private double parseCoord(EditBox field) {

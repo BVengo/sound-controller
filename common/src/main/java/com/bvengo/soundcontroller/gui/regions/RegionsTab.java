@@ -19,11 +19,13 @@ import java.util.function.Consumer;
 public class RegionsTab implements Tab {
     private final Screen screen;
     private final Layout layout = LinearLayout.vertical();
+    private final Runnable onSelected;
 
     private final RegionListWidget regionListWidget;
 
-    public RegionsTab(Screen screen, Options options) {
+    public RegionsTab(Screen screen, Options options, Runnable onSelected) {
         this.screen = screen;
+        this.onSelected = onSelected;
         this.regionListWidget = new RegionListWidget(Minecraft.getInstance(), 200, 100, 0);
     }
 
@@ -44,6 +46,7 @@ public class RegionsTab implements Tab {
 
     @Override
     public void doLayout(ScreenRectangle rect) {
+        this.onSelected.run();
         regionListWidget.updateSizeAndPosition(rect.width(), rect.height(), rect.top());
         loadRegions();
     }
@@ -61,9 +64,8 @@ public class RegionsTab implements Tab {
         regionListWidget.clearEntries();
         Font font = Minecraft.getInstance().font;
         String serverKey = SoundController.getCurrentServerKey();
-        String worldKey = SoundController.getCurrentWorldKey();
         for (RegionData region : RegionConfig.getInstance().getRegions()) {
-            if (region.getServerKey().equals(serverKey) && region.getWorldKey().equals(worldKey)) {
+            if (region.getServerKey().equals(serverKey)) {
                 regionListWidget.addWidgetEntry(new RegionListEntry(region, screen, font));
             }
         }

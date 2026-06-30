@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.storage.LevelResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,8 @@ public final class SoundController {
 		Minecraft mc = Minecraft.getInstance();
 		MinecraftServer server = mc.getSingleplayerServer();
 		if (server != null) {
-			return "singleplayer:" + server.getWorldData().getLevelName();
+			Path worldPath = server.getWorldPath(LevelResource.ROOT).normalize().getFileName();
+			return "singleplayer:" + (worldPath != null ? worldPath.toString() : server.getWorldData().getLevelName());
 		}
 		ServerData serverData = mc.getCurrentServer();
 		if (serverData != null) {
