@@ -10,52 +10,73 @@ import com.google.gson.*;
 import net.minecraft.resources.Identifier;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class RegionConfigParser {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String FILE_NAME = SoundController.MOD_ID + "-regions.json";
+    private static final String SERVERS_KEY = "servers";
 
     private static File getFile() {
         return ConfigParser.getConfigDir().resolve(FILE_NAME).toFile();
     }
 
-    public static void loadConfig(RegionConfig config) {
+    public static void loadConfig(RegionConfig config, String serverKey) {
         File file = getFile();
         if (!file.exists()) {
+            config.replaceLoadedRegions(serverKey, List.of());
             return;
         }
 
         try (Reader reader = new FileReader(file)) {
             JsonObject root = gson.fromJson(reader, JsonObject.class);
-            if (root == null) return;
-
-            JsonArray regionsArray = root.getAsJsonArray("regions");
-            if (regionsArray == null) return;
-
-            for (JsonElement el : regionsArray) {
-                RegionData region = parseRegion(el.getAsJsonObject());
-                if (region != null) {
-                    config.getRegions().add(region);
-                }
+            if (root == null) {
+                config.replaceLoadedRegions(serverKey, List.of());
+                return;
             }
 
-            SoundController.LOGGER.info("Loaded {} region(s).", config.getRegions().size());
+            List<RegionData> regions = parseRegionsForServer(root, serverKey);
+            config.replaceLoadedRegions(serverKey, regions);
+
+            SoundController.LOGGER.info("Loaded {} region(s) for {}.", regions.size(), serverKey);
         } catch (Exception e) {
             SoundController.LOGGER.error("Error reading regions config: ", e);
+            config.replaceLoadedRegions(serverKey, List.of());
         }
     }
 
-    private static RegionData parseRegion(JsonObject obj) {
+    private static List<RegionData> parseRegionsForServer(JsonObject root, String serverKey) {
+        JsonObject servers = root.getAsJsonObject(SERVERS_KEY);
+        if (servers == null) {
+            return List.of();
+        }
+
+        JsonArray regionsArray = servers.getAsJsonArray(serverKey);
+        if (regionsArray == null) {
+            return List.of();
+        }
+
+        List<RegionData> regions = new ArrayList<>();
+        for (JsonElement el : regionsArray) {
+            RegionData region = parseRegion(el.getAsJsonObject(), serverKey);
+            if (region != null) {
+                regions.add(region);
+            }
+        }
+        return regions;
+    }
+
+    private static RegionData parseRegion(JsonObject obj, String bucketServerKey) {
         try {
             String name = obj.get("name").getAsString();
-            String serverKey = obj.get("serverKey").getAsString();
             String worldKey = obj.get("worldKey").getAsString();
 
             RegionGeometry geometry = parseGeometry(obj.getAsJsonObject("geometry"));
             if (geometry == null) return null;
 
-            RegionData region = new RegionData(name, serverKey, worldKey, geometry);
+            RegionData region = new RegionData(name, bucketServerKey, worldKey, geometry);
             if (obj.has("enabled")) region.setEnabled(obj.get("enabled").getAsBoolean());
 
             JsonArray sounds = obj.getAsJsonArray("sounds");
@@ -97,15 +118,21 @@ public class RegionConfigParser {
         };
     }
 
-    public static void saveConfig(RegionConfig config) {
-        JsonObject root = new JsonObject();
+    public static void saveConfig(RegionConfig config, String serverKey) {
+        JsonObject root = readExistingRoot();
         root.addProperty("version", RegionConfig.CONFIG_VERSION);
+
+        JsonObject servers = root.getAsJsonObject(SERVERS_KEY);
+        if (servers == null) {
+            servers = new JsonObject();
+        }
 
         JsonArray regionsArray = new JsonArray();
         for (RegionData region : config.getRegions()) {
             regionsArray.add(serializeRegion(region));
         }
-        root.add("regions", regionsArray);
+        servers.add(serverKey, regionsArray);
+        root.add(SERVERS_KEY, servers);
 
         File file = getFile();
         try (Writer writer = new FileWriter(file)) {
@@ -115,11 +142,25 @@ public class RegionConfigParser {
         }
     }
 
+    private static JsonObject readExistingRoot() {
+        File file = getFile();
+        if (!file.exists()) {
+            return new JsonObject();
+        }
+
+        try (Reader reader = new FileReader(file)) {
+            JsonObject root = gson.fromJson(reader, JsonObject.class);
+            return root != null ? root : new JsonObject();
+        } catch (Exception e) {
+            SoundController.LOGGER.error("Error reading existing regions config before save: ", e);
+            return new JsonObject();
+        }
+    }
+
     private static JsonObject serializeRegion(RegionData region) {
         JsonObject obj = new JsonObject();
         obj.addProperty("name", region.getName());
         obj.addProperty("enabled", region.isEnabled());
-        obj.addProperty("serverKey", region.getServerKey());
         obj.addProperty("worldKey", region.getWorldKey());
         obj.add("geometry", serializeGeometry(region.getGeometry()));
 
