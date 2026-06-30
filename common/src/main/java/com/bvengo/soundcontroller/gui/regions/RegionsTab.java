@@ -64,9 +64,8 @@ public class RegionsTab implements Tab {
         regionListWidget.clearEntries();
         Font font = Minecraft.getInstance().font;
         String serverKey = SoundController.getCurrentServerKey();
-        String worldKey = SoundController.getCurrentWorldKey();
         for (RegionData region : RegionConfig.getInstance().getRegions()) {
-            if (region.getServerKey().equals(serverKey) && region.getWorldKey().equals(worldKey)) {
+            if (region.getServerKey().equals(serverKey)) {
                 regionListWidget.addWidgetEntry(new RegionListEntry(region, screen, font));
             }
         }

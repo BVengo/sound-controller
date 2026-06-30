@@ -4,6 +4,7 @@ import com.bvengo.soundcontroller.Translations;
 import com.bvengo.soundcontroller.VolumeData;
 import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.gui.buttons.ToggleButtonWidget;
+import com.bvengo.soundcontroller.gui.buttons.TriggerButtonWidget;
 import com.bvengo.soundcontroller.gui.components.VolumeListWidget;
 import com.bvengo.soundcontroller.gui.components.VolumeWidgetEntry;
 import com.bvengo.soundcontroller.gui.presets.PresetPickerScreen;
@@ -12,7 +13,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -40,11 +40,20 @@ public class GlobalSoundTab implements Tab {
     private final EditBox searchField;
     private final ToggleButtonWidget filterButton;
     private final ToggleButtonWidget subtitlesButton;
-    private final Button loadPresetButton;
+    private final TriggerButtonWidget loadPresetButton;
     private final VolumeListWidget volumeListWidget;
 
     private final Runnable onSelected;
     private boolean showModifiedOnly = false;
+
+    private static final int ROW_TOP_PADDING = 8;
+    private static final int LABEL_LEFT_PADDING = 32;
+    private static final int LABEL_SEARCH_GAP = 4;
+    private static final int SEARCH_BUTTON_GAP = 8;
+    private static final int BUTTON_GAP = 4;
+    private static final int BUTTON_SIZE = 20;
+    private static final int RIGHT_PADDING = 8;
+    private static final int LIST_TOP_GAP = 8;
 
     public GlobalSoundTab(AllSoundOptionsScreen screen, Options options, Runnable onSelected) {
         this.screen = screen;
@@ -55,10 +64,10 @@ public class GlobalSoundTab implements Tab {
 
         this.searchLabel = new StringWidget(SEARCH_FIELD_TITLE, font);
 
-        this.searchField = new EditBox(font, 0, 0, 200, 20, SEARCH_FIELD_PLACEHOLDER);
+        this.searchField = new EditBox(font, 0, 0, 200, BUTTON_SIZE, SEARCH_FIELD_PLACEHOLDER);
         this.searchField.setResponder(value -> loadOptions());
 
-        this.filterButton = new ToggleButtonWidget("filter", 0, 0, 20, 20,
+        this.filterButton = new ToggleButtonWidget("filter", 0, 0, BUTTON_SIZE, BUTTON_SIZE,
             button -> {
                 showModifiedOnly = !showModifiedOnly;
                 loadOptions();
@@ -67,20 +76,21 @@ public class GlobalSoundTab implements Tab {
         );
         this.filterButton.setTooltip(Tooltip.create(FILTER_BUTTON_TOOLTIP));
 
-        this.subtitlesButton = new ToggleButtonWidget("subtitles", 0, 0, 20, 20,
+        this.subtitlesButton = new ToggleButtonWidget("subtitles", 0, 0, BUTTON_SIZE, BUTTON_SIZE,
             button -> config.toggleSubtitles(),
             config.areSubtitlesEnabled()
         );
         this.subtitlesButton.setTooltip(Tooltip.create(SUBTITLES_BUTTON_TOOLTIP));
 
-        this.loadPresetButton = Button.builder(Translations.translatableOf("preset.load"),
+        this.loadPresetButton = new TriggerButtonWidget("preset", 0, 0, BUTTON_SIZE, BUTTON_SIZE,
             b -> Minecraft.getInstance().setScreenAndShow(new PresetPickerScreen(screen, preset -> {
                 for (var entry : preset.getSounds().entrySet()) {
                     VolumeData vd = config.getVolumes().get(entry.getKey());
                     if (vd != null) vd.setVolume(entry.getValue());
                 }
             }))
-        ).size(90, 20).build();
+        );
+        this.loadPresetButton.setTooltip(Tooltip.create(Translations.translatableOf("preset.load")));
 
         this.volumeListWidget = new VolumeListWidget(Minecraft.getInstance(), 200, 100, 0);
         loadOptions();
@@ -109,21 +119,23 @@ public class GlobalSoundTab implements Tab {
     @Override
     public void doLayout(ScreenRectangle rect) {
         this.onSelected.run();
-        int top = rect.top() + 8;
-        int searchFieldX = rect.left() + 80;
-        int searchFieldWidth = rect.width() - 167;
+        int top = rect.top() + ROW_TOP_PADDING;
+
+        int labelY = top + (this.searchField.getHeight() - this.searchLabel.getHeight()) / 2;
+        this.searchLabel.setPosition(rect.left() + LABEL_LEFT_PADDING, labelY);
+
+        int searchFieldX = searchLabel.getRight() + LABEL_SEARCH_GAP;
+        int buttonsWidth = BUTTON_SIZE * 3 + SEARCH_BUTTON_GAP + BUTTON_GAP * 2 + RIGHT_PADDING;
+        int searchFieldWidth = Math.max(0, rect.left() + rect.width() - searchFieldX - buttonsWidth);
 
         this.searchField.setPosition(searchFieldX, top);
         this.searchField.setWidth(searchFieldWidth);
 
-        this.filterButton.setPosition(this.searchField.getRight() + 8, top);
-        this.subtitlesButton.setPosition(this.filterButton.getRight() + 4, top);
-        this.loadPresetButton.setPosition(this.subtitlesButton.getRight() + 4, top);
+        this.filterButton.setPosition(this.searchField.getRight() + SEARCH_BUTTON_GAP, top);
+        this.subtitlesButton.setPosition(this.filterButton.getRight() + BUTTON_GAP, top);
+        this.loadPresetButton.setPosition(this.subtitlesButton.getRight() + BUTTON_GAP, top);
 
-        int labelY = top + (this.searchField.getHeight() - this.searchLabel.getHeight()) / 2;
-        this.searchLabel.setPosition(rect.left() + 32, labelY);
-
-        int listTop = this.searchField.getBottom() + 8;
+        int listTop = this.searchField.getBottom() + LIST_TOP_GAP;
         int listHeight = rect.height() - (listTop - rect.top());
         this.volumeListWidget.updateSizeAndPosition(rect.width(), listHeight, listTop);
     }

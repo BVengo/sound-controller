@@ -11,6 +11,7 @@ import java.util.HashMap;
 public class PresetConfigParser {
     private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private static final String FILE_NAME = SoundController.MOD_ID + "-presets.json";
+    private static final String PRESETS_KEY = "presets";
 
     private static File getFile() {
         return ConfigParser.getConfigDir().resolve(FILE_NAME).toFile();
@@ -24,7 +25,7 @@ public class PresetConfigParser {
             JsonObject root = gson.fromJson(reader, JsonObject.class);
             if (root == null) return;
 
-            JsonArray presetsArray = root.getAsJsonArray("presets");
+            JsonArray presetsArray = root.getAsJsonArray(PRESETS_KEY);
             if (presetsArray == null) return;
 
             for (JsonElement el : presetsArray) {
@@ -72,7 +73,7 @@ public class PresetConfigParser {
         for (PresetData preset : config.getPresets()) {
             presetsArray.add(serializePreset(preset));
         }
-        root.add("presets", presetsArray);
+        root.add(PRESETS_KEY, presetsArray);
 
         File file = getFile();
         try (Writer writer = new FileWriter(file)) {

@@ -8,7 +8,9 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 
@@ -23,17 +25,24 @@ public class PresetPickerScreen extends Screen {
     private PickerListWidget listWidget;
 
     public PresetPickerScreen(Screen parent, Consumer<PresetData> onApply) {
-        super(Translations.translatableOf("preset.load"));
+        super(Translations.translatableOf("preset.picker.title"));
         this.parent = parent;
         this.onApply = onApply;
     }
 
     @Override
     protected void init() {
+        layout.removeChildren();
+
+        LinearLayout header = LinearLayout.vertical().spacing(4);
+        header.addChild(new StringWidget(this.title, font));
+        header.addChild(new StringWidget(Translations.translatableOf("preset.picker.subtitle"), font));
+        layout.addToHeader(header);
+
         listWidget = new PickerListWidget(minecraft, width, 0, 0);
         addRenderableWidget(listWidget);
 
-        layout.addToFooter(Button.builder(CommonComponents.GUI_CANCEL, b -> onClose()).build());
+        layout.addToFooter(Button.builder(CommonComponents.GUI_CANCEL, b -> closeToParent()).build());
         layout.visitWidgets(this::addRenderableWidget);
 
         repositionElements();
@@ -44,7 +53,9 @@ public class PresetPickerScreen extends Screen {
     protected void repositionElements() {
         layout.arrangeElements();
         if (listWidget != null) {
-            listWidget.updateSizeAndPosition(width, height - layout.getFooterHeight(), layout.getHeaderHeight());
+            int headerHeight = layout.getHeaderHeight();
+            int listHeight = height - headerHeight - layout.getFooterHeight();
+            listWidget.updateSizeAndPosition(width, listHeight, headerHeight);
         }
     }
 
@@ -57,11 +68,15 @@ public class PresetPickerScreen extends Screen {
 
     private void applyPreset(PresetData preset) {
         onApply.accept(preset);
-        minecraft.setScreenAndShow(parent);
+        closeToParent();
     }
 
     @Override
     public void onClose() {
+        closeToParent();
+    }
+
+    private void closeToParent() {
         minecraft.setScreenAndShow(parent);
     }
 
@@ -111,6 +126,9 @@ public class PresetPickerScreen extends Screen {
 
     private static class PickerListWidget extends ContainerObjectSelectionList<PickerEntry> {
         private static final int ROW_HEIGHT = 30;
+        private static final int ROW_WIDTH = 360;
+        private static final int HORIZONTAL_MARGIN = 32;
+        private static final int SCROLLBAR_RIGHT_PADDING = 8;
 
         PickerListWidget(Minecraft client, int width, int height, int y) {
             super(client, width, height, y, ROW_HEIGHT);
@@ -119,7 +137,12 @@ public class PresetPickerScreen extends Screen {
 
         @Override
         public int getRowWidth() {
-            return this.width;
+            return Math.min(ROW_WIDTH, Math.max(0, this.width - HORIZONTAL_MARGIN));
+        }
+
+        @Override
+        protected int scrollBarX() {
+            return Math.min(super.scrollBarX(), getRight() - SCROLLBAR_RIGHT_PADDING);
         }
 
         @Override
