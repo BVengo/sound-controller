@@ -5,7 +5,7 @@ import com.bvengo.soundcontroller.config.PresetConfig;
 import com.bvengo.soundcontroller.config.PresetData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList.Entry;
 import net.minecraft.client.gui.components.Tooltip;
@@ -42,18 +42,18 @@ public class PresetListEntry extends Entry<PresetListEntry> {
     }
 
     private void openEditScreen() {
-        Minecraft.getInstance().setScreenAndShow(new PresetEditScreen(parentScreen, preset));
+        Minecraft.getInstance().setScreen(new PresetEditScreen(parentScreen, preset));
     }
 
     private void confirmDelete() {
         Minecraft mc = Minecraft.getInstance();
-        mc.setScreenAndShow(new ConfirmScreen(
+        mc.setScreen(new ConfirmScreen(
             confirmed -> {
                 if (confirmed) {
                     PresetConfig.getInstance().removePreset(preset);
                     PresetConfig.getInstance().save();
                 }
-                mc.setScreenAndShow(parentScreen);
+                mc.setScreen(parentScreen);
             },
             Translations.translatableOf("preset.delete.confirm.title"),
             Component.literal("\"" + preset.getName() + "\"")
@@ -61,23 +61,24 @@ public class PresetListEntry extends Entry<PresetListEntry> {
     }
 
     @Override
-    public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        int entryLeft = getX() + 8;
-        int entryRight = getX() + getWidth() - 8;
-        int centerY = getY() + (getHeight() - BUTTON_HEIGHT) / 2;
+    public void render(GuiGraphics context, int index, int top, int left, int entryWidth, int entryHeight,
+                       int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        int entryLeft = left + 8;
+        int entryRight = left + entryWidth - 8;
+        int centerY = top + (entryHeight - BUTTON_HEIGHT) / 2;
 
         int deleteX = entryRight - DELETE_WIDTH;
         int editX = deleteX - 4 - EDIT_WIDTH;
         int nameWidth = editX - 8 - entryLeft;
 
         String name = font.plainSubstrByWidth(preset.getName(), Math.max(0, nameWidth));
-        context.text(font, name, entryLeft, centerY + 1, 0xFFFFFFFF, true);
+        context.drawString(font, name, entryLeft, centerY + 1, 0xFFFFFFFF, true);
 
         this.editButton.setPosition(editX, centerY);
-        this.editButton.extractRenderState(context, mouseX, mouseY, tickDelta);
+        this.editButton.render(context, mouseX, mouseY, tickDelta);
 
         this.deleteButton.setPosition(deleteX, centerY);
-        this.deleteButton.extractRenderState(context, mouseX, mouseY, tickDelta);
+        this.deleteButton.render(context, mouseX, mouseY, tickDelta);
     }
 
     @Override

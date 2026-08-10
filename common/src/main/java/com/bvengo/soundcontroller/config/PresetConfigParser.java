@@ -2,7 +2,7 @@ package com.bvengo.soundcontroller.config;
 
 import com.bvengo.soundcontroller.SoundController;
 import com.google.gson.*;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.io.*;
 import java.util.Comparator;
@@ -44,13 +44,13 @@ public class PresetConfigParser {
     private static PresetData parsePreset(JsonObject obj) {
         try {
             String name = obj.get("name").getAsString();
-            HashMap<Identifier, Float> sounds = new HashMap<>();
+            HashMap<ResourceLocation, Float> sounds = new HashMap<>();
 
             JsonArray soundsArray = obj.getAsJsonArray("sounds");
             if (soundsArray != null) {
                 for (JsonElement soundEl : soundsArray) {
                     JsonObject soundObj = soundEl.getAsJsonObject();
-                    Identifier id = Identifier.tryParse(soundObj.get("soundId").getAsString());
+                    ResourceLocation id = ResourceLocation.tryParse(soundObj.get("soundId").getAsString());
                     float volume = soundObj.get("volume").getAsFloat();
                     if (id != null) {
                         sounds.put(id, volume);

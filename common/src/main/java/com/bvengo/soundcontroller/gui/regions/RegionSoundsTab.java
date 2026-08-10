@@ -20,7 +20,7 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -43,7 +43,7 @@ public class RegionSoundsTab implements Tab {
     private final TriggerButtonWidget loadPresetButton;
     private final VolumeListWidget volumeListWidget;
 
-    private final HashMap<Identifier, VolumeData> workingSounds;
+    private final HashMap<ResourceLocation, VolumeData> workingSounds;
     private boolean showModifiedOnly = false;
 
     private static final int ROW_TOP_PADDING = 8;
@@ -54,7 +54,7 @@ public class RegionSoundsTab implements Tab {
     private static final int RIGHT_PADDING = 8;
     private static final int LIST_TOP_GAP = 8;
 
-    public RegionSoundsTab(Screen screen, Options options, HashMap<Identifier, VolumeData> workingSounds) {
+    public RegionSoundsTab(Screen screen, Options options, HashMap<ResourceLocation, VolumeData> workingSounds) {
         this.screen = screen;
         this.options = options;
         this.workingSounds = workingSounds;
@@ -73,7 +73,7 @@ public class RegionSoundsTab implements Tab {
         filterButton.setTooltip(Tooltip.create(FILTER_BUTTON_TOOLTIP));
 
         loadPresetButton = new TriggerButtonWidget("preset", 0, 0, BUTTON_SIZE, BUTTON_SIZE,
-            b -> Minecraft.getInstance().setScreenAndShow(new PresetPickerScreen(screen, preset -> {
+            b -> Minecraft.getInstance().setScreen(new PresetPickerScreen(screen, preset -> {
                 for (var entry : preset.getSounds().entrySet()) {
                     VolumeData vd = workingSounds.get(entry.getKey());
                     if (vd != null) vd.setVolume(entry.getValue());
@@ -89,11 +89,6 @@ public class RegionSoundsTab implements Tab {
     @Override
     public Component getTabTitle() {
         return Translations.translatableOf("tab.sounds");
-    }
-
-    @Override
-    public Component getTabExtraNarration() {
-        return Component.empty();
     }
 
     @Override
@@ -129,11 +124,6 @@ public class RegionSoundsTab implements Tab {
         loadSoundOptions();
     }
 
-    @Override
-    public Layout getLayout() {
-        return layout;
-    }
-
     public String getSearchValue() {
         return searchField.getValue();
     }
@@ -142,8 +132,8 @@ public class RegionSoundsTab implements Tab {
         searchField.setValue(value);
     }
 
-    public Map<Identifier, VolumeData> getSoundOverrides() {
-        Map<Identifier, VolumeData> overrides = new HashMap<>();
+    public Map<ResourceLocation, VolumeData> getSoundOverrides() {
+        Map<ResourceLocation, VolumeData> overrides = new HashMap<>();
         for (var entry : workingSounds.entrySet()) {
             if (entry.getValue().isModified()) {
                 overrides.put(entry.getKey(), entry.getValue());

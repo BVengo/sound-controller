@@ -7,7 +7,7 @@ import com.bvengo.soundcontroller.region.RegionData;
 import com.bvengo.soundcontroller.region.RegionGeometry;
 import com.bvengo.soundcontroller.region.SphereGeometry;
 import com.google.gson.*;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -85,7 +85,7 @@ public class RegionConfigParser {
                     JsonObject soundObj = soundEl.getAsJsonObject();
                     String soundId = soundObj.get("soundId").getAsString();
                     float volume = soundObj.get("volume").getAsFloat();
-                    Identifier id = Identifier.tryParse(soundId);
+                    ResourceLocation id = ResourceLocation.tryParse(soundId);
                     if (id != null) {
                         region.getSoundOverrides().put(id, new VolumeData(id, volume));
                     }

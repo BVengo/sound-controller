@@ -7,7 +7,7 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.client.event.AddClientReloadListenersEvent;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 @Mod(SoundController.MOD_ID)
@@ -24,7 +24,7 @@ public final class NeoForgeSoundController {
 		event.enqueueWork(SoundController::onClientStarted);
 	}
 
-	private void registerReloadListeners(AddClientReloadListenersEvent event) {
-		event.addListener(SoundReloadListener.ID, new SoundReloadListener());
+	private void registerReloadListeners(RegisterClientReloadListenersEvent event) {
+		event.registerReloadListener(new SoundReloadListener());
 	}
 }

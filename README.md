@@ -8,6 +8,8 @@ We've all dealt with that loud portal before, or those ridiculously loud mob far
 
 Sound Controller is a client-side Minecraft mod providing complete volume control over the sounds played in the game. It adds an extra set of options to your sound settings, providing you with per-sound volume sliders, custom regions, and presets!
 
+This branch backports the complete 1.4.0 feature set to Minecraft 1.21.1 for NeoForge and Fabric.
+
 This mod is available on [GitHub](https://www.github.com/BVengo/sound-controller) and [Modrinth](https://www.modrinth.com/mod/sound-controller). Support for [CurseForge](https://www.curseforge.com/minecraft/mc-mods/sound-controller) has been dropped, but very early Fabric versions can still be found there.
 
 ---

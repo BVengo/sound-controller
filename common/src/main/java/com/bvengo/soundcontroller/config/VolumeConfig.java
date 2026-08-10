@@ -9,14 +9,14 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
 public class VolumeConfig {
     private static VolumeConfig instance;
     public static final int CONFIG_VERSION = 4;
 
-    private final HashMap<Identifier, VolumeData> soundVolumes;
+    private final HashMap<ResourceLocation, VolumeData> soundVolumes;
 
     public boolean subtitlesEnabled = false;
 
@@ -44,23 +44,23 @@ public class VolumeConfig {
         // Update map with any sounds missing from the config file
         SoundManager soundManager = Minecraft.getInstance().getSoundManager();
 
-        for (Identifier id : soundManager.getAvailableSounds()) {
+        for (ResourceLocation id : soundManager.getAvailableSounds()) {
             soundVolumes.putIfAbsent(id, new VolumeData(id));
         }
 
         ConfigParser.saveConfig(this);
     }
 
-    public HashMap<Identifier, VolumeData> getVolumes() {
+    public HashMap<ResourceLocation, VolumeData> getVolumes() {
         return soundVolumes;
     }
 
-    public VolumeData getVolumeData(Identifier soundId) {
+    public VolumeData getVolumeData(ResourceLocation soundId) {
         return soundVolumes.getOrDefault(soundId, new VolumeData(soundId));
     }
 
     public float getAdjustedVolume(SoundInstance sound, float baseVolume) {
-        VolumeData volumeData = getVolumeData(sound.getIdentifier());
+        VolumeData volumeData = getVolumeData(sound.getLocation());
         float volume = volumeData.getVolume() * baseVolume;
 
         Minecraft mc = Minecraft.getInstance();
@@ -68,7 +68,7 @@ public class VolumeConfig {
             Vec3 playerPos = mc.player.position();
             String serverKey = SoundController.getCurrentServerKey();
             String worldKey = SoundController.getCurrentWorldKey();
-            Identifier soundId = sound.getIdentifier();
+            ResourceLocation soundId = sound.getLocation();
 
             float minRegionVolume = Float.MAX_VALUE;
             boolean hasOverride = false;

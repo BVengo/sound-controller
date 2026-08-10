@@ -8,6 +8,7 @@ import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.gui.buttons.ToggleButtonWidget;
 import com.bvengo.soundcontroller.gui.components.VolumeListWidget;
 import com.bvengo.soundcontroller.gui.components.VolumeWidgetEntry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
@@ -16,7 +17,7 @@ import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.Comparator;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ public class PresetEditScreen extends Screen {
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
 
     private String workingName;
-    private HashMap<Identifier, VolumeData> workingSounds;
+    private HashMap<ResourceLocation, VolumeData> workingSounds;
     private boolean showModifiedOnly = false;
 
     private EditBox nameField;
@@ -54,7 +55,7 @@ public class PresetEditScreen extends Screen {
     protected void init() {
         if (workingSounds == null) {
             workingSounds = new HashMap<>();
-            for (Identifier soundId : VolumeConfig.getInstance().getVolumes().keySet()) {
+            for (ResourceLocation soundId : VolumeConfig.getInstance().getVolumes().keySet()) {
                 float vol = preset != null && preset.getSounds().containsKey(soundId)
                     ? preset.getSounds().get(soundId)
                     : VolumeData.DEFAULT_VOLUME;
@@ -120,10 +121,10 @@ public class PresetEditScreen extends Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(Minecraft minecraft, int width, int height) {
         workingName = nameField != null ? nameField.getValue() : workingName;
         String search = searchField != null ? searchField.getValue() : "";
-        super.resize(width, height);
+        super.resize(minecraft, width, height);
         if (searchField != null) searchField.setValue(search);
     }
 
@@ -131,8 +132,8 @@ public class PresetEditScreen extends Screen {
         String name = nameField.getValue().trim();
         if (name.isEmpty()) return;
 
-        HashMap<Identifier, Float> sounds = new HashMap<>();
-        for (Map.Entry<Identifier, VolumeData> entry : workingSounds.entrySet()) {
+        HashMap<ResourceLocation, Float> sounds = new HashMap<>();
+        for (Map.Entry<ResourceLocation, VolumeData> entry : workingSounds.entrySet()) {
             if (entry.getValue().isModified()) {
                 sounds.put(entry.getKey(), entry.getValue().getVolume());
             }
@@ -152,7 +153,7 @@ public class PresetEditScreen extends Screen {
 
     @Override
     public void onClose() {
-        minecraft.setScreenAndShow(parent);
+        minecraft.setScreen(parent);
     }
 
     private void loadSoundOptions() {

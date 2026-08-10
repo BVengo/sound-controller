@@ -35,11 +35,6 @@ public class RegionsTab implements Tab {
     }
 
     @Override
-    public Component getTabExtraNarration() {
-        return Component.empty();
-    }
-
-    @Override
     public void visitChildren(Consumer<AbstractWidget> consumer) {
         consumer.accept(regionListWidget);
     }
@@ -51,13 +46,8 @@ public class RegionsTab implements Tab {
         loadRegions();
     }
 
-    @Override
-    public Layout getLayout() {
-        return layout;
-    }
-
     public void openAddScreen() {
-        Minecraft.getInstance().setScreenAndShow(new RegionEditScreen(screen, null));
+        Minecraft.getInstance().setScreen(new RegionEditScreen(screen, null));
     }
 
     private void loadRegions() {

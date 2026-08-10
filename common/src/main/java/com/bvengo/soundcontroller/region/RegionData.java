@@ -1,7 +1,7 @@
 package com.bvengo.soundcontroller.region;
 
 import com.bvengo.soundcontroller.VolumeData;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.HashMap;
@@ -11,7 +11,7 @@ public class RegionData {
     private final String serverKey;
     private final String worldKey;
     private RegionGeometry geometry;
-    private HashMap<Identifier, VolumeData> soundOverrides;
+    private HashMap<ResourceLocation, VolumeData> soundOverrides;
     private boolean enabled = true;
 
     public RegionData(String name, String serverKey, String worldKey, RegionGeometry geometry) {
@@ -34,14 +34,14 @@ public class RegionData {
     public boolean isEnabled() { return enabled; }
     public void setEnabled(boolean enabled) { this.enabled = enabled; }
 
-    public HashMap<Identifier, VolumeData> getSoundOverrides() { return soundOverrides; }
-    public void setSoundOverrides(HashMap<Identifier, VolumeData> overrides) { this.soundOverrides = overrides; }
+    public HashMap<ResourceLocation, VolumeData> getSoundOverrides() { return soundOverrides; }
+    public void setSoundOverrides(HashMap<ResourceLocation, VolumeData> overrides) { this.soundOverrides = overrides; }
 
-    public boolean hasSoundOverride(Identifier soundId) {
+    public boolean hasSoundOverride(ResourceLocation soundId) {
         return soundOverrides.containsKey(soundId);
     }
 
-    public float getVolumeForSound(Identifier soundId) {
+    public float getVolumeForSound(ResourceLocation soundId) {
         VolumeData data = soundOverrides.get(soundId);
         return data != null ? data.getVolume() : VolumeData.DEFAULT_VOLUME;
     }

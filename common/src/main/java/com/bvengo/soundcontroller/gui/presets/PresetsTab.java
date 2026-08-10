@@ -34,11 +34,6 @@ public class PresetsTab implements Tab {
     }
 
     @Override
-    public Component getTabExtraNarration() {
-        return Component.empty();
-    }
-
-    @Override
     public void visitChildren(Consumer<AbstractWidget> consumer) {
         consumer.accept(presetListWidget);
     }
@@ -48,11 +43,6 @@ public class PresetsTab implements Tab {
         this.onSelected.run();
         presetListWidget.updateSizeAndPosition(rect.width(), rect.height(), rect.top());
         loadPresets();
-    }
-
-    @Override
-    public Layout getLayout() {
-        return layout;
     }
 
     private void loadPresets() {

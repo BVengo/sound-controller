@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(SoundEngine.class)
 public class SoundEngineMixin {
-    @WrapOperation(method = "play(Lnet/minecraft/client/resources/sounds/SoundInstance;)Lnet/minecraft/client/sounds/SoundEngine$PlayResult;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/SoundEngine;calculateVolume(FLnet/minecraft/sounds/SoundSource;)F"))
+    @WrapOperation(method = "play(Lnet/minecraft/client/resources/sounds/SoundInstance;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/SoundEngine;calculateVolume(FLnet/minecraft/sounds/SoundSource;)F"))
     private float modifyH(SoundEngine instance, float volume, SoundSource category, Operation<Float> original, SoundInstance sound) {
         // h comes from getAdjustedVolume(float volume, Category category) - we can't inject there, because no ID is available
         float h = original.call(instance, volume, category);

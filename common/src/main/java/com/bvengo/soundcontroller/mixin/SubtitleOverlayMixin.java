@@ -15,11 +15,11 @@ import org.spongepowered.asm.mixin.injection.At;
 public class SubtitleOverlayMixin {
 	@WrapOperation(method = "onPlaySound", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/WeighedSoundEvents;getSubtitle()Lnet/minecraft/network/chat/Component;"))
 	private Component replaceSubtitleText(WeighedSoundEvents instance, Operation<Component> original, SoundInstance sound) {
-		return SoundController.getConfig().areSubtitlesEnabled() ? Component.translationArg(sound.getIdentifier()) : original.call(instance);
+		return SoundController.getConfig().areSubtitlesEnabled() ? Component.translationArg(sound.getLocation()) : original.call(instance);
 	}
 
 	@WrapOperation(
-			method = "extractRenderState",
+			method = "render",
 			at = @At(value = "INVOKE",
 					target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;",
 					ordinal = 0)
@@ -29,7 +29,7 @@ public class SubtitleOverlayMixin {
 	}
 
 	@WrapOperation(
-			method = "extractRenderState",
+			method = "render",
 			at = @At(value = "INVOKE",
 					target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;",
 					ordinal = 1)

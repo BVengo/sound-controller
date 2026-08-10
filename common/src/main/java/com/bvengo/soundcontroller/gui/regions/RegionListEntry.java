@@ -5,7 +5,7 @@ import com.bvengo.soundcontroller.config.RegionConfig;
 import com.bvengo.soundcontroller.region.RegionData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList.Entry;
 import net.minecraft.client.gui.components.Tooltip;
@@ -42,18 +42,18 @@ public class RegionListEntry extends Entry<RegionListEntry> {
     }
 
     private void openEditScreen() {
-        Minecraft.getInstance().setScreenAndShow(new RegionEditScreen(parentScreen, region));
+        Minecraft.getInstance().setScreen(new RegionEditScreen(parentScreen, region));
     }
 
     private void confirmDelete() {
         Minecraft mc = Minecraft.getInstance();
-        mc.setScreenAndShow(new ConfirmScreen(
+        mc.setScreen(new ConfirmScreen(
             confirmed -> {
                 if (confirmed) {
                     RegionConfig.getInstance().removeRegion(region);
                     RegionConfig.getInstance().save();
                 }
-                mc.setScreenAndShow(parentScreen);
+                mc.setScreen(parentScreen);
             },
             Translations.translatableOf("region.delete.confirm.title"),
             Component.literal("\"" + region.getName() + "\"")
@@ -61,10 +61,11 @@ public class RegionListEntry extends Entry<RegionListEntry> {
     }
 
     @Override
-    public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-        int entryLeft = getX() + 8;
-        int entryRight = getX() + getWidth() - 8;
-        int centerY = getY() + (getHeight() - BUTTON_HEIGHT) / 2;
+    public void render(GuiGraphics context, int index, int top, int left, int entryWidth, int entryHeight,
+                       int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        int entryLeft = left + 8;
+        int entryRight = left + entryWidth - 8;
+        int centerY = top + (entryHeight - BUTTON_HEIGHT) / 2;
 
         int deleteX = entryRight - DELETE_WIDTH;
         int editX = deleteX - 4 - EDIT_WIDTH;
@@ -74,14 +75,14 @@ public class RegionListEntry extends Entry<RegionListEntry> {
         String name = font.plainSubstrByWidth(region.getName(), nameWidth);
         String geo = font.plainSubstrByWidth(region.getGeometry().getDescription(), Math.max(0, geoWidth));
 
-        context.text(font, name, entryLeft, centerY + 1, 0xFFFFFFFF, true);
-        context.text(font, geo, entryLeft + nameWidth + 8, centerY + 1, 0xFFAAAAAA, true);
+        context.drawString(font, name, entryLeft, centerY + 1, 0xFFFFFFFF, true);
+        context.drawString(font, geo, entryLeft + nameWidth + 8, centerY + 1, 0xFFAAAAAA, true);
 
         this.editButton.setPosition(editX, centerY);
-        this.editButton.extractRenderState(context, mouseX, mouseY, tickDelta);
+        this.editButton.render(context, mouseX, mouseY, tickDelta);
 
         this.deleteButton.setPosition(deleteX, centerY);
-        this.deleteButton.extractRenderState(context, mouseX, mouseY, tickDelta);
+        this.deleteButton.render(context, mouseX, mouseY, tickDelta);
     }
 
     @Override

@@ -1,5 +1,5 @@
 plugins {
-	id 'net.fabricmc.fabric-loom'
+	id 'fabric-loom'
 }
 
 base {
@@ -15,9 +15,10 @@ sourceSets {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	implementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-	implementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
+	mappings loom.officialMojangMappings()
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+	modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}") {
 		exclude module: 'fabric-api'
 	}
 }
@@ -32,8 +33,8 @@ processResources {
 
 java {
 	withSourcesJar()
-	sourceCompatibility = JavaVersion.VERSION_25
-	targetCompatibility = JavaVersion.VERSION_25
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
 }
 
 jar {

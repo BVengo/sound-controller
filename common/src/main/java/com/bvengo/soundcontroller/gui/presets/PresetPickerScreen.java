@@ -5,7 +5,7 @@ import com.bvengo.soundcontroller.config.PresetConfig;
 import com.bvengo.soundcontroller.config.PresetData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.StringWidget;
@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 public class PresetPickerScreen extends Screen {
     private final Screen parent;
     private final Consumer<PresetData> onApply;
-    private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
+    private HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
 
     private PickerListWidget listWidget;
 
@@ -32,7 +32,7 @@ public class PresetPickerScreen extends Screen {
 
     @Override
     protected void init() {
-        layout.removeChildren();
+        layout = new HeaderAndFooterLayout(this);
 
         LinearLayout header = LinearLayout.vertical().spacing(4);
         header.addChild(new StringWidget(this.title, font));
@@ -77,7 +77,7 @@ public class PresetPickerScreen extends Screen {
     }
 
     private void closeToParent() {
-        minecraft.setScreenAndShow(parent);
+        minecraft.setScreen(parent);
     }
 
     private class PickerEntry extends ContainerObjectSelectionList.Entry<PickerEntry> {
@@ -98,19 +98,20 @@ public class PresetPickerScreen extends Screen {
         }
 
         @Override
-        public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            int entryLeft = getX() + 8;
-            int entryRight = getX() + getWidth() - 8;
-            int centerY = getY() + (getHeight() - BUTTON_HEIGHT) / 2;
+        public void render(GuiGraphics context, int index, int top, int left, int entryWidth, int entryHeight,
+                           int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            int entryLeft = left + 8;
+            int entryRight = left + entryWidth - 8;
+            int centerY = top + (entryHeight - BUTTON_HEIGHT) / 2;
 
             int loadX = entryRight - LOAD_WIDTH;
             int nameWidth = loadX - 8 - entryLeft;
 
             String name = font.plainSubstrByWidth(preset.getName(), Math.max(0, nameWidth));
-            context.text(font, name, entryLeft, centerY + 1, 0xFFFFFFFF, true);
+            context.drawString(font, name, entryLeft, centerY + 1, 0xFFFFFFFF, true);
 
             loadButton.setPosition(loadX, centerY);
-            loadButton.extractRenderState(context, mouseX, mouseY, tickDelta);
+            loadButton.render(context, mouseX, mouseY, tickDelta);
         }
 
         @Override
@@ -141,8 +142,8 @@ public class PresetPickerScreen extends Screen {
         }
 
         @Override
-        protected int scrollBarX() {
-            return Math.min(super.scrollBarX(), getRight() - SCROLLBAR_RIGHT_PADDING);
+        protected int getScrollbarPosition() {
+            return Math.min(super.getScrollbarPosition(), getRight() - SCROLLBAR_RIGHT_PADDING);
         }
 
         @Override

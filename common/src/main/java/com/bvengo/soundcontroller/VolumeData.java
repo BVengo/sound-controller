@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -12,21 +12,21 @@ import net.minecraft.util.RandomSource;
 public class VolumeData {
     public static final Float DEFAULT_VOLUME = 1.0f;
 
-    private final Identifier soundId;
+    private final ResourceLocation soundId;
     private Float volume;
 
     private SimpleSoundInstance currentSoundInstance = null;
 
-    public VolumeData(Identifier id, float volume) {
+    public VolumeData(ResourceLocation id, float volume) {
         this.soundId = id;
         this.volume = volume; // Removed clamping to allow manually setting over / under the slider
     }
 
-    public VolumeData(Identifier id) {
+    public VolumeData(ResourceLocation id) {
         this(id, DEFAULT_VOLUME);
     }
 
-    public Identifier getId() {
+    public ResourceLocation getId() {
         return soundId;
     }
 

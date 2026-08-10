@@ -5,6 +5,9 @@ import net.minecraft.sounds.SoundSource;
 
 public class Utils {
 	public static void updateExistingSounds() {
-        Minecraft.getInstance().getSoundManager().refreshCategoryVolume(SoundSource.AMBIENT);
+        Minecraft.getInstance().getSoundManager().updateSourceVolume(
+            SoundSource.AMBIENT,
+            Minecraft.getInstance().options.getSoundSourceVolume(SoundSource.AMBIENT)
+        );
 	}
 }

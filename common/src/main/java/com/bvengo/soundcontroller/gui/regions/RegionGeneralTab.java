@@ -101,7 +101,8 @@ public class RegionGeneralTab implements Tab {
             .selected(initEnabled)
             .build();
 
-        geometryTypeButton = CycleButton.<GeometryType>builder(GeometryType::getDisplayComponent, geometryType)
+        geometryTypeButton = CycleButton.<GeometryType>builder(GeometryType::getDisplayComponent)
+            .withInitialValue(geometryType)
             .withValues(GeometryType.SPHERE, GeometryType.BOX)
             .create(0, 0, 200, 20, translatableOf("region.geometry.type"),
                 (btn, val) -> { geometryType = val; updateGeometryVisibility(); });
@@ -139,11 +140,6 @@ public class RegionGeneralTab implements Tab {
     @Override
     public Component getTabTitle() {
         return translatableOf("tab.general");
-    }
-
-    @Override
-    public Component getTabExtraNarration() {
-        return Component.empty();
     }
 
     @Override
@@ -229,11 +225,6 @@ public class RegionGeneralTab implements Tab {
 
         updatePositionButtonState();
         updateGeometryVisibility();
-    }
-
-    @Override
-    public Layout getLayout() {
-        return layout;
     }
 
     public String getCurrentName() {

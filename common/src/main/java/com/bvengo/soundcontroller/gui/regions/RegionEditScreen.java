@@ -7,15 +7,16 @@ import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.region.RegionData;
 import com.bvengo.soundcontroller.region.RegionGeometry;
 import net.minecraft.client.Options;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.tabs.MenuTabBar;
+import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,12 +33,12 @@ public class RegionEditScreen extends Screen {
     private final String worldKey;
 
     private String workingName;
-    private HashMap<Identifier, VolumeData> workingSounds;
+    private HashMap<ResourceLocation, VolumeData> workingSounds;
 
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
     private final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 
-    private MenuTabBar tabNavigationBar;
+    private TabNavigationBar tabNavigationBar;
     private RegionGeneralTab generalTab;
     private RegionSoundsTab soundsTab;
 
@@ -64,7 +65,7 @@ public class RegionEditScreen extends Screen {
     protected void init() {
         if (workingSounds == null) {
             workingSounds = new HashMap<>();
-            for (Identifier soundId : VolumeConfig.getInstance().getVolumes().keySet()) {
+            for (ResourceLocation soundId : VolumeConfig.getInstance().getVolumes().keySet()) {
                 float vol = existingRegion != null
                     ? existingRegion.getVolumeForSound(soundId)
                     : VolumeData.DEFAULT_VOLUME;
@@ -75,9 +76,9 @@ public class RegionEditScreen extends Screen {
         generalTab = new RegionGeneralTab(existingRegion, worldKey, workingName);
         soundsTab = new RegionSoundsTab(this, options, workingSounds);
 
-        tabNavigationBar = MenuTabBar.builder(tabManager, width)
-            .addTab(generalTab)
-            .addTab(soundsTab)
+        tabNavigationBar = TabNavigationBar.builder(tabManager, width)
+            .addTabs(generalTab)
+            .addTabs(soundsTab)
             .build();
         addRenderableWidget(tabNavigationBar);
 
@@ -97,7 +98,7 @@ public class RegionEditScreen extends Screen {
     protected void repositionElements() {
         if (tabNavigationBar == null) return;
 
-        tabNavigationBar.arrangeElements(width);
+        tabNavigationBar.arrangeElements();
         int tabBottom = tabNavigationBar.getRectangle().bottom();
 
         ScreenRectangle contentArea = new ScreenRectangle(
@@ -110,10 +111,10 @@ public class RegionEditScreen extends Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(Minecraft minecraft, int width, int height) {
         workingName = generalTab != null ? generalTab.getCurrentName() : workingName;
         String search = soundsTab != null ? soundsTab.getSearchValue() : "";
-        super.resize(width, height);
+        super.resize(minecraft, width, height);
         if (soundsTab != null) soundsTab.setSearchValue(search);
     }
 
@@ -126,7 +127,7 @@ public class RegionEditScreen extends Screen {
             return false;
         }
 
-        Map<Identifier, VolumeData> overrides = soundsTab.getSoundOverrides();
+        Map<ResourceLocation, VolumeData> overrides = soundsTab.getSoundOverrides();
 
         RegionConfig regionConfig = RegionConfig.getInstance();
         boolean enabled = generalTab.extractEnabled();
@@ -147,6 +148,6 @@ public class RegionEditScreen extends Screen {
 
     @Override
     public void onClose() {
-        minecraft.setScreenAndShow(parent);
+        minecraft.setScreen(parent);
     }
 }

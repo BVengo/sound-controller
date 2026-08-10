@@ -23,6 +23,6 @@ side = "CLIENT"
 [[dependencies.soundcontroller]]
 modId = "minecraft"
 type = "required"
-versionRange = "[${minecraft_version},)"
+versionRange = "[${minecraft_version}]"
 ordering = "NONE"
 side = "CLIENT"

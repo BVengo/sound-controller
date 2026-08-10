@@ -62,6 +62,6 @@ public final class SoundController {
 	public static String getCurrentWorldKey() {
 		Minecraft mc = Minecraft.getInstance();
 		if (mc.level == null) return "unknown";
-		return mc.level.dimension().identifier().toString();
+		return mc.level.dimension().location().toString();
 	}
 }

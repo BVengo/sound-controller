@@ -11,7 +11,7 @@ import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.tabs.MenuTabBar;
+import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -32,7 +32,7 @@ public class AllSoundOptionsScreen extends Screen {
 
     private int currentTabIndex = 0;
 
-    private MenuTabBar tabNavigationBar;
+    private TabNavigationBar tabNavigationBar;
     private GlobalSoundTab globalTab;
     private RegionsTab regionsTab;
     private PresetsTab presetsTab;
@@ -53,10 +53,10 @@ public class AllSoundOptionsScreen extends Screen {
         this.regionsTab = new RegionsTab(this, this.options, () -> updateFooterButtons(1, true, false));
         this.presetsTab = new PresetsTab(this, () -> updateFooterButtons(2, false, true));
 
-        this.tabNavigationBar = MenuTabBar.builder(this.tabManager, this.width)
-            .addTab(this.globalTab)
-            .addTab(this.regionsTab)
-            .addTab(this.presetsTab)
+        this.tabNavigationBar = TabNavigationBar.builder(this.tabManager, this.width)
+            .addTabs(this.globalTab)
+            .addTabs(this.regionsTab)
+            .addTabs(this.presetsTab)
             .build();
         this.addRenderableWidget(this.tabNavigationBar);
 
@@ -69,7 +69,7 @@ public class AllSoundOptionsScreen extends Screen {
         this.addRegionButton.visible = false;
 
         this.addPresetButton = Button.builder(Translations.translatableOf("preset.add"),
-            b -> Minecraft.getInstance().setScreenAndShow(new PresetEditScreen(this, null))).build();
+            b -> Minecraft.getInstance().setScreen(new PresetEditScreen(this, null))).build();
         this.addPresetButton.visible = false;
 
         this.tabNavigationBar.selectTab(this.currentTabIndex, false);
@@ -85,7 +85,7 @@ public class AllSoundOptionsScreen extends Screen {
     protected void repositionElements() {
         if (this.tabNavigationBar == null) return;
 
-        this.tabNavigationBar.arrangeElements(this.width);
+        this.tabNavigationBar.arrangeElements();
         int tabBottom = this.tabNavigationBar.getRectangle().bottom();
 
         // Arrange layout (positions doneButton) BEFORE setting tab area so
@@ -131,9 +131,9 @@ public class AllSoundOptionsScreen extends Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(Minecraft minecraft, int width, int height) {
         String search = this.globalTab != null ? this.globalTab.getSearchValue() : "";
-        super.resize(width, height);
+        super.resize(minecraft, width, height);
         if (this.globalTab != null) {
             this.globalTab.setSearchValue(search);
         }
@@ -141,7 +141,7 @@ public class AllSoundOptionsScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreenAndShow(this.parent);
+        this.minecraft.setScreen(this.parent);
     }
 
     @Override

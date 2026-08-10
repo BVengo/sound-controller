@@ -25,8 +25,8 @@ public class VolumeListWidget extends ContainerObjectSelectionList<VolumeWidgetE
     }
 
     @Override
-    protected int scrollBarX() {
-        return Math.min(super.scrollBarX(), getRight() - 8);
+    protected int getScrollbarPosition() {
+        return Math.min(super.getScrollbarPosition(), getRight() - 8);
     }
 
     @Override
