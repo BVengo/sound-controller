@@ -46,10 +46,10 @@ public class RegionData {
         return data != null ? data.getVolume() : VolumeData.DEFAULT_VOLUME;
     }
 
-    public boolean isActive(String serverKey, String worldKey, Vec3 playerPos) {
+    public boolean isActive(String serverKey, String worldKey, Vec3 pos) {
         return this.enabled
             && this.serverKey.equals(serverKey)
             && this.worldKey.equals(worldKey)
-            && this.geometry.contains(playerPos);
+            && this.geometry.contains(pos);
     }
 }
