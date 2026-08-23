@@ -41,11 +41,11 @@ public class RegionConfig {
         regions.remove(region);
     }
 
-    public List<RegionData> getActiveRegions(String serverKey, String worldKey, Vec3 playerPos) {
+    public List<RegionData> getActiveRegions(String serverKey, String worldKey, Vec3 pos) {
         loadServer(serverKey);
         List<RegionData> active = new ArrayList<>();
         for (RegionData region : regions) {
-            if (region.isActive(serverKey, worldKey, playerPos)) {
+            if (region.isActive(serverKey, worldKey, pos)) {
                 active.add(region);
             }
         }

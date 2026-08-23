@@ -8,6 +8,7 @@ import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
@@ -61,32 +62,38 @@ public class VolumeConfig {
 
     public float getAdjustedVolume(SoundInstance sound, float baseVolume) {
         VolumeData volumeData = getVolumeData(sound.getIdentifier());
-        float volume = volumeData.getVolume() * baseVolume;
+        return volumeData.getVolume() * baseVolume * getRegionVolume(sound);
+    }
 
+    public boolean shouldStartSilently(SoundInstance sound) {
+        return sound instanceof TickableSoundInstance && getRegionVolume(sound) == 0.0f;
+    }
+
+    private float getRegionVolume(SoundInstance sound) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null && mc.level != null) {
-            Vec3 playerPos = mc.player.position();
-            String serverKey = SoundController.getCurrentServerKey();
-            String worldKey = SoundController.getCurrentWorldKey();
-            Identifier soundId = sound.getIdentifier();
+        if (mc.player == null || mc.level == null) {
+            return VolumeData.DEFAULT_VOLUME;
+        }
 
-            float minRegionVolume = Float.MAX_VALUE;
-            boolean hasOverride = false;
+        Vec3 soundPos = sound.isRelative()
+            ? mc.player.position()
+            : new Vec3(sound.getX(), sound.getY(), sound.getZ());
+        String serverKey = SoundController.getCurrentServerKey();
+        String worldKey = SoundController.getCurrentWorldKey();
+        Identifier soundId = sound.getIdentifier();
 
-            List<RegionData> active = SoundController.getRegionConfig().getActiveRegions(serverKey, worldKey, playerPos);
-            for (RegionData region : active) {
-                if (region.hasSoundOverride(soundId)) {
-                    minRegionVolume = Math.min(minRegionVolume, region.getVolumeForSound(soundId));
-                    hasOverride = true;
-                }
-            }
+        float minRegionVolume = Float.MAX_VALUE;
+        boolean hasOverride = false;
 
-            if (hasOverride) {
-                volume *= minRegionVolume;
+        List<RegionData> active = SoundController.getRegionConfig().getActiveRegions(serverKey, worldKey, soundPos);
+        for (RegionData region : active) {
+            if (region.hasSoundOverride(soundId)) {
+                minRegionVolume = Math.min(minRegionVolume, region.getVolumeForSound(soundId));
+                hasOverride = true;
             }
         }
 
-        return volume;
+        return hasOverride ? minRegionVolume : VolumeData.DEFAULT_VOLUME;
     }
 
     public boolean areSubtitlesEnabled() {
