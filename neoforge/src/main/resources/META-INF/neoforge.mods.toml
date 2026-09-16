@@ -7,7 +7,7 @@ modId = "soundcontroller"
 version = "${version}"
 displayName = "Sound Controller"
 description = "Have complete control over the volume of all sounds played in the game."
-logoFile = "assets/soundcontroller/icon.png"
+iconFile = "assets/soundcontroller/icon.png"
 authors = "BVengo"
 
 [[mixins]]
@@ -23,6 +23,6 @@ side = "CLIENT"
 [[dependencies.soundcontroller]]
 modId = "minecraft"
 type = "required"
-versionRange = "[${minecraft_version},)"
+versionRange = "${neoforge_minecraft_version_range}"
 ordering = "NONE"
 side = "CLIENT"
