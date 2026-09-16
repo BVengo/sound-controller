@@ -35,9 +35,9 @@ dependencies {
 
 processResources {
 	def props = [
-		version           : project.version,
-		minecraft_version : project.minecraft_version,
-		neoforge_version  : project.neoforge_version
+		version                        : project.version,
+		neoforge_minecraft_version_range: project.neoforge_minecraft_version_range,
+		neoforge_version               : project.neoforge_version
 	]
 	inputs.properties(props)
 
