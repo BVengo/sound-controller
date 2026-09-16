@@ -2,9 +2,7 @@ package com.bvengo.soundcontroller.config;
 
 import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.VolumeData;
-import com.bvengo.soundcontroller.region.RegionData;
 import java.util.HashMap;
-import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SoundInstance;
@@ -65,6 +63,11 @@ public class VolumeConfig {
         return volumeData.getVolume() * baseVolume * getRegionVolume(sound);
     }
 
+    public boolean shouldSkipStarting(SoundInstance sound) {
+        // Tickable sounds can become audible later as their position or region state changes.
+        return !(sound instanceof TickableSoundInstance) && getAdjustedVolume(sound, 1.0f) <= 0.0f;
+    }
+
     public boolean shouldStartSilently(SoundInstance sound) {
         return sound instanceof TickableSoundInstance && getRegionVolume(sound) == 0.0f;
     }
@@ -82,18 +85,7 @@ public class VolumeConfig {
         String worldKey = SoundController.getCurrentWorldKey();
         Identifier soundId = sound.getIdentifier();
 
-        float minRegionVolume = Float.MAX_VALUE;
-        boolean hasOverride = false;
-
-        List<RegionData> active = SoundController.getRegionConfig().getActiveRegions(serverKey, worldKey, soundPos);
-        for (RegionData region : active) {
-            if (region.hasSoundOverride(soundId)) {
-                minRegionVolume = Math.min(minRegionVolume, region.getVolumeForSound(soundId));
-                hasOverride = true;
-            }
-        }
-
-        return hasOverride ? minRegionVolume : VolumeData.DEFAULT_VOLUME;
+        return SoundController.getRegionConfig().getVolumeForSound(serverKey, worldKey, soundPos, soundId);
     }
 
     public boolean areSubtitlesEnabled() {
