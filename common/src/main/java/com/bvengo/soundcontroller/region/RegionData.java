@@ -46,6 +46,17 @@ public class RegionData {
         return data != null ? data.getVolume() : VolumeData.DEFAULT_VOLUME;
     }
 
+    public boolean canApplyTo(String serverKey, String worldKey, Identifier soundId) {
+        return this.enabled
+            && this.serverKey.equals(serverKey)
+            && this.worldKey.equals(worldKey)
+            && hasSoundOverride(soundId);
+    }
+
+    public boolean contains(Vec3 pos) {
+        return this.geometry.contains(pos);
+    }
+
     public boolean isActive(String serverKey, String worldKey, Vec3 pos) {
         return this.enabled
             && this.serverKey.equals(serverKey)
