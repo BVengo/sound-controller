@@ -58,9 +58,10 @@ Below is the button used to apply a preset to the current volume configuration.
 ## Development
 
 The build uses [Stonecutter](https://stonecutter.kikugie.dev/) for managing loaders and versions.
+Minecraft 26.1, 26.2, and 26.3 are supported on both Fabric and NeoForge.
 
 ```sh
-# Build both loaders and collect release and source jars in build/libs.
+# Build all supported versions for both loaders and collect release and source jars in build/libs.
 ./gradlew buildAll
 
 # Build or launch a single variant.

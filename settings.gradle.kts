@@ -20,6 +20,8 @@ stonecutter {
             }
         }
 
+        minecraft("26.1")
+        minecraft("26.2")
         minecraft("26.3")
         vcsVersion = "26.3-fabric"
     }

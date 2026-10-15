@@ -12,4 +12,4 @@ public class ModMenuIntegration implements ModMenuApi {
         return parent -> new AllSoundOptionsScreen(parent, Minecraft.getInstance().options);
     }
 }
-// ?}
+//?}
