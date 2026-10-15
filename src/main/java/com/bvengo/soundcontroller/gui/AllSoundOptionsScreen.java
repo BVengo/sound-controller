@@ -11,7 +11,11 @@ import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
+//? if >=26.2 {
 import net.minecraft.client.gui.components.tabs.MenuTabBar;
+//?} else {
+/*import net.minecraft.client.gui.components.tabs.TabNavigationBar;
+*///?}
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -32,7 +36,11 @@ public class AllSoundOptionsScreen extends Screen {
 
     private int currentTabIndex = 0;
 
+    //? if >=26.2 {
     private MenuTabBar tabNavigationBar;
+    //?} else {
+    /*private TabNavigationBar tabNavigationBar;
+    *///?}
     private GlobalSoundTab globalTab;
     private RegionsTab regionsTab;
     private PresetsTab presetsTab;
@@ -53,11 +61,17 @@ public class AllSoundOptionsScreen extends Screen {
         this.regionsTab = new RegionsTab(this, this.options, () -> updateFooterButtons(1, true, false));
         this.presetsTab = new PresetsTab(this, () -> updateFooterButtons(2, false, true));
 
+        //? if >=26.2 {
         this.tabNavigationBar = MenuTabBar.builder(this.tabManager, this.width)
             .addTab(this.globalTab)
             .addTab(this.regionsTab)
             .addTab(this.presetsTab)
             .build();
+        //?} else {
+        /*this.tabNavigationBar = TabNavigationBar.builder(this.tabManager, this.width)
+            .addTabs(this.globalTab, this.regionsTab, this.presetsTab)
+            .build();
+        *///?}
         this.addRenderableWidget(this.tabNavigationBar);
 
         // Only Done goes in the layout footer — conditional buttons are positioned manually
@@ -85,7 +99,12 @@ public class AllSoundOptionsScreen extends Screen {
     protected void repositionElements() {
         if (this.tabNavigationBar == null) return;
 
+        //? if >=26.2 {
         this.tabNavigationBar.arrangeElements(this.width);
+        //?} else {
+        /*this.tabNavigationBar.updateWidth(this.width);
+        this.tabNavigationBar.arrangeElements();
+        *///?}
         int tabBottom = this.tabNavigationBar.getRectangle().bottom();
 
         // Arrange layout (positions doneButton) BEFORE setting tab area so

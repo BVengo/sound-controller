@@ -20,7 +20,7 @@ import java.util.function.Consumer;
 public class PresetPickerScreen extends Screen {
     private final Screen parent;
     private final Consumer<PresetData> onApply;
-    private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
+    private HeaderAndFooterLayout layout;
 
     private PickerListWidget listWidget;
 
@@ -32,7 +32,7 @@ public class PresetPickerScreen extends Screen {
 
     @Override
     protected void init() {
-        layout.removeChildren();
+        layout = new HeaderAndFooterLayout(this);
 
         LinearLayout header = LinearLayout.vertical().spacing(4);
         header.addChild(new StringWidget(this.title, font));

@@ -8,7 +8,11 @@ import com.bvengo.soundcontroller.region.RegionData;
 import com.bvengo.soundcontroller.region.RegionGeometry;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
+//? if >=26.2 {
 import net.minecraft.client.gui.components.tabs.MenuTabBar;
+//?} else {
+/*import net.minecraft.client.gui.components.tabs.TabNavigationBar;
+*///?}
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -37,7 +41,11 @@ public class RegionEditScreen extends Screen {
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
     private final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 
+    //? if >=26.2 {
     private MenuTabBar tabNavigationBar;
+    //?} else {
+    /*private TabNavigationBar tabNavigationBar;
+    *///?}
     private RegionGeneralTab generalTab;
     private RegionSoundsTab soundsTab;
 
@@ -75,10 +83,16 @@ public class RegionEditScreen extends Screen {
         generalTab = new RegionGeneralTab(existingRegion, worldKey, workingName);
         soundsTab = new RegionSoundsTab(this, options, workingSounds);
 
+        //? if >=26.2 {
         tabNavigationBar = MenuTabBar.builder(tabManager, width)
             .addTab(generalTab)
             .addTab(soundsTab)
             .build();
+        //?} else {
+        /*tabNavigationBar = TabNavigationBar.builder(tabManager, width)
+            .addTabs(generalTab, soundsTab)
+            .build();
+        *///?}
         addRenderableWidget(tabNavigationBar);
 
         LinearLayout footerButtons = LinearLayout.horizontal().spacing(8);
@@ -97,7 +111,12 @@ public class RegionEditScreen extends Screen {
     protected void repositionElements() {
         if (tabNavigationBar == null) return;
 
+        //? if >=26.2 {
         tabNavigationBar.arrangeElements(width);
+        //?} else {
+        /*tabNavigationBar.updateWidth(width);
+        tabNavigationBar.arrangeElements();
+        *///?}
         int tabBottom = tabNavigationBar.getRectangle().bottom();
 
         ScreenRectangle contentArea = new ScreenRectangle(
