@@ -1,0 +1,18 @@
+# Shared mod metadata and version deps
+mod.version = "1.4.1"
+mod.group = "dev.bvengo"
+mod.id = "soundcontroller"
+
+["26.3"]
+mod.java = 25
+
+[fabric."26.3"]
+mod.mc_compat = ">=26.3"
+deps.fabric_loader = "0.19.5"
+deps.fabric_api = "0.153.2+26.3"
+deps.modmenu = "20.0.0-beta.3"
+
+[neoforge."26.3"]
+mod.mc_compat = "[26.3,)"
+deps.neoforge = "26.3.0.1-beta"
+deps.annotations = "26.1.0"
