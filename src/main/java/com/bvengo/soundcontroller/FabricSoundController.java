@@ -17,4 +17,4 @@ public final class FabricSoundController implements ClientModInitializer {
                 .registerReloadListener(SoundReloadListener.ID, new SoundReloadListener());
     }
 }
-// ?}
+//?}

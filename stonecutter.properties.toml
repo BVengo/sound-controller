@@ -3,14 +3,42 @@ mod.version = "1.4.1"
 mod.group = "dev.bvengo"
 mod.id = "soundcontroller"
 
+["26.1"]
+mod.java = 25
+
+["26.2"]
+mod.java = 25
+
 ["26.3"]
 mod.java = 25
+
+[fabric."26.1"]
+mod.mc_compat = ">=26.1 <26.2"
+deps.fabric_loader = "0.18.4"
+deps.fabric_api = "0.145.1+26.1"
+deps.modmenu = "18.0.0-alpha.8"
+
+[fabric."26.2"]
+mod.mc_compat = ">=26.2 <26.3"
+deps.fabric_loader = "0.19.3"
+deps.fabric_api = "0.152.2+26.2"
+deps.modmenu = "20.0.0-beta.3"
 
 [fabric."26.3"]
 mod.mc_compat = ">=26.3"
 deps.fabric_loader = "0.19.5"
 deps.fabric_api = "0.153.2+26.3"
 deps.modmenu = "20.0.0-beta.3"
+
+[neoforge."26.1"]
+mod.mc_compat = "[26.1,26.2)"
+deps.neoforge = "26.1.0.19-beta"
+deps.annotations = "26.1.0"
+
+[neoforge."26.2"]
+mod.mc_compat = "[26.2,26.3)"
+deps.neoforge = "26.2.0.7-beta"
+deps.annotations = "26.1.0"
 
 [neoforge."26.3"]
 mod.mc_compat = "[26.3,)"
