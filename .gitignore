@@ -28,6 +28,9 @@ hs_err_pid*
 
 .idea/
 
+# Generated Eclipse launch configurations from Gradle IDE integration
+.eclipse/
+
 bin/
 
 build/
