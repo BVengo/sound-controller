@@ -50,10 +50,12 @@ public class PresetsTab implements Tab {
         loadPresets();
     }
 
+    //? if >=26.2 {
     @Override
     public Layout getLayout() {
         return layout;
     }
+    //?}
 
     private void loadPresets() {
         presetListWidget.clearEntries();
