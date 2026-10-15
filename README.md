@@ -55,6 +55,24 @@ Below is the button used to apply a preset to the current volume configuration.
 
 ---
 
+## Development
+
+The build uses [Stonecutter](https://stonecutter.kikugie.dev/) for managing loaders and versions.
+
+```sh
+# Build both loaders and collect release and source jars in build/libs.
+./gradlew buildAll
+
+# Build or launch a single variant.
+./gradlew :26.3-fabric:build
+./gradlew :26.3-fabric:runClient
+./gradlew :26.3-neoforge:runClient
+
+# Switch the sources shown in the IDE, then reload the Gradle project.
+./gradlew stonecutterSwitchTo26.3-neoforge
+```
+
+
 ## Contributing
 Contributions and suggestions are always welcome! Please limit all issues to only one feature at a time - feel free to open multiple at once if you have many ideas. Similarly, please limit pull requests to a single feature at a time and try to follow the existing code style.
 
