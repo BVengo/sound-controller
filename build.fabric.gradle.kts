@@ -1,5 +1,5 @@
 plugins {
-    id("net.fabricmc.fabric-loom") version "1.17-SNAPSHOT"
+    id("dev.kikugie.loom-back-compat")
 }
 
 apply(from = rootProject.file("build.common.gradle.kts"))
