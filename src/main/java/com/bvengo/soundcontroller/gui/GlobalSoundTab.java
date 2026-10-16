@@ -101,10 +101,12 @@ public class GlobalSoundTab implements Tab {
         return Translations.translatableOf("tab.global");
     }
 
-    @Override
+    //? if >=1.21.6 {
+    /*@Override
     public Component getTabExtraNarration() {
         return Component.empty();
     }
+    *///?}
 
     @Override
     public void visitChildren(Consumer<AbstractWidget> consumer) {

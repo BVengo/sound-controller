@@ -132,7 +132,8 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
         addResetButton();
     }
 
-    @Override
+    //? if >=1.21.6 {
+    /*@Override
     public void extractContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
         int leftSide, effectiveSliderWidth;
         if (panelWidth >= 0) {
@@ -155,6 +156,32 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
         this.resetButton.setPosition(playSoundButton.getRight() + paddingBetweenButtons, getY());
         this.resetButton.extractRenderState(context, mouseX, mouseY, tickDelta);
     }
+    *///?} else {
+    @Override
+    public void render(GuiGraphics context, int index, int top, int left, int entryWidth, int entryHeight,
+                       int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        int leftSide, effectiveSliderWidth;
+        if (panelWidth >= 0) {
+            int padding = 8;
+            int buttonsWidth = buttonSize * 2 + paddingAfterSearch + paddingBetweenButtons;
+            effectiveSliderWidth = Math.max(20, panelWidth - buttonsWidth - padding * 2);
+            leftSide = panelX + padding;
+        } else {
+            effectiveSliderWidth = sliderWidth;
+            leftSide = panelX + (screen.width - totalWidth) / 2;
+        }
+
+        this.volumeSlider.setWidth(effectiveSliderWidth);
+        this.volumeSlider.setPosition(leftSide, top);
+        this.volumeSlider.render(context, mouseX, mouseY, tickDelta);
+
+        this.playSoundButton.setPosition(volumeSlider.getRight() + paddingAfterSearch, top);
+        this.playSoundButton.render(context, mouseX, mouseY, tickDelta);
+
+        this.resetButton.setPosition(playSoundButton.getRight() + paddingBetweenButtons, top);
+        this.resetButton.render(context, mouseX, mouseY, tickDelta);
+    }
+    //?}
 
     @Override
     public List<? extends GuiEventListener> children() {

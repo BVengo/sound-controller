@@ -32,7 +32,7 @@ public class RegionGeneralTab implements Tab {
         SPHERE, BOX;
 
         Component getDisplayComponent() {
-            return Translations.translatableOf("region.geometry." + name().toLowerCase());
+            return translatableOf("region.geometry." + name().toLowerCase());
         }
     }
 
@@ -101,7 +101,9 @@ public class RegionGeneralTab implements Tab {
             .selected(initEnabled)
             .build();
 
-        geometryTypeButton = CycleButton.<GeometryType>builder(GeometryType::getDisplayComponent, geometryType)
+        geometryTypeButton = CycleButton.<GeometryType>builder(GeometryType::getDisplayComponent/*? if >=1.21.11 {*//*, geometryType*//*?}*/)
+            //? if <1.21.11
+            .withInitialValue(geometryType)
             .withValues(GeometryType.SPHERE, GeometryType.BOX)
             .create(0, 0, 200, 20, translatableOf("region.geometry.type"),
                 (btn, val) -> { geometryType = val; updateGeometryVisibility(); });
@@ -141,10 +143,12 @@ public class RegionGeneralTab implements Tab {
         return translatableOf("tab.general");
     }
 
-    @Override
+    //? if >=1.21.6 {
+    /*@Override
     public Component getTabExtraNarration() {
         return Component.empty();
     }
+    *///?}
 
     @Override
     public void visitChildren(Consumer<AbstractWidget> consumer) {

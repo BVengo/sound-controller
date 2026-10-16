@@ -8,6 +8,7 @@ import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.gui.buttons.ToggleButtonWidget;
 import com.bvengo.soundcontroller.gui.components.VolumeListWidget;
 import com.bvengo.soundcontroller.gui.components.VolumeWidgetEntry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
@@ -120,10 +121,10 @@ public class PresetEditScreen extends Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(/*? if <1.21.11 {*/Minecraft minecraft, /*?}*/int width, int height) {
         workingName = nameField != null ? nameField.getValue() : workingName;
         String search = searchField != null ? searchField.getValue() : "";
-        super.resize(width, height);
+        super.resize(/*? if <1.21.11 {*/minecraft, /*?}*/width, height);
         if (searchField != null)
             searchField.setValue(search);
     }

@@ -30,9 +30,11 @@ tasks.processResources {
         "version" to project.version,
         "neoforge_minecraft_version_range" to project.property("mod.mc_compat"),
         "neoforge_version" to project.property("deps.neoforge"),
+        "java_version" to project.property("mod.java"),
     )
     inputs.properties(props)
     filesMatching("META-INF/neoforge.mods.toml") { expand(props) }
+    filesMatching("soundcontroller.mixins.json") { expand(props) }
     exclude("fabric.mod.json")
 }
 

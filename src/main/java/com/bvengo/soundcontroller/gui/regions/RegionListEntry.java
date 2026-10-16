@@ -60,7 +60,8 @@ public class RegionListEntry extends Entry<RegionListEntry> {
         ));
     }
 
-    @Override
+    //? if >=1.21.6 {
+    /*@Override
     public void extractContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
         int entryLeft = getX() + 8;
         int entryRight = getX() + getWidth() - 8;
@@ -83,6 +84,32 @@ public class RegionListEntry extends Entry<RegionListEntry> {
         this.deleteButton.setPosition(deleteX, centerY);
         this.deleteButton.extractRenderState(context, mouseX, mouseY, tickDelta);
     }
+    *///?} else {
+    @Override
+    public void render(GuiGraphics context, int index, int top, int left, int entryWidth, int entryHeight,
+                       int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        int entryLeft = left + 8;
+        int entryRight = left + entryWidth - 8;
+        int centerY = top + (entryHeight - BUTTON_HEIGHT) / 2;
+
+        int deleteX = entryRight - DELETE_WIDTH;
+        int editX = deleteX - 4 - EDIT_WIDTH;
+        int nameWidth = (entryRight - entryLeft) / 3;
+        int geoWidth = editX - 8 - (entryLeft + nameWidth + 8);
+
+        String name = font.plainSubstrByWidth(region.getName(), nameWidth);
+        String geo = font.plainSubstrByWidth(region.getGeometry().getDescription(), Math.max(0, geoWidth));
+
+        context.drawString(font, name, entryLeft, centerY + 1, 0xFFFFFFFF, true);
+        context.drawString(font, geo, entryLeft + nameWidth + 8, centerY + 1, 0xFFAAAAAA, true);
+
+        this.editButton.setPosition(editX, centerY);
+        this.editButton.render(context, mouseX, mouseY, tickDelta);
+
+        this.deleteButton.setPosition(deleteX, centerY);
+        this.deleteButton.render(context, mouseX, mouseY, tickDelta);
+    }
+    //?}
 
     @Override
     public List<Button> children() {

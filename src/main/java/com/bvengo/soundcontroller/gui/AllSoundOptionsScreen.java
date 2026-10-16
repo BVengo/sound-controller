@@ -69,7 +69,9 @@ public class AllSoundOptionsScreen extends Screen {
             .build();
         *///?} else {
         this.tabNavigationBar = TabNavigationBar.builder(this.tabManager, this.width)
-            .addTabs(this.globalTab, this.regionsTab, this.presetsTab)
+            .addTabs(this.globalTab)
+            .addTabs(this.regionsTab)
+            .addTabs(this.presetsTab)
             .build();
         //?}
         this.addRenderableWidget(this.tabNavigationBar);
@@ -101,8 +103,11 @@ public class AllSoundOptionsScreen extends Screen {
 
         //? if >=26.2 {
         /*this.tabNavigationBar.arrangeElements(this.width);
+        *///?} elif >=26.1 {
+        /*this.tabNavigationBar.updateWidth(this.width);
+        this.tabNavigationBar.arrangeElements();
         *///?} else {
-        this.tabNavigationBar.updateWidth(this.width);
+        this.tabNavigationBar.setWidth(this.width);
         this.tabNavigationBar.arrangeElements();
         //?}
         int tabBottom = this.tabNavigationBar.getRectangle().bottom();
@@ -150,9 +155,9 @@ public class AllSoundOptionsScreen extends Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(/*? if <1.21.11 {*/Minecraft minecraft, /*?}*/int width, int height) {
         String search = this.globalTab != null ? this.globalTab.getSearchValue() : "";
-        super.resize(width, height);
+        super.resize(/*? if <1.21.11 {*/minecraft, /*?}*/width, height);
         if (this.globalTab != null) {
             this.globalTab.setSearchValue(search);
         }

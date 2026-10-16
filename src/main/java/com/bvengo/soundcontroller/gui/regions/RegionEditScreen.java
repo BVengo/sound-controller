@@ -6,6 +6,7 @@ import com.bvengo.soundcontroller.config.RegionConfig;
 import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.region.RegionData;
 import com.bvengo.soundcontroller.region.RegionGeometry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
 //? if >=26.2 {
@@ -90,7 +91,8 @@ public class RegionEditScreen extends Screen {
             .build();
         *///?} else {
         tabNavigationBar = TabNavigationBar.builder(tabManager, width)
-            .addTabs(generalTab, soundsTab)
+            .addTabs(generalTab)
+            .addTabs(soundsTab)
             .build();
         //?}
         addRenderableWidget(tabNavigationBar);
@@ -113,8 +115,11 @@ public class RegionEditScreen extends Screen {
 
         //? if >=26.2 {
         /*tabNavigationBar.arrangeElements(width);
+         *///?} elif >=26.1 {
+        /*tabNavigationBar.updateWidth(width);
+        tabNavigationBar.arrangeElements();
         *///?} else {
-        tabNavigationBar.updateWidth(width);
+        tabNavigationBar.setWidth(width);
         tabNavigationBar.arrangeElements();
         //?}
         int tabBottom = tabNavigationBar.getRectangle().bottom();
@@ -129,10 +134,10 @@ public class RegionEditScreen extends Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(/*? if <1.21.11 {*/Minecraft minecraft, /*?}*/int width, int height) {
         workingName = generalTab != null ? generalTab.getCurrentName() : workingName;
         String search = soundsTab != null ? soundsTab.getSearchValue() : "";
-        super.resize(width, height);
+        super.resize(/*? if <1.21.11 {*/minecraft, /*?}*/width, height);
         if (soundsTab != null) soundsTab.setSearchValue(search);
     }
 

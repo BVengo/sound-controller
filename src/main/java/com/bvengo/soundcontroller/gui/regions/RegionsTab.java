@@ -34,10 +34,12 @@ public class RegionsTab implements Tab {
         return com.bvengo.soundcontroller.Translations.translatableOf("tab.regions");
     }
 
-    @Override
+    //? if >=1.21.6 {
+    /*@Override
     public Component getTabExtraNarration() {
         return Component.empty();
     }
+    *///?}
 
     @Override
     public void visitChildren(Consumer<AbstractWidget> consumer) {

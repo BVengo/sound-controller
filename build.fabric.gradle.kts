@@ -45,8 +45,10 @@ tasks.processResources {
     val props = mapOf(
         "version" to project.version,
         "fabric_minecraft_version_range" to project.property("mod.mc_compat"),
+        "java_version" to project.property("mod.java"),
     )
     inputs.properties(props)
     filesMatching("fabric.mod.json") { expand(props) }
+    filesMatching("soundcontroller.mixins.json") { expand(props) }
     exclude("META-INF/neoforge.mods.toml")
 }
