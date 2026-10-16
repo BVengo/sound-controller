@@ -25,6 +25,23 @@ dependencies {
     compileOnly("org.jetbrains:annotations:${property("deps.annotations")}")
 }
 
+stonecutter {
+    replacements.string(current.parsed < "1.21.11") {
+        replace(".getIdentifier()", ".getLocation()")
+        replace(".identifier()", ".location()")
+        replace("Identifier", "ResourceLocation")
+    }
+    replacements.string(current.parsed < "26.1") {
+        replace("GuiGraphicsExtractor", "GuiGraphics")
+    }
+    replacements.string(current.parsed < "1.21.4") {
+        replace("scrollBarX()", "getScrollbarPosition()")
+    }
+    replacements.string(current.parsed < "1.21.8") {
+        replace("setScreenAndShow", "setScreen")
+    }
+}
+
 tasks.processResources {
     val props = mapOf(
         "version" to project.version,

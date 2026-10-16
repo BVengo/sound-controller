@@ -28,7 +28,7 @@ public final class NeoForgeSoundController {
 
 	private void registerReloadListeners(RegisterClientReloadListenersEvent event) {
 		//? if >=26.1 {
-		/*event.addListener(SoundReloadListener.ID, new SoundReloadListener())
+		/*event.addListener(SoundReloadListener.ID, new SoundReloadListener());
 		*///?} else {
 		event.registerReloadListener(new SoundReloadListener());
 		//?}
