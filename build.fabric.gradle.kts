@@ -7,9 +7,9 @@ apply(from = rootProject.file("build.common.gradle.kts"))
 dependencies {
     minecraft("com.mojang:minecraft:${stonecutter.current.version}")
     loomx.applyMojangMappings()
-    implementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
-    implementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
-    implementation("com.terraformersmc:modmenu:${property("deps.modmenu")}") {
+    modImplementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
+    modImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+    modImplementation("com.terraformersmc:modmenu:${property("deps.modmenu")}") {
         exclude(module = "fabric-api")
     }
 }
