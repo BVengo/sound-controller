@@ -28,7 +28,7 @@ deps.modmenu = "20.0.0-beta.3"
 mod.mc_compat = ">=26.3"
 deps.fabric_loader = "0.19.5"
 deps.fabric_api = "0.153.2+26.3"
-deps.modmenu = "20.0.0-beta.3"
+deps.modmenu = "21.0.0-beta.1"
 
 [neoforge."26.1"]
 mod.mc_compat = "[26.1,26.2)"
