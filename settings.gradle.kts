@@ -21,6 +21,7 @@ stonecutter {
             }
         }
 
+        minecraft("1.21.1")
         minecraft("26.1")
         minecraft("26.2")
         minecraft("26.3")

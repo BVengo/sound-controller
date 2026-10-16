@@ -5,7 +5,7 @@ import com.bvengo.soundcontroller.config.RegionConfig;
 import com.bvengo.soundcontroller.region.RegionData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList.Entry;
 import net.minecraft.client.gui.components.Tooltip;
@@ -42,18 +42,18 @@ public class RegionListEntry extends Entry<RegionListEntry> {
     }
 
     private void openEditScreen() {
-        Minecraft.getInstance().setScreenAndShow(new RegionEditScreen(parentScreen, region));
+        Minecraft.getInstance().setScreen(new RegionEditScreen(parentScreen, region));
     }
 
     private void confirmDelete() {
         Minecraft mc = Minecraft.getInstance();
-        mc.setScreenAndShow(new ConfirmScreen(
+        mc.setScreen(new ConfirmScreen(
             confirmed -> {
                 if (confirmed) {
                     RegionConfig.getInstance().removeRegion(region);
                     RegionConfig.getInstance().save();
                 }
-                mc.setScreenAndShow(parentScreen);
+                mc.setScreen(parentScreen);
             },
             Translations.translatableOf("region.delete.confirm.title"),
             Component.literal("\"" + region.getName() + "\"")
@@ -61,7 +61,7 @@ public class RegionListEntry extends Entry<RegionListEntry> {
     }
 
     @Override
-    public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+    public void extractContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
         int entryLeft = getX() + 8;
         int entryRight = getX() + getWidth() - 8;
         int centerY = getY() + (getHeight() - BUTTON_HEIGHT) / 2;

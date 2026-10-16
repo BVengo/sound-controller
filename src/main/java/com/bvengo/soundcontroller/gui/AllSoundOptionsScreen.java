@@ -12,10 +12,10 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 //? if >=26.2 {
-import net.minecraft.client.gui.components.tabs.MenuTabBar;
-//?} else {
-/*import net.minecraft.client.gui.components.tabs.TabNavigationBar;
-*///?}
+/*import net.minecraft.client.gui.components.tabs.MenuTabBar;
+*///?} else {
+import net.minecraft.client.gui.components.tabs.TabNavigationBar;
+//?}
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
@@ -37,10 +37,10 @@ public class AllSoundOptionsScreen extends Screen {
     private int currentTabIndex = 0;
 
     //? if >=26.2 {
-    private MenuTabBar tabNavigationBar;
-    //?} else {
-    /*private TabNavigationBar tabNavigationBar;
-    *///?}
+    /*private MenuTabBar tabNavigationBar;
+    *///?} else {
+    private TabNavigationBar tabNavigationBar;
+    //?}
     private GlobalSoundTab globalTab;
     private RegionsTab regionsTab;
     private PresetsTab presetsTab;
@@ -62,16 +62,16 @@ public class AllSoundOptionsScreen extends Screen {
         this.presetsTab = new PresetsTab(this, () -> updateFooterButtons(2, false, true));
 
         //? if >=26.2 {
-        this.tabNavigationBar = MenuTabBar.builder(this.tabManager, this.width)
+        /*this.tabNavigationBar = MenuTabBar.builder(this.tabManager, this.width)
             .addTab(this.globalTab)
             .addTab(this.regionsTab)
             .addTab(this.presetsTab)
             .build();
-        //?} else {
-        /*this.tabNavigationBar = TabNavigationBar.builder(this.tabManager, this.width)
+        *///?} else {
+        this.tabNavigationBar = TabNavigationBar.builder(this.tabManager, this.width)
             .addTabs(this.globalTab, this.regionsTab, this.presetsTab)
             .build();
-        *///?}
+        //?}
         this.addRenderableWidget(this.tabNavigationBar);
 
         // Only Done goes in the layout footer — conditional buttons are positioned manually
@@ -83,7 +83,7 @@ public class AllSoundOptionsScreen extends Screen {
         this.addRegionButton.visible = false;
 
         this.addPresetButton = Button.builder(Translations.translatableOf("preset.add"),
-            b -> Minecraft.getInstance().setScreenAndShow(new PresetEditScreen(this, null))).build();
+            b -> Minecraft.getInstance().setScreen(new PresetEditScreen(this, null))).build();
         this.addPresetButton.visible = false;
 
         this.tabNavigationBar.selectTab(this.currentTabIndex, false);
@@ -100,11 +100,11 @@ public class AllSoundOptionsScreen extends Screen {
         if (this.tabNavigationBar == null) return;
 
         //? if >=26.2 {
-        this.tabNavigationBar.arrangeElements(this.width);
-        //?} else {
-        /*this.tabNavigationBar.updateWidth(this.width);
+        /*this.tabNavigationBar.arrangeElements(this.width);
+        *///?} else {
+        this.tabNavigationBar.updateWidth(this.width);
         this.tabNavigationBar.arrangeElements();
-        *///?}
+        //?}
         int tabBottom = this.tabNavigationBar.getRectangle().bottom();
 
         // Arrange layout (positions doneButton) BEFORE setting tab area so
@@ -160,7 +160,7 @@ public class AllSoundOptionsScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreenAndShow(this.parent);
+        this.minecraft.setScreen(this.parent);
     }
 
     @Override

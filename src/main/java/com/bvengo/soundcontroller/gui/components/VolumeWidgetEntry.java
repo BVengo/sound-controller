@@ -9,7 +9,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList.Entry;
 import net.minecraft.client.gui.components.Tooltip;
@@ -133,7 +133,7 @@ public class VolumeWidgetEntry extends Entry<VolumeWidgetEntry> {
     }
 
     @Override
-    public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+    public void extractContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
         int leftSide, effectiveSliderWidth;
         if (panelWidth >= 0) {
             int padding = 8;

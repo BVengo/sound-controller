@@ -6,6 +6,7 @@ apply(from = rootProject.file("build.common.gradle.kts"))
 
 dependencies {
     minecraft("com.mojang:minecraft:${stonecutter.current.version}")
+    loomx.applyMojangMappings()
     implementation("net.fabricmc:fabric-loader:${property("deps.fabric_loader")}")
     implementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
     implementation("com.terraformersmc:modmenu:${property("deps.modmenu")}") {
@@ -20,6 +21,23 @@ repositories {
 loom {
     runConfigs.configureEach {
         runDirectory.set(rootProject.file("run/fabric"))
+    }
+}
+
+stonecutter {
+    replacements.string(current.parsed < "1.21.11") {
+        replace(".getIdentifier()", ".getLocation()")
+        replace(".identifier()", ".location()")
+        replace("Identifier", "ResourceLocation")
+    }
+    replacements.string(current.parsed < "26.1") {
+        replace("GuiGraphicsExtractor", "GuiGraphics")
+    }
+    replacements.string(current.parsed < "1.21.4") {
+        replace("scrollBarX()", "getScrollbarPosition()")
+    }
+    replacements.string(current.parsed < "1.21.8") {
+        replace("setScreenAndShow", "setScreen")
     }
 }
 

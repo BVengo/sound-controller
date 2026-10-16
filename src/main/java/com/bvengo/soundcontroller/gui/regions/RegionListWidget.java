@@ -20,8 +20,8 @@ public class RegionListWidget extends ContainerObjectSelectionList<RegionListEnt
     }
 
     @Override
-    protected int scrollBarX() {
-        return Math.min(super.scrollBarX(), getRight() - SCROLLBAR_RIGHT_PADDING);
+    protected int getScrollbarPosition() {
+        return Math.min(super.getScrollbarPosition(), getRight() - SCROLLBAR_RIGHT_PADDING);
     }
 
     @Override

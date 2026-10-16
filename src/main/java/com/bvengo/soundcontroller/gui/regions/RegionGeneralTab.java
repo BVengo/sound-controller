@@ -232,11 +232,11 @@ public class RegionGeneralTab implements Tab {
     }
 
     //? if >=26.2 {
-    @Override
+    /*@Override
     public Layout getLayout() {
         return layout;
     }
-    //?}
+    *///?}
 
     public String getCurrentName() {
         return nameField.getValue();

@@ -52,14 +52,14 @@ public class RegionsTab implements Tab {
     }
 
     //? if >=26.2 {
-    @Override
+    /*@Override
     public Layout getLayout() {
         return layout;
     }
-    //?}
+    *///?}
 
     public void openAddScreen() {
-        Minecraft.getInstance().setScreenAndShow(new RegionEditScreen(screen, null));
+        Minecraft.getInstance().setScreen(new RegionEditScreen(screen, null));
     }
 
     private void loadRegions() {

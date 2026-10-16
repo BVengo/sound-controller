@@ -83,7 +83,7 @@ public class GlobalSoundTab implements Tab {
         this.subtitlesButton.setTooltip(Tooltip.create(SUBTITLES_BUTTON_TOOLTIP));
 
         this.loadPresetButton = new TriggerButtonWidget("preset", 0, 0, BUTTON_SIZE, BUTTON_SIZE,
-            b -> Minecraft.getInstance().setScreenAndShow(new PresetPickerScreen(screen, preset -> {
+            b -> Minecraft.getInstance().setScreen(new PresetPickerScreen(screen, preset -> {
                 for (var entry : preset.getSounds().entrySet()) {
                     VolumeData vd = config.getVolumes().get(entry.getKey());
                     if (vd != null) vd.setVolume(entry.getValue());
@@ -141,11 +141,11 @@ public class GlobalSoundTab implements Tab {
     }
 
     //? if >=26.2 {
-    @Override
+    /*@Override
     public Layout getLayout() {
         return this.layout;
     }
-    //?}
+    *///?}
 
     public EditBox getSearchField() {
         return this.searchField;

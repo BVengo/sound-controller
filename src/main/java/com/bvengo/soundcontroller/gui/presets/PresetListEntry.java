@@ -5,7 +5,7 @@ import com.bvengo.soundcontroller.config.PresetConfig;
 import com.bvengo.soundcontroller.config.PresetData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList.Entry;
 import net.minecraft.client.gui.components.Tooltip;
@@ -42,25 +42,25 @@ public class PresetListEntry extends Entry<PresetListEntry> {
     }
 
     private void openEditScreen() {
-        Minecraft.getInstance().setScreenAndShow(new PresetEditScreen(parentScreen, preset));
+        Minecraft.getInstance().setScreen(new PresetEditScreen(parentScreen, preset));
     }
 
     private void confirmDelete() {
         Minecraft mc = Minecraft.getInstance();
-        mc.setScreenAndShow(new ConfirmScreen(
+        mc.setScreen(new ConfirmScreen(
                 confirmed -> {
                     if (confirmed) {
                         PresetConfig.getInstance().removePreset(preset);
                         PresetConfig.getInstance().save();
                     }
-                    mc.setScreenAndShow(parentScreen);
+                    mc.setScreen(parentScreen);
                 },
                 Translations.translatableOf("preset.delete.confirm.title"),
                 Component.literal("\"" + preset.getName() + "\"")));
     }
 
     @Override
-    public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+    public void extractContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
         int entryLeft = getX() + 8;
         int entryRight = getX() + getWidth() - 8;
         int centerY = getY() + (getHeight() - BUTTON_HEIGHT) / 2;

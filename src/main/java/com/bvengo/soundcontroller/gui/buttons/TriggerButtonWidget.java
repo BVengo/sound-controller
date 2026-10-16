@@ -1,7 +1,9 @@
 package com.bvengo.soundcontroller.gui.buttons;
 
-import net.minecraft.client.input.InputWithModifiers;
+//? if >=1.21.9 {
+/*import net.minecraft.client.input.InputWithModifiers;
 import net.minecraft.client.input.MouseButtonEvent;
+*///?}
 
 /**
  * Custom button widget that is used as a trigger rather than a toggle.
@@ -14,12 +16,12 @@ public class TriggerButtonWidget extends HoverableButtonWidget {
     }
 
     @Override
-    public void onPress(InputWithModifiers input) {
+    public void onPress(/*? if >= 1.21.9 {*//*InputWithModifiers input*//*?}*/) {
         isPressed = true;
     }
 
     @Override
-    public void onRelease(MouseButtonEvent click) {
+    public void onRelease(/*? if >= 1.21.9 {*//*MouseButtonEvent click*//*?} else {*/double mouseX, double mouseY/*?}*/) {
         // Release toggle texture on release, and perform press action.
         // Only perform press action if button remains hovered.
         if (isHovered) {

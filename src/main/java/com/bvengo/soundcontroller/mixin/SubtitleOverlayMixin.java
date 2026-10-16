@@ -16,7 +16,7 @@ public class SubtitleOverlayMixin {
     @WrapOperation(method = "onPlaySound", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/WeighedSoundEvents;getSubtitle()Lnet/minecraft/network/chat/Component;"))
     private Component replaceSubtitleText(WeighedSoundEvents instance, Operation<Component> original,
             SoundInstance sound) {
-        return SoundController.getConfig().areSubtitlesEnabled() ? Component.translationArg(sound.getIdentifier())
+        return SoundController.getConfig().areSubtitlesEnabled() ? Component.translationArg(sound.getLocation())
                 : original.call(instance);
     }
 
