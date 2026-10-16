@@ -16,16 +16,16 @@ public class SubtitleOverlayMixin {
     @WrapOperation(method = "onPlaySound", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sounds/WeighedSoundEvents;getSubtitle()Lnet/minecraft/network/chat/Component;"))
     private Component replaceSubtitleText(WeighedSoundEvents instance, Operation<Component> original,
             SoundInstance sound) {
-        return SoundController.getConfig().areSubtitlesEnabled() ? Component.translationArg(sound.getIdentifier())
+        return SoundController.getConfig().areSubtitlesEnabled() ? Component.translationArg(sound.getLocation())
                 : original.call(instance);
     }
 
-    @WrapOperation(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;", ordinal = 0))
+    @WrapOperation(method = /*? if >=26.1 {*//*"extractRenderState"*//*?} else {*/"render"/*?}*/, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;", ordinal = 0))
     private Object modifyFirstShowSubtitlesCheck(OptionInstance instance, Operation<Object> original) {
         return (Boolean) (original.call(instance)) || SoundController.getConfig().areSubtitlesEnabled();
     }
 
-    @WrapOperation(method = "extractRenderState", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;", ordinal = 1))
+    @WrapOperation(method = /*? if >=26.1 {*//*"extractRenderState"*//*?} else {*/"render"/*?}*/, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/OptionInstance;get()Ljava/lang/Object;", ordinal = 1))
     private Object modifySecondShowSubtitlesCheck(OptionInstance instance, Operation<Object> original) {
         return (Boolean) (original.call(instance)) || SoundController.getConfig().areSubtitlesEnabled();
     }

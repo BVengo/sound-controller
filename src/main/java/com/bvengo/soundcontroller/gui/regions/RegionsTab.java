@@ -34,10 +34,12 @@ public class RegionsTab implements Tab {
         return com.bvengo.soundcontroller.Translations.translatableOf("tab.regions");
     }
 
-    @Override
+    //? if >=1.21.6 {
+    /*@Override
     public Component getTabExtraNarration() {
         return Component.empty();
     }
+    *///?}
 
     @Override
     public void visitChildren(Consumer<AbstractWidget> consumer) {
@@ -52,14 +54,14 @@ public class RegionsTab implements Tab {
     }
 
     //? if >=26.2 {
-    @Override
+    /*@Override
     public Layout getLayout() {
         return layout;
     }
-    //?}
+    *///?}
 
     public void openAddScreen() {
-        Minecraft.getInstance().setScreenAndShow(new RegionEditScreen(screen, null));
+        Minecraft.getInstance().setScreen(new RegionEditScreen(screen, null));
     }
 
     private void loadRegions() {

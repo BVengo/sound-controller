@@ -63,6 +63,6 @@ public final class SoundController {
         Minecraft mc = Minecraft.getInstance();
         if (mc.level == null)
             return "unknown";
-        return mc.level.dimension().identifier().toString();
+        return mc.level.dimension().location().toString();
     }
 }

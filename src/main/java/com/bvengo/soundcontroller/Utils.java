@@ -5,6 +5,13 @@ import net.minecraft.sounds.SoundSource;
 
 public class Utils {
     public static void updateExistingSounds() {
-        Minecraft.getInstance().getSoundManager().refreshCategoryVolume(SoundSource.AMBIENT);
+        //? >=26.1 {
+        /*Minecraft.getInstance().getSoundManager().refreshCategoryVolume(SoundSource.AMBIENT);
+        *///?} elif 1.21.1 {
+        Minecraft.getInstance().getSoundManager().updateSourceVolume(
+            SoundSource.AMBIENT,
+            Minecraft.getInstance().options.getSoundSourceVolume(SoundSource.AMBIENT)
+        );
+        //?}
     }
 }

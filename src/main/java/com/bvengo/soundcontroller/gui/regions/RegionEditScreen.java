@@ -6,20 +6,21 @@ import com.bvengo.soundcontroller.config.RegionConfig;
 import com.bvengo.soundcontroller.config.VolumeConfig;
 import com.bvengo.soundcontroller.region.RegionData;
 import com.bvengo.soundcontroller.region.RegionGeometry;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
 //? if >=26.2 {
-import net.minecraft.client.gui.components.tabs.MenuTabBar;
-//?} else {
-/*import net.minecraft.client.gui.components.tabs.TabNavigationBar;
-*///?}
+/*import net.minecraft.client.gui.components.tabs.MenuTabBar;
+*///?} else {
+import net.minecraft.client.gui.components.tabs.TabNavigationBar;
+//?}
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,16 +37,16 @@ public class RegionEditScreen extends Screen {
     private final String worldKey;
 
     private String workingName;
-    private HashMap<Identifier, VolumeData> workingSounds;
+    private HashMap<ResourceLocation, VolumeData> workingSounds;
 
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
     private final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 
     //? if >=26.2 {
-    private MenuTabBar tabNavigationBar;
-    //?} else {
-    /*private TabNavigationBar tabNavigationBar;
-    *///?}
+    /*private MenuTabBar tabNavigationBar;
+    *///?} else {
+    private TabNavigationBar tabNavigationBar;
+    //?}
     private RegionGeneralTab generalTab;
     private RegionSoundsTab soundsTab;
 
@@ -72,7 +73,7 @@ public class RegionEditScreen extends Screen {
     protected void init() {
         if (workingSounds == null) {
             workingSounds = new HashMap<>();
-            for (Identifier soundId : VolumeConfig.getInstance().getVolumes().keySet()) {
+            for (ResourceLocation soundId : VolumeConfig.getInstance().getVolumes().keySet()) {
                 float vol = existingRegion != null
                     ? existingRegion.getVolumeForSound(soundId)
                     : VolumeData.DEFAULT_VOLUME;
@@ -84,15 +85,16 @@ public class RegionEditScreen extends Screen {
         soundsTab = new RegionSoundsTab(this, options, workingSounds);
 
         //? if >=26.2 {
-        tabNavigationBar = MenuTabBar.builder(tabManager, width)
+        /*tabNavigationBar = MenuTabBar.builder(tabManager, width)
             .addTab(generalTab)
             .addTab(soundsTab)
             .build();
-        //?} else {
-        /*tabNavigationBar = TabNavigationBar.builder(tabManager, width)
-            .addTabs(generalTab, soundsTab)
+        *///?} else {
+        tabNavigationBar = TabNavigationBar.builder(tabManager, width)
+            .addTabs(generalTab)
+            .addTabs(soundsTab)
             .build();
-        *///?}
+        //?}
         addRenderableWidget(tabNavigationBar);
 
         LinearLayout footerButtons = LinearLayout.horizontal().spacing(8);
@@ -112,11 +114,14 @@ public class RegionEditScreen extends Screen {
         if (tabNavigationBar == null) return;
 
         //? if >=26.2 {
-        tabNavigationBar.arrangeElements(width);
-        //?} else {
+        /*tabNavigationBar.arrangeElements(width);
+         *///?} elif >=26.1 {
         /*tabNavigationBar.updateWidth(width);
         tabNavigationBar.arrangeElements();
-        *///?}
+        *///?} else {
+        tabNavigationBar.setWidth(width);
+        tabNavigationBar.arrangeElements();
+        //?}
         int tabBottom = tabNavigationBar.getRectangle().bottom();
 
         ScreenRectangle contentArea = new ScreenRectangle(
@@ -129,10 +134,10 @@ public class RegionEditScreen extends Screen {
     }
 
     @Override
-    public void resize(int width, int height) {
+    public void resize(/*? if <1.21.11 {*/Minecraft minecraft, /*?}*/int width, int height) {
         workingName = generalTab != null ? generalTab.getCurrentName() : workingName;
         String search = soundsTab != null ? soundsTab.getSearchValue() : "";
-        super.resize(width, height);
+        super.resize(/*? if <1.21.11 {*/minecraft, /*?}*/width, height);
         if (soundsTab != null) soundsTab.setSearchValue(search);
     }
 
@@ -145,7 +150,7 @@ public class RegionEditScreen extends Screen {
             return false;
         }
 
-        Map<Identifier, VolumeData> overrides = soundsTab.getSoundOverrides();
+        Map<ResourceLocation, VolumeData> overrides = soundsTab.getSoundOverrides();
 
         RegionConfig regionConfig = RegionConfig.getInstance();
         boolean enabled = generalTab.extractEnabled();
@@ -166,6 +171,6 @@ public class RegionEditScreen extends Screen {
 
     @Override
     public void onClose() {
-        minecraft.setScreenAndShow(parent);
+        minecraft.setScreen(parent);
     }
 }

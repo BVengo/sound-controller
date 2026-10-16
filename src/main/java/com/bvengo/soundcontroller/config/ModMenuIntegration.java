@@ -1,7 +1,7 @@
 package com.bvengo.soundcontroller.config;
 
 //? if fabric {
-import com.bvengo.soundcontroller.gui.AllSoundOptionsScreen;
+/*import com.bvengo.soundcontroller.gui.AllSoundOptionsScreen;
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.minecraft.client.Minecraft;
@@ -12,4 +12,4 @@ public class ModMenuIntegration implements ModMenuApi {
         return parent -> new AllSoundOptionsScreen(parent, Minecraft.getInstance().options);
     }
 }
-//?}
+*///?}

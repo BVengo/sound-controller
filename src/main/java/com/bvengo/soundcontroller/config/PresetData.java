@@ -1,14 +1,14 @@
 package com.bvengo.soundcontroller.config;
 
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 
 public class PresetData {
     private String name;
-    private final HashMap<Identifier, Float> sounds;
+    private final HashMap<ResourceLocation, Float> sounds;
 
-    public PresetData(String name, HashMap<Identifier, Float> sounds) {
+    public PresetData(String name, HashMap<ResourceLocation, Float> sounds) {
         this.name = name;
         this.sounds = sounds;
     }
@@ -21,7 +21,7 @@ public class PresetData {
         this.name = name;
     }
 
-    public HashMap<Identifier, Float> getSounds() {
+    public HashMap<ResourceLocation, Float> getSounds() {
         return sounds;
     }
 }

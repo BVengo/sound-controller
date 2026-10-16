@@ -3,7 +3,7 @@ package com.bvengo.soundcontroller.config;
 import com.bvengo.soundcontroller.SoundController;
 import com.bvengo.soundcontroller.VolumeData;
 import com.bvengo.soundcontroller.region.RegionData;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -54,7 +54,7 @@ public class RegionConfig {
         return active;
     }
 
-    public float getVolumeForSound(String serverKey, String worldKey, Vec3 pos, Identifier soundId) {
+    public float getVolumeForSound(String serverKey, String worldKey, Vec3 pos, ResourceLocation soundId) {
         loadServer(serverKey);
         float minRegionVolume = Float.MAX_VALUE;
         boolean hasOverride = false;

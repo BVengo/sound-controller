@@ -5,7 +5,7 @@ import com.bvengo.soundcontroller.config.PresetConfig;
 import com.bvengo.soundcontroller.config.PresetData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.StringWidget;
@@ -77,7 +77,7 @@ public class PresetPickerScreen extends Screen {
     }
 
     private void closeToParent() {
-        minecraft.setScreenAndShow(parent);
+        minecraft.setScreen(parent);
     }
 
     private class PickerEntry extends ContainerObjectSelectionList.Entry<PickerEntry> {
@@ -97,8 +97,9 @@ public class PresetPickerScreen extends Screen {
                 .build();
         }
 
-        @Override
-        public void extractContent(GuiGraphicsExtractor context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        //? if >=1.21.6 {
+        /*@Override
+        public void extractContent(GuiGraphics context, int mouseX, int mouseY, boolean hovered, float tickDelta) {
             int entryLeft = getX() + 8;
             int entryRight = getX() + getWidth() - 8;
             int centerY = getY() + (getHeight() - BUTTON_HEIGHT) / 2;
@@ -112,6 +113,24 @@ public class PresetPickerScreen extends Screen {
             loadButton.setPosition(loadX, centerY);
             loadButton.extractRenderState(context, mouseX, mouseY, tickDelta);
         }
+        *///?} else {
+        @Override
+        public void render(GuiGraphics context, int index, int top, int left, int entryWidth, int entryHeight,
+                           int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            int entryLeft = left + 8;
+            int entryRight = left + entryWidth - 8;
+            int centerY = top + (entryHeight - BUTTON_HEIGHT) / 2;
+
+            int loadX = entryRight - LOAD_WIDTH;
+            int nameWidth = loadX - 8 - entryLeft;
+
+            String name = font.plainSubstrByWidth(preset.getName(), Math.max(0, nameWidth));
+            context.drawString(font, name, entryLeft, centerY + 1, 0xFFFFFFFF, true);
+
+            loadButton.setPosition(loadX, centerY);
+            loadButton.render(context, mouseX, mouseY, tickDelta);
+        }
+        //?}
 
         @Override
         public List<Button> children() {
@@ -141,8 +160,8 @@ public class PresetPickerScreen extends Screen {
         }
 
         @Override
-        protected int scrollBarX() {
-            return Math.min(super.scrollBarX(), getRight() - SCROLLBAR_RIGHT_PADDING);
+        protected int getScrollbarPosition() {
+            return Math.min(super.getScrollbarPosition(), getRight() - SCROLLBAR_RIGHT_PADDING);
         }
 
         @Override

@@ -33,10 +33,12 @@ public class PresetsTab implements Tab {
         return Translations.translatableOf("tab.presets");
     }
 
-    @Override
+    //? if >=1.21.6 {
+    /*@Override
     public Component getTabExtraNarration() {
         return Component.empty();
     }
+    *///?}
 
     @Override
     public void visitChildren(Consumer<AbstractWidget> consumer) {
@@ -51,11 +53,11 @@ public class PresetsTab implements Tab {
     }
 
     //? if >=26.2 {
-    @Override
+    /*@Override
     public Layout getLayout() {
         return layout;
     }
-    //?}
+    *///?}
 
     private void loadPresets() {
         presetListWidget.clearEntries();

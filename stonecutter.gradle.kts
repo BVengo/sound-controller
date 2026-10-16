@@ -2,7 +2,7 @@ plugins {
     id("dev.kikugie.stonecutter")
 }
 
-stonecutter active "26.3-fabric"
+stonecutter active "1.21.1-neoforge"
 
 stonecutter parameters {
     val (minecraft, loader) = current.project.split('-', limit = 2)

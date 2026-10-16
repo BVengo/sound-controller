@@ -1,6 +1,7 @@
 package com.bvengo.soundcontroller.gui.buttons;
 
-import net.minecraft.client.input.InputWithModifiers;
+//? if >=1.21.9
+//import net.minecraft.client.input.InputWithModifiers;
 
 /**
  * Custom button widget that is used as a trigger rather than a toggle.
@@ -16,7 +17,7 @@ public class ToggleButtonWidget extends HoverableButtonWidget {
     }
 
     @Override
-    public void onPress(InputWithModifiers input) {
+    public void onPress(/*? if >= 1.21.9 {*//*InputWithModifiers input*//*?}*/) {
         // Natural toggle when button is pressed
         this.onPress.onPress(this);
         isPressed = !isPressed;
