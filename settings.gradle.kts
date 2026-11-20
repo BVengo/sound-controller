@@ -1,30 +1,21 @@
 pluginManagement {
+    providers.gradleProperty("modkit.includeBuild").orNull?.let { path ->
+        includeBuild(path)
+    }
     repositories {
-        maven("https://maven.fabricmc.net/") { name = "Fabric" }
-        maven("https://maven.neoforged.net/releases/") { name = "NeoForged" }
-        maven("https://maven.kikugie.dev/releases") { name = "KikuGie" }
+        providers.gradleProperty("modkit.repository").orNull?.let { path ->
+            maven { url = uri(path) }
+        }
+        maven("https://maven.kikugie.dev/releases")
+        maven("https://maven.fabricmc.net/")
+        maven("https://maven.neoforged.net/releases/")
         mavenCentral()
         gradlePluginPortal()
     }
 }
 
 plugins {
-    id("dev.kikugie.stonecutter") version "0.9.8"
-}
-
-stonecutter {
-    create(rootProject) {
-        fun minecraft(version: String) {
-            for (loader in listOf("fabric", "neoforge")) {
-                version("$version-$loader", version).buildscript("build.$loader.gradle.kts")
-            }
-        }
-
-        minecraft("26.1")
-        minecraft("26.2")
-        minecraft("26.3")
-        vcsVersion = "26.3-fabric"
-    }
+    id("dev.bvengo.modkit.settings") version "0.1.0"
 }
 
 rootProject.name = "sound-controller"
