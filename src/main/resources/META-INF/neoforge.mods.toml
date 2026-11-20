@@ -16,7 +16,7 @@ config = "soundcontroller.mixins.json"
 [[dependencies.soundcontroller]]
 modId = "neoforge"
 type = "required"
-versionRange = "[${neoforge_version},)"
+versionRange = "[${loader_version},)"
 ordering = "NONE"
 side = "CLIENT"
 

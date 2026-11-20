@@ -1,0 +1,18 @@
+schema = 1
+
+[mod]
+id = "soundcontroller"
+group = "dev.bvengo"
+version = "1.4.1"
+
+[targets]
+minecraft = ["26.1", "26.2", "26.3"]
+loaders = ["fabric", "neoforge"]
+vcs = "26.3-fabric"
+
+[dependencies]
+fabric_api = true
+modmenu = true
+
+[overrides.targets."26.3.fabric".dependencies]
+fabric_api = "0.153.2+26.3"

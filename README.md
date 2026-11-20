@@ -57,19 +57,24 @@ Below is the button used to apply a preset to the current volume configuration.
 
 ## Development
 
-The build uses [Stonecutter](https://stonecutter.kikugie.dev/) for managing loaders and versions.
+The build uses ModKit 0.1.0 and [Stonecutter](https://stonecutter.kikugie.dev/).
+Use Java 25 and the Gradle wrapper. ModKit is not published yet. Supply
+`-Pmodkit.includeBuild=../bvengo-modkit` on each command for local development,
+or `-Pmodkit.repository=<file-Maven-URI>` for a local Maven installation.
+Client code lives in `src/client/java`, with shared descriptors and assets in
+`src/main/resources`.
 
 ```sh
 # Build all supported versions for all supported loaders into build/libs
-./gradlew buildAll
+./gradlew -Pmodkit.includeBuild=../bvengo-modkit buildAll
 
 # Build or launch a single variant.
-./gradlew :26.3-fabric:build
-./gradlew :26.3-fabric:runClient
-./gradlew :26.3-neoforge:runClient
+./gradlew -Pmodkit.includeBuild=../bvengo-modkit :26.3-fabric:build
+./gradlew -Pmodkit.includeBuild=../bvengo-modkit :26.3-fabric:runClient
+./gradlew -Pmodkit.includeBuild=../bvengo-modkit :26.3-neoforge:runClient
 
 # Switch the sources shown in the IDE, then reload the Gradle project.
-./gradlew stonecutterSwitchTo26.3-neoforge
+./gradlew -Pmodkit.includeBuild=../bvengo-modkit stonecutterSwitchTo26.3-neoforge
 ```
 
 
