@@ -57,13 +57,17 @@ Below is the button used to apply a preset to the current volume configuration.
 
 ## Development
 
-The build uses ModKit 0.1.0 and [Stonecutter](https://stonecutter.kikugie.dev/).
-Use Java 25 and the Gradle wrapper. ModKit is not published yet. Supply
-`-Pmodkit.includeBuild=../bvengo-modkit` on each command for local development,
-or `-Pmodkit.repository=<file-Maven-URI>` for a local Maven installation.
-Configure targets, dependencies, metadata, mixins and packaging in `mod.toml`.
-ModKit generates loader and mixin descriptors during the build. Client code lives
-in `src/client/java`, with assets in `src/main/resources`.
+The build uses my custom BVengo Modkit 0.1.0 on top of [Stonecutter](https://stonecutter.kikugie.dev/).
+
+Note that ModKit has not been made publically available just yet, so this
+branch will not work for anybody except myself.
+
+All build configs sit inside `mod.toml`, and are passed into ModKit for loader
+generation, mixin descriptors, and build configuration.
+
+Supply `-Pmodkit.includeBuild=../bvengo-modkit` on each command for local
+development, or `-Pmodkit.repository=<file-Maven-URI>` for a local Maven
+installation.
 
 ```sh
 # Build all supported versions for all supported loaders into build/libs
@@ -77,7 +81,6 @@ in `src/client/java`, with assets in `src/main/resources`.
 # Switch the sources shown in the IDE, then reload the Gradle project.
 ./gradlew -Pmodkit.includeBuild=../bvengo-modkit stonecutterSwitchTo26.3-neoforge
 ```
-
 
 ## Contributing
 Contributions and suggestions are always welcome! Please limit all issues to only one feature at a time - feel free to open multiple at once if you have many ideas. Similarly, please limit pull requests to a single feature at a time and try to follow the existing code style.
