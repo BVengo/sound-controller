@@ -38,8 +38,8 @@ sources = "https://github.com/BVengo/sound-controller"
 issues = "https://github.com/BVengo/sound-controller/issues"
 
 [metadata.entrypoints]
-client = ["com.bvengo.soundcontroller.FabricSoundController"]
-modmenu = ["com.bvengo.soundcontroller.config.ModMenuIntegration"]
+client = ["dev.bvengo.soundcontroller.FabricSoundController"]
+modmenu = ["dev.bvengo.soundcontroller.config.ModMenuIntegration"]
 
 [metadata.fabric.depends]
 fabricloader = ">=0.18.4"
@@ -55,5 +55,5 @@ update_checker = true
 "modmenu.discord" = "https://discord.gg/gyTa5v7kKk"
 
 [metadata.mixins]
-package = "com.bvengo.soundcontroller.mixin"
+package = "dev.bvengo.soundcontroller.mixin"
 client = ["OptionsSubScreenMixin", "SoundEngineMixin", "SubtitleOverlayMixin"]

@@ -69,6 +69,9 @@ Supply `-Pmodkit.includeBuild=../bvengo-modkit` on each command for local
 development, or `-Pmodkit.repository=<file-Maven-URI>` for a local Maven
 installation.
 
+Java packages and the Maven group use `dev.bvengo`. Integrations must use the
+updated Java package names.
+
 ```sh
 # Build all supported versions for all supported loaders into build/libs
 ./gradlew -Pmodkit.includeBuild=../bvengo-modkit buildAll
