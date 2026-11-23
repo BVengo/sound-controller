@@ -1,0 +1,139 @@
+package dev.bvengo.soundcontroller.gui.regions;
+
+import dev.bvengo.soundcontroller.SoundController;
+import dev.bvengo.soundcontroller.VolumeData;
+import dev.bvengo.soundcontroller.config.RegionConfig;
+import dev.bvengo.soundcontroller.config.VolumeConfig;
+import dev.bvengo.soundcontroller.region.RegionData;
+import dev.bvengo.soundcontroller.region.RegionGeometry;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.components.Button;
+import dev.bvengo.modcore.client.ui.TabbedPanel;
+import net.minecraft.client.gui.components.tabs.TabManager;
+import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.resources.Identifier;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import static dev.bvengo.soundcontroller.Translations.translatableOf;
+
+public class RegionEditScreen extends Screen {
+    private final Screen parent;
+    private final RegionData existingRegion;
+    private final Options options;
+
+    private final String serverKey;
+    private final String worldKey;
+
+    private String workingName;
+    private HashMap<Identifier, VolumeData> workingSounds;
+
+    private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
+    private final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
+
+    private TabbedPanel tabNavigationBar;
+    private RegionGeneralTab generalTab;
+    private RegionSoundsTab soundsTab;
+
+    public RegionEditScreen(Screen parent, RegionData existingRegion) {
+        super(existingRegion == null
+            ? translatableOf("region.create")
+            : translatableOf("region.edit.title"));
+        this.parent = parent;
+        this.existingRegion = existingRegion;
+        this.options = net.minecraft.client.Minecraft.getInstance().options;
+
+        if (existingRegion != null) {
+            serverKey = existingRegion.getServerKey();
+            worldKey = existingRegion.getWorldKey();
+            workingName = existingRegion.getName();
+        } else {
+            serverKey = SoundController.getCurrentServerKey();
+            worldKey = SoundController.getCurrentWorldKey();
+            workingName = "";
+        }
+    }
+
+    @Override
+    protected void init() {
+        if (workingSounds == null) {
+            workingSounds = new HashMap<>();
+            for (Identifier soundId : VolumeConfig.getInstance().getVolumes().keySet()) {
+                float vol = existingRegion != null
+                    ? existingRegion.getVolumeForSound(soundId)
+                    : VolumeData.DEFAULT_VOLUME;
+                workingSounds.put(soundId, new VolumeData(soundId, vol));
+            }
+        }
+
+        generalTab = new RegionGeneralTab(existingRegion, worldKey, workingName);
+        soundsTab = new RegionSoundsTab(this, options, workingSounds);
+
+        tabNavigationBar = new TabbedPanel(tabManager, width, generalTab, soundsTab);
+        addRenderableWidget(tabNavigationBar.widget());
+
+        LinearLayout footerButtons = LinearLayout.horizontal().spacing(8);
+        footerButtons.addChild(Button.builder(translatableOf("region.save"),
+            b -> { if (validateAndSave()) onClose(); }).build());
+        footerButtons.addChild(Button.builder(CommonComponents.GUI_CANCEL,
+            b -> onClose()).build());
+        layout.addToFooter(footerButtons);
+
+        tabNavigationBar.selectTab(0, false);
+        repositionElements();
+        layout.visitWidgets(this::addRenderableWidget);
+    }
+
+    @Override
+    protected void repositionElements() {
+        if (tabNavigationBar == null) return;
+
+        tabNavigationBar.arrange(width, height, layout);
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        workingName = generalTab != null ? generalTab.getCurrentName() : workingName;
+        String search = soundsTab != null ? soundsTab.getSearchValue() : "";
+        super.resize(width, height);
+        if (soundsTab != null) soundsTab.setSearchValue(search);
+    }
+
+    private boolean validateAndSave() {
+        Optional<String> name = generalTab.extractName();
+        Optional<RegionGeometry> geometry = generalTab.extractGeometry();
+
+        if (name.isEmpty() || geometry.isEmpty()) {
+            tabNavigationBar.selectTab(0, true);
+            return false;
+        }
+
+        Map<Identifier, VolumeData> overrides = soundsTab.getSoundOverrides();
+
+        RegionConfig regionConfig = RegionConfig.getInstance();
+        boolean enabled = generalTab.extractEnabled();
+        if (existingRegion != null) {
+            existingRegion.setName(name.get());
+            existingRegion.setEnabled(enabled);
+            existingRegion.setGeometry(geometry.get());
+            existingRegion.setSoundOverrides(new HashMap<>(overrides));
+        } else {
+            RegionData newRegion = new RegionData(name.get(), serverKey, worldKey, geometry.get());
+            newRegion.setEnabled(enabled);
+            newRegion.setSoundOverrides(new HashMap<>(overrides));
+            regionConfig.addRegion(newRegion);
+        }
+        regionConfig.save();
+        return true;
+    }
+
+    @Override
+    public void onClose() {
+        minecraft.setScreenAndShow(parent);
+    }
+}

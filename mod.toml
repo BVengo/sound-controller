@@ -1,0 +1,64 @@
+schema = 1
+
+[mod]
+id = "soundcontroller"
+group = "dev.bvengo"
+version = "1.4.1"
+
+[targets]
+minecraft = ["26.1", "26.2", "26.3"]
+loaders = ["fabric", "neoforge"]
+vcs = "26.3-fabric"
+
+[dependencies]
+modcore = true
+fabric_api = true
+modmenu = true
+annotations = { loaders = ["neoforge"] }
+
+[overrides.targets."26.3.fabric".dependencies]
+fabric_api = "0.153.2+26.3"
+
+[packaging]
+licence_file = "LICENSE.md"
+
+[publishing]
+maven = true
+
+[metadata]
+name = "Sound Controller"
+description = "Have complete control over the volume of all sounds played in the game."
+licence = "LGPL-3.0"
+environment = "client"
+authors = ["BVengo"]
+contributors = ["JustAlittleWolf", "YouQi-ovo", "Maganoos", "lonefelidae16", "eikhren", "CoolAid48"]
+icon = "assets/soundcontroller/icon.png"
+
+[metadata.contact]
+sources = "https://github.com/BVengo/sound-controller"
+issues = "https://github.com/BVengo/sound-controller/issues"
+
+[metadata.entrypoints]
+client = ["dev.bvengo.soundcontroller.FabricSoundController"]
+modmenu = ["dev.bvengo.soundcontroller.config.ModMenuIntegration"]
+
+[metadata.fabric.depends]
+bvengomodcore = ">=0.1.0 <0.2.0"
+fabricloader = ">=0.18.4"
+fabric-api = "*"
+
+[metadata.fabric.recommends]
+modmenu = "*"
+
+[metadata.fabric.custom.modmenu]
+update_checker = true
+
+[metadata.fabric.custom.modmenu.links]
+"modmenu.discord" = "https://discord.gg/gyTa5v7kKk"
+
+[metadata.mixins]
+package = "dev.bvengo.soundcontroller.mixin"
+client = ["OptionsSubScreenMixin", "SoundEngineMixin", "SubtitleOverlayMixin"]
+
+[metadata.neoforge.depends]
+bvengomodcore = "[0.1.0,0.2.0)"
