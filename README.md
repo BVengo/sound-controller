@@ -61,8 +61,9 @@ The build uses ModKit 0.1.0 and [Stonecutter](https://stonecutter.kikugie.dev/).
 Use Java 25 and the Gradle wrapper. ModKit is not published yet. Supply
 `-Pmodkit.includeBuild=../bvengo-modkit` on each command for local development,
 or `-Pmodkit.repository=<file-Maven-URI>` for a local Maven installation.
-Client code lives in `src/client/java`, with shared descriptors and assets in
-`src/main/resources`.
+Configure targets, dependencies, metadata, mixins and packaging in `mod.toml`.
+ModKit generates loader and mixin descriptors during the build. Client code lives
+in `src/client/java`, with assets in `src/main/resources`.
 
 ```sh
 # Build all supported versions for all supported loaders into build/libs

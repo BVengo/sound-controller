@@ -13,6 +13,47 @@ vcs = "26.3-fabric"
 [dependencies]
 fabric_api = true
 modmenu = true
+annotations = { loaders = ["neoforge"] }
 
 [overrides.targets."26.3.fabric".dependencies]
 fabric_api = "0.153.2+26.3"
+
+[packaging]
+licence_file = "LICENSE.md"
+
+[publishing]
+maven = true
+
+[metadata]
+name = "Sound Controller"
+description = "Have complete control over the volume of all sounds played in the game."
+licence = "LGPL-3.0"
+environment = "client"
+authors = ["BVengo"]
+contributors = ["JustAlittleWolf", "YouQi-ovo", "Maganoos", "lonefelidae16", "eikhren", "CoolAid48"]
+icon = "assets/soundcontroller/icon.png"
+
+[metadata.contact]
+sources = "https://github.com/BVengo/sound-controller"
+issues = "https://github.com/BVengo/sound-controller/issues"
+
+[metadata.entrypoints]
+client = ["com.bvengo.soundcontroller.FabricSoundController"]
+modmenu = ["com.bvengo.soundcontroller.config.ModMenuIntegration"]
+
+[metadata.fabric.depends]
+fabricloader = ">=0.18.4"
+fabric-api = "*"
+
+[metadata.fabric.recommends]
+modmenu = "*"
+
+[metadata.fabric.custom.modmenu]
+update_checker = true
+
+[metadata.fabric.custom.modmenu.links]
+"modmenu.discord" = "https://discord.gg/gyTa5v7kKk"
+
+[metadata.mixins]
+package = "com.bvengo.soundcontroller.mixin"
+client = ["OptionsSubScreenMixin", "SoundEngineMixin", "SubtitleOverlayMixin"]
