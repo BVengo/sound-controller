@@ -11,14 +11,9 @@ import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
-//? if >=26.2 {
-import net.minecraft.client.gui.components.tabs.MenuTabBar;
-//?} else {
-/*import net.minecraft.client.gui.components.tabs.TabNavigationBar;
-*///?}
+import dev.bvengo.modcore.client.ui.TabbedPanel;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 
@@ -36,11 +31,7 @@ public class AllSoundOptionsScreen extends Screen {
 
     private int currentTabIndex = 0;
 
-    //? if >=26.2 {
-    private MenuTabBar tabNavigationBar;
-    //?} else {
-    /*private TabNavigationBar tabNavigationBar;
-    *///?}
+    private TabbedPanel tabNavigationBar;
     private GlobalSoundTab globalTab;
     private RegionsTab regionsTab;
     private PresetsTab presetsTab;
@@ -61,18 +52,8 @@ public class AllSoundOptionsScreen extends Screen {
         this.regionsTab = new RegionsTab(this, this.options, () -> updateFooterButtons(1, true, false));
         this.presetsTab = new PresetsTab(this, () -> updateFooterButtons(2, false, true));
 
-        //? if >=26.2 {
-        this.tabNavigationBar = MenuTabBar.builder(this.tabManager, this.width)
-            .addTab(this.globalTab)
-            .addTab(this.regionsTab)
-            .addTab(this.presetsTab)
-            .build();
-        //?} else {
-        /*this.tabNavigationBar = TabNavigationBar.builder(this.tabManager, this.width)
-            .addTabs(this.globalTab, this.regionsTab, this.presetsTab)
-            .build();
-        *///?}
-        this.addRenderableWidget(this.tabNavigationBar);
+        this.tabNavigationBar = new TabbedPanel(tabManager, width, globalTab, regionsTab, presetsTab);
+        this.addRenderableWidget(this.tabNavigationBar.widget());
 
         // Only Done goes in the layout footer — conditional buttons are positioned manually
         this.doneButton = Button.builder(CommonComponents.GUI_DONE, b -> this.onClose()).build();
@@ -99,23 +80,7 @@ public class AllSoundOptionsScreen extends Screen {
     protected void repositionElements() {
         if (this.tabNavigationBar == null) return;
 
-        //? if >=26.2 {
-        this.tabNavigationBar.arrangeElements(this.width);
-        //?} else {
-        /*this.tabNavigationBar.updateWidth(this.width);
-        this.tabNavigationBar.arrangeElements();
-        *///?}
-        int tabBottom = this.tabNavigationBar.getRectangle().bottom();
-
-        // Arrange layout (positions doneButton) BEFORE setting tab area so
-        // updateFooterButtons() can read doneButton.getY() when doLayout() fires.
-        this.layout.setHeaderHeight(tabBottom);
-        this.layout.arrangeElements();
-
-        ScreenRectangle contentArea = new ScreenRectangle(
-            0, tabBottom, this.width, this.height - this.layout.getFooterHeight() - tabBottom
-        );
-        this.tabManager.setTabArea(contentArea);
+        tabNavigationBar.arrange(width, height, layout);
     }
 
     // Called by each tab's doLayout() — sets conditional button visibility and re-centres the footer row.

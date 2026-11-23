@@ -8,14 +8,9 @@ import dev.bvengo.soundcontroller.region.RegionData;
 import dev.bvengo.soundcontroller.region.RegionGeometry;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;
-//? if >=26.2 {
-import net.minecraft.client.gui.components.tabs.MenuTabBar;
-//?} else {
-/*import net.minecraft.client.gui.components.tabs.TabNavigationBar;
-*///?}
+import dev.bvengo.modcore.client.ui.TabbedPanel;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
-import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.CommonComponents;
@@ -41,11 +36,7 @@ public class RegionEditScreen extends Screen {
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
     private final TabManager tabManager = new TabManager(this::addRenderableWidget, this::removeWidget);
 
-    //? if >=26.2 {
-    private MenuTabBar tabNavigationBar;
-    //?} else {
-    /*private TabNavigationBar tabNavigationBar;
-    *///?}
+    private TabbedPanel tabNavigationBar;
     private RegionGeneralTab generalTab;
     private RegionSoundsTab soundsTab;
 
@@ -83,17 +74,8 @@ public class RegionEditScreen extends Screen {
         generalTab = new RegionGeneralTab(existingRegion, worldKey, workingName);
         soundsTab = new RegionSoundsTab(this, options, workingSounds);
 
-        //? if >=26.2 {
-        tabNavigationBar = MenuTabBar.builder(tabManager, width)
-            .addTab(generalTab)
-            .addTab(soundsTab)
-            .build();
-        //?} else {
-        /*tabNavigationBar = TabNavigationBar.builder(tabManager, width)
-            .addTabs(generalTab, soundsTab)
-            .build();
-        *///?}
-        addRenderableWidget(tabNavigationBar);
+        tabNavigationBar = new TabbedPanel(tabManager, width, generalTab, soundsTab);
+        addRenderableWidget(tabNavigationBar.widget());
 
         LinearLayout footerButtons = LinearLayout.horizontal().spacing(8);
         footerButtons.addChild(Button.builder(translatableOf("region.save"),
@@ -111,21 +93,7 @@ public class RegionEditScreen extends Screen {
     protected void repositionElements() {
         if (tabNavigationBar == null) return;
 
-        //? if >=26.2 {
-        tabNavigationBar.arrangeElements(width);
-        //?} else {
-        /*tabNavigationBar.updateWidth(width);
-        tabNavigationBar.arrangeElements();
-        *///?}
-        int tabBottom = tabNavigationBar.getRectangle().bottom();
-
-        ScreenRectangle contentArea = new ScreenRectangle(
-            0, tabBottom, width, height - layout.getFooterHeight() - tabBottom
-        );
-        tabManager.setTabArea(contentArea);
-
-        layout.setHeaderHeight(tabBottom);
-        layout.arrangeElements();
+        tabNavigationBar.arrange(width, height, layout);
     }
 
     @Override

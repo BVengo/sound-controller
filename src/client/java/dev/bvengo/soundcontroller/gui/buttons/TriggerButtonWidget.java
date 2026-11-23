@@ -1,31 +1,25 @@
 package dev.bvengo.soundcontroller.gui.buttons;
 
-import net.minecraft.client.input.InputWithModifiers;
-import net.minecraft.client.input.MouseButtonEvent;
+import dev.bvengo.modcore.client.ui.ButtonSprites;
+import dev.bvengo.modcore.client.ui.SpriteTriggerButton;
+import dev.bvengo.soundcontroller.SoundController;
+import dev.bvengo.soundcontroller.Translations;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
-/**
- * Custom button widget that is used as a trigger rather than a toggle.
- * i.e. it is only active while the button is being pressed.
- */
-public class TriggerButtonWidget extends HoverableButtonWidget {
-
-    public TriggerButtonWidget(String buttonId, int x, int y, int width, int height, OnPress pressAction) {
-        super(buttonId, x, y, width, height, pressAction);
+public class TriggerButtonWidget extends SpriteTriggerButton {
+    public TriggerButtonWidget(String buttonId, int x, int y, int width, int height, OnPress action) {
+        super(x, y, width, height, labelFor(buttonId),
+                ButtonSprites.forButton(Identifier.fromNamespaceAndPath(SoundController.MOD_ID, buttonId)), action);
     }
 
-    @Override
-    public void onPress(InputWithModifiers input) {
-        isPressed = true;
-    }
+    private static Component labelFor(String buttonId) {
+        String translation = switch (buttonId) {
+            case "audio" -> "play.tooltip";
+            case "preset" -> "preset.load";
+            default -> buttonId + ".tooltip";
+        };
 
-    @Override
-    public void onRelease(MouseButtonEvent click) {
-        // Release toggle texture on release, and perform press action.
-        // Only perform press action if button remains hovered.
-        if (isHovered) {
-            this.onPress.onPress(this);
-        }
-
-        isPressed = false;
+        return Translations.translatableOf(translation);
     }
 }

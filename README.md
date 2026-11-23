@@ -74,15 +74,15 @@ updated Java package names.
 
 ```sh
 # Build all supported versions for all supported loaders into build/libs
-./gradlew -Pmodkit.includeBuild=../bvengo-modkit buildAll
+./gradlew -Pmodkit.includeBuild=../bvengo-modkit -Pmodcore.artifacts=../bvengo-modcore/build/libs buildAll
 
 # Build or launch a single variant.
-./gradlew -Pmodkit.includeBuild=../bvengo-modkit :26.3-fabric:build
-./gradlew -Pmodkit.includeBuild=../bvengo-modkit :26.3-fabric:runClient
-./gradlew -Pmodkit.includeBuild=../bvengo-modkit :26.3-neoforge:runClient
+./gradlew -Pmodkit.includeBuild=../bvengo-modkit -Pmodcore.artifacts=../bvengo-modcore/build/libs :26.3-fabric:build
+./gradlew -Pmodkit.includeBuild=../bvengo-modkit -Pmodcore.artifacts=../bvengo-modcore/build/libs :26.3-fabric:runClient
+./gradlew -Pmodkit.includeBuild=../bvengo-modkit -Pmodcore.artifacts=../bvengo-modcore/build/libs :26.3-neoforge:runClient
 
 # Switch the sources shown in the IDE, then reload the Gradle project.
-./gradlew -Pmodkit.includeBuild=../bvengo-modkit stonecutterSwitchTo26.3-neoforge
+./gradlew -Pmodkit.includeBuild=../bvengo-modkit -Pmodcore.artifacts=../bvengo-modcore/build/libs stonecutterSwitchTo26.3-neoforge
 ```
 
 ## Contributing
@@ -92,3 +92,12 @@ Contributions and suggestions are always welcome! Please limit all issues to onl
 To further discuss or get notifications of new updates, check out my [Discord](https://discord.gg/gyTa5v7kKk). If you like what I do, consider supporting me on Ko-Fi!
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/C0C7DZ3FB)
+
+## Shared rendering and UI
+
+This mod requires the ModCore JAR for its game version and loader. Build
+ModCore first, then build this mod with:
+
+```sh
+./gradlew -Pmodkit.includeBuild=../bvengo-modkit -Pmodcore.artifacts=../bvengo-modcore/build/libs buildAll
+```

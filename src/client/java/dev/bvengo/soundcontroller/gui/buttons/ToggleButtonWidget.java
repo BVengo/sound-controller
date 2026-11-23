@@ -1,24 +1,25 @@
 package dev.bvengo.soundcontroller.gui.buttons;
 
+import dev.bvengo.modcore.client.ui.ButtonSprites;
+import dev.bvengo.modcore.client.ui.SpriteToggleButton;
+import dev.bvengo.soundcontroller.SoundController;
+import dev.bvengo.soundcontroller.Translations;
 import net.minecraft.client.input.InputWithModifiers;
+import net.minecraft.resources.Identifier;
 
-/**
- * Custom button widget that is used as a trigger rather than a toggle.
- * i.e. it is only active while the button is being pressed.
- */
-public class ToggleButtonWidget extends HoverableButtonWidget {
+public final class ToggleButtonWidget extends SpriteToggleButton {
+    private final OnPress action;
 
-    public ToggleButtonWidget(
-            String buttonId, int x, int y, int width, int height,
-            OnPress pressAction, boolean isToggled) {
-        super(buttonId, x, y, width, height, pressAction);
-        this.isPressed = isToggled;
+    public ToggleButtonWidget(String buttonId, int x, int y, int width, int height, OnPress action, boolean selected) {
+        super(x, y, width, height, Translations.translatableOf(buttonId + ".tooltip"),
+                ButtonSprites.forButton(Identifier.fromNamespaceAndPath(SoundController.MOD_ID, buttonId)),
+                selected, value -> {});
+        this.action = action;
     }
 
     @Override
     public void onPress(InputWithModifiers input) {
-        // Natural toggle when button is pressed
-        this.onPress.onPress(this);
-        isPressed = !isPressed;
+        action.onPress(this);
+        super.onPress(input);
     }
 }

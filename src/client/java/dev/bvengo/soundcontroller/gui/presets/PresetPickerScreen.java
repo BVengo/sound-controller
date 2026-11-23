@@ -8,6 +8,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import dev.bvengo.modcore.client.ui.ScrollableList;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
@@ -124,34 +125,9 @@ public class PresetPickerScreen extends Screen {
         }
     }
 
-    private static class PickerListWidget extends ContainerObjectSelectionList<PickerEntry> {
-        private static final int ROW_HEIGHT = 30;
-        private static final int ROW_WIDTH = 360;
-        private static final int HORIZONTAL_MARGIN = 32;
-        private static final int SCROLLBAR_RIGHT_PADDING = 8;
-
-        PickerListWidget(Minecraft client, int width, int height, int y) {
-            super(client, width, height, y, ROW_HEIGHT);
-            this.centerListVertically = false;
-        }
-
-        @Override
-        public int getRowWidth() {
-            return Math.min(ROW_WIDTH, Math.max(0, this.width - HORIZONTAL_MARGIN));
-        }
-
-        @Override
-        protected int scrollBarX() {
-            return Math.min(super.scrollBarX(), getRight() - SCROLLBAR_RIGHT_PADDING);
-        }
-
-        @Override
-        public void clearEntries() {
-            super.clearEntries();
-        }
-
-        public void addWidgetEntry(PickerEntry entry) {
-            this.addEntry(entry);
+    private static final class PickerListWidget extends ScrollableList<PickerEntry> {
+        PickerListWidget(Minecraft minecraft, int width, int height, int y) {
+            super(minecraft, width, height, y, 30, 360, 32, 8);
         }
     }
 }

@@ -1,37 +1,15 @@
 package dev.bvengo.soundcontroller.gui.components;
 
+import dev.bvengo.modcore.client.ui.ScrollableList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 
-/**
- * The list widget that contains all the individual records. Contains a list of
- * {@link VolumeWidgetEntry}.
- */
-public class VolumeListWidget extends ContainerObjectSelectionList<VolumeWidgetEntry> {
-    private static final int rowWidth = VolumeWidgetEntry.totalWidth;
-    private static final int rowHeight = 25;
-
-    public VolumeListWidget(Minecraft client, int width, int height, int y) {
-        super(client, width, height, y, rowHeight);
-        this.centerListVertically = false;
-    }
-
-    public void addWidgetEntry(VolumeWidgetEntry widget) {
-        this.addEntry(widget);
+public final class VolumeListWidget extends ScrollableList<VolumeWidgetEntry> {
+    public VolumeListWidget(Minecraft minecraft, int width, int height, int y) {
+        super(minecraft, width, height, y, 25, VolumeWidgetEntry.totalWidth, 0, 8);
     }
 
     @Override
     public int getRowWidth() {
-        return rowWidth;
-    }
-
-    @Override
-    protected int scrollBarX() {
-        return Math.min(super.scrollBarX(), getRight() - 8);
-    }
-
-    @Override
-    public void clearEntries() {
-        super.clearEntries();
+        return VolumeWidgetEntry.totalWidth;
     }
 }

@@ -11,6 +11,7 @@ loaders = ["fabric", "neoforge"]
 vcs = "26.3-fabric"
 
 [dependencies]
+modcore = true
 fabric_api = true
 modmenu = true
 annotations = { loaders = ["neoforge"] }
@@ -42,6 +43,7 @@ client = ["dev.bvengo.soundcontroller.FabricSoundController"]
 modmenu = ["dev.bvengo.soundcontroller.config.ModMenuIntegration"]
 
 [metadata.fabric.depends]
+bvengomodcore = ">=0.1.0 <0.2.0"
 fabricloader = ">=0.18.4"
 fabric-api = "*"
 
@@ -57,3 +59,6 @@ update_checker = true
 [metadata.mixins]
 package = "dev.bvengo.soundcontroller.mixin"
 client = ["OptionsSubScreenMixin", "SoundEngineMixin", "SubtitleOverlayMixin"]
+
+[metadata.neoforge.depends]
+bvengomodcore = "[0.1.0,0.2.0)"
